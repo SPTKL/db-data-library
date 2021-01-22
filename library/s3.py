@@ -78,11 +78,12 @@ class S3:
         """
         try:
             response = self.client.copy_object(
-                        Bucket=self.bucket
+                        Bucket=self.bucket,
+                        Key=dest_key,
                         CopySource={
                             'Bucket': self.bucket,
                             'Key': source_key
-                        }
+                        },
                         ACL=acl,
                     )
             if info:
@@ -113,9 +114,9 @@ class S3:
         acl: acl for newly created file
         info: if true, get info for file in its new location
         """
-        try:
-            response = self.cp(source_key=source_key, dest_key=dest_key, acl=acl)
-            response = self.rm(key=source_key)
-            if info:
-                return self.info(key=dest_key)
+        
+        response = self.cp(source_key=source_key, dest_key=dest_key, acl=acl)
+        response = self.rm(key=source_key)
+        if info:
+            return self.info(key=dest_key)
         return

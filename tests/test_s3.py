@@ -10,11 +10,12 @@ from library import (
 s3 = S3(aws_access_key_id, aws_secret_access_key, aws_s3_endpoint, aws_s3_bucket)
 
 def test_s3_upload_file():
+
     # Make sure file doesn't already exist
     assert s3.exists('test/20210121/test.yml') == False
 
     # Attempt to upload to 20210121/test.yml
-    s3.upload_file(name='test', version='20210120', path=f"{Path(__file__).parent}/data/socrata.yml")
+    s3.upload_file(name='test', version='20210121', path=f"{Path(__file__).parent}/data/socrata.yml")
 
     # Make sure file now exists
     assert s3.exists('test/20210121/test.yml') == True
@@ -23,7 +24,7 @@ def test_s3_upload_file():
     # assert s3.check_existence('test/20210121/test.yml') == True
 
 def test_s3_ls():
-    s3.ls('test')
+    print(s3.ls('test'))
 
 def test_s3_info():
     # Make sure file exists before trying to pull info
@@ -70,6 +71,7 @@ def test_s3_rm():
     assert s3.exists('test/moved/test.yml') == False
 
 if __name__ == "__main__":
+
     print("Test upload...")
     test_s3_upload_file()
 
