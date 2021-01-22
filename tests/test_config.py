@@ -35,3 +35,15 @@ def test_config_version_today():
 def test_config_compute():
     config = Config(f"{Path(__file__).parent}/data/socrata.yml").compute
     assert type(config["dataset"]["source"]["url"]) == dict
+
+def test_config_compute_parsed():
+    dataset, source, destination, info = Config(f"{Path(__file__).parent}/data/socrata.yml").compute_parsed
+    assert dataset['source'] == source
+    assert dataset['info'] == info
+    assert dataset['destination'] == destination
+    assert 'url' in list(source.keys())
+    assert 'options' in list(source.keys())
+    assert 'geometry' in list(source.keys())
+    assert 'fields' in list(destination.keys())
+    assert 'options' in list(destination.keys())
+    assert 'geometry' in list(destination.keys())

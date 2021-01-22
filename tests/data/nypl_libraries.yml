@@ -1,0 +1,31 @@
+dataset:
+  name: &name nypl_libraries
+  version: "20210122"
+  acl: public
+  source:
+    url:
+      path: https://raw.githubusercontent.com/NYCPlanning/recipes/master/recipes/facdb/nypl_libraries.csv
+      subpath: ""
+    options:
+      - "AUTODETECT_TYPE=NO"
+      - "EMPTY_STRING_AS_NULL=YES"
+      - "X_POSSIBLE_NAMES=lon"
+      - "Y_POSSIBLE_NAMES=lat"
+    geometry:
+      SRS: EPSG:4326
+      type: POINT
+
+  destination:
+    name: *name
+    geometry:
+      SRS: EPSG:4326
+      type: POINT
+    options:
+      - "OVERWRITE=YES"
+    fields: []
+    sql: null 
+
+  info:
+    description: ""
+    url: ""
+    dependents: []

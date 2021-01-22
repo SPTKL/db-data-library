@@ -34,16 +34,16 @@ def format_url(path: str, subpath: str) -> str:
     url = path if len(subpath) == 0 else path + "/" + subpath
 
     if "http" in url and ".zip" not in url:
-        return "vsicul/" + url
+        return "/vsicurl/" + url
 
     if ".zip" in url:
         if "http" in url:
-            url = "vsizip/vsicurl/" + url
+            url = "/vsizip/vsicurl/" + url
         elif "s3://" in url:
-            url = "vsizip/vsis3/" + url.replace("s3://", "")
+            url = "/vsizip/vsis3/" + url.replace("s3://", "")
         else:
-            url = "vsizip/" + url
+            url = "/vsizip/" + url
         return url
 
     if "s3://" in url and ".zip" not in url:
-        return url.replace("s3://", "vsis3/")
+        return url.replace("s3://", "/vsis3/")
