@@ -27,6 +27,10 @@ class S3:
         """
         suffix = Path(path).suffix
         key = f"{name}/{version}/{name}{suffix}"
+        response = self.put(path, key, acl)
+        return response
+
+    def put(self, path:str, key:str, acl:str = "public-read") -> dict:
         try:
             response = self.client.upload_file(
                 path,
@@ -48,12 +52,14 @@ class S3:
 
     def ls(self, prefix:str, detail:bool = False) -> list:
         response = self.client.list_objects(Bucket=self.bucket, Prefix = prefix)
-        contents = response['Contents']
-        if detail:
-            return contents
+        if 'Contents' in response.keys():
+            contents = response['Contents']
+            if detail:
+                return contents
+            else:
+                return [content['Key'] for content in contents]
         else:
-            return [content['Key'] for content in contents]
-
+            return []
     # https://s3fs.readthedocs.io/en/latest/api.html?highlight=listdir#s3fs.core.S3FileSystem.info
 
     def info(self, key:str) -> dict:
@@ -92,9 +98,13 @@ class S3:
         except ParamValidationError as e:
             raise ValueError(f"Copy {source_key} -> {dest_key} failed: {e}") from e
 
-    def rm(self, keys:list):
+    def rm(self, *keys) -> dict:
         """
         Removes a files within the bucket
+        sample usage: 
+        s3.rm('path/to/file')
+        s3.rm('file1', 'file2', 'file3')
+        s3.rm(*['file1', 'file2', 'file3'])
         """
         objects = [{'Key':k} for k in keys]
         response = self.client.delete_objects(
@@ -120,7 +130,7 @@ class S3:
         """
         
         response = self.cp(source_key=source_key, dest_key=dest_key, acl=acl)
-        response = self.rm(keys=[source_key])
+        response = self.rm(source_key)
         if info:
             return self.info(key=dest_key)
         return
