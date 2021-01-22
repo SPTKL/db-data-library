@@ -12,13 +12,13 @@ dataset:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
     geometry:
-      srcSRS: EPSG:4326
+      SRS: EPSG:4326
       type: MULTIPOLYGON
 
   destination:
     name: *name
     geometry:
-      dstSRS: EPSG:4326
+      SRS: EPSG:4326
       type: MULTIPOLYGON
     options:
       - "OVERWRITE=YES"
