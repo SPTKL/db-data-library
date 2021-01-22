@@ -1,5 +1,5 @@
 import os
-from osgeo import gdal
+from osgeo import gdal, ogr
 from .utils import parse_engine
 
 def format_field_names(dataset: gdal.Dataset, fields: list):
