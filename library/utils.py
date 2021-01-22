@@ -1,5 +1,6 @@
 from urllib.parse import urlparse
 
+
 def parse_engine(url: str) -> str:
     """
     url: postgres connection string
@@ -14,7 +15,7 @@ def parse_engine(url: str) -> str:
     return f"PG:host={hostname} port={portnum} user={username} dbname={database} password={password}"
 
 
-def format_url(url: str) -> str:
+def format_url(path: str, subpath: str) -> str:
     """
     Adds "vsis3" if [url] is from s3
     - s3://edm-recipes/recipes.csv
@@ -27,15 +28,22 @@ def format_url(url: str) -> str:
     Adds "vsicurl" if [url] contains http
     - https://rawgithubcontent.come/somerepo/somefile.csv
     """
+    if len(subpath) > 0:
+        subpath = subpath[1:] if subpath[0] == "/" else subpath
+    path = path[:-1] if path[-1] == "/" else path
+    url = path if len(subpath) == 0 else path + "/" + subpath
+
     if "http" in url and ".zip" not in url:
         return "vsicul/" + url
+
     if ".zip" in url:
         if "http" in url:
-            url = "/vsizip/vsicurl/" + url
+            url = "vsizip/vsicurl/" + url
         elif "s3://" in url:
-            url = "/vsizip/vsis3/" + url.replace("s3://", "")
+            url = "vsizip/vsis3/" + url.replace("s3://", "")
         else:
-            url = "/vsizip/" + url
+            url = "vsizip/" + url
         return url
+
     if "s3://" in url and ".zip" not in url:
-        return url.replace("s3://", "/vsis3/")
+        return url.replace("s3://", "vsis3/")

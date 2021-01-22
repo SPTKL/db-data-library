@@ -1,26 +1,95 @@
 from datetime import datetime
+import yaml
+from jinja2 import Template
+import requests
+import json
+from .utils import format_url
+
 
 class Config:
     """
-    Config is a class that stores information about the configuration of a given dataset
+    Config will take a configuration file from the templates directly
+    or any given configuration file and compute/output a configuration
+    file to pass into the Ingestor
     """
 
-    def __init__(self, config:dict):
-        self.schema_name =  config.get("schema_name", "")
-        self.version_name = config.get("version_name", "")
-        self.path =         config.get("path", "")
-        self.layerCreationOptions = config.get("layerCreationOptions", ["OVERWRITE=YES"])
-        self.dstSRS =       config.get("dstSRS", "EPSG:4326")
-        self.srcSRS =       config.get("srcSRS", "EPSG:4326")
-        self.geometryType = config.get("geometryType", "NONE")
-        self.SQLStatement = config.get("SQLStatement", None)
-        self.srcOpenOptions = config.get(
-            "srcOpenOptions", ["AUTODETECT_TYPE=NO", "EMPTY_STRING_AS_NULL=YES"]
-        )
-        self.newFieldNames = config.get("newFieldNames", [])
-        self.version = (
-            datetime.today().strftime("%Y/%m/%d")
-            if self.version_name == ""
-            else self.version_name
-        )
-        self.layerName = f"{self.schema_name}.{self.version}"
+    def __init__(self, path: str):
+        self.path = path
+
+    @property
+    def unparsed_unrendered_template(self) -> str:
+        """importing the yml file into a string"""
+        with open(self.path, "r") as f:
+            return f.read()
+
+    @property
+    def parsed_unrendered_template(self) -> dict:
+        """parsing unrendered template"""
+        return yaml.safe_load(self.unparsed_unrendered_template)
+
+    def parsed_rendered_template(self, **kwargs) -> dict:
+        """render template, then parse into a dictionary"""
+        template = Template(self.unparsed_unrendered_template)
+        return yaml.safe_load(template.render(**kwargs))
+
+    @property
+    def source_type(self) -> str:
+        """determin the type of the source, either url or socrata"""
+        template = self.parsed_unrendered_template
+        source = template["dataset"]["source"]
+        return list(source.keys())[0]
+
+    def version_socrata(self, uid: str) -> str:
+        """using the socrata API to collect data last update date"""
+        metadata = requests.get(
+            f"https://data.cityofnewyork.us/api/views/{uid}.json"
+        ).json()
+        version = datetime.fromtimestamp(metadata["rowsUpdatedAt"]).strftime("%Y%m%d")
+        return version
+
+    # @property
+    # def version_bytes(self) -> str:
+    #     """parsing bytes of the big apple to get the latest bytes version"""
+    #     # scrape from bytes to get a version
+    #     return None
+
+    @property
+    def version_today(self) -> str:
+        """using today as the version name"""
+        return datetime.today().strftime("%Y%m%d")
+
+    @property
+    def compute(self) -> dict:
+        """based on given yml file and compute configuration"""
+        if self.source_type == "url":
+            # Note that version here is only provided as an option
+            # if version is verbosely defined, it will not replace what's in yaml
+            config = self.parsed_rendered_template(version=self.version_today)
+
+        if self.source_type == "socrata":
+            # For socrata we are computing the url and add the url object to the config file
+            _uid = self.parsed_unrendered_template["dataset"]["source"]["socrata"][
+                "uid"
+            ]
+            _format = self.parsed_unrendered_template["dataset"]["source"]["socrata"][
+                "format"
+            ]
+            config = self.parsed_rendered_template(version=self.version_socrata(_uid))
+            if _format == "csv":
+                url = f"https://data.cityofnewyork.us/api/views/{_uid}/rows.csv"
+            if _format == "geojson":
+                url = f"https://nycopendata.socrata.com/api/geospatial/{_uid}?method=export&format=GeoJSON"
+            config["dataset"]["source"] = {"url": {"path": url, "subpath": ""}}
+
+        path = config["dataset"]["source"]["url"]["path"]
+        subpath = config["dataset"]["source"]["url"]["subpath"]
+        config["dataset"]["source"]["url"]["gdalpath"] = format_url(path, subpath)
+        return config
+
+    @property
+    def compute_json(self) -> str:
+        return json.dumps(self.compute, indent=4)
+
+    @property
+    def compute_yml(self) -> str:
+        return yaml.dumps(self.compute)
