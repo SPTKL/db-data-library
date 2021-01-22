@@ -92,15 +92,19 @@ class S3:
         except ParamValidationError as e:
             raise ValueError(f"Copy {source_key} -> {dest_key} failed: {e}") from e
 
-    def rm(self, key:str):
+    def rm(self, keys:list):
         """
-        Remove a file within the bucket
+        Removes a files within the bucket
         """
-        response = self.client.delete_object(
+        objects = [{'Key':k} for k in keys]
+        response = self.client.delete_objects(
                         Bucket=self.bucket,
-                        Key=key,
+                        Delete={
+                            'Objects': objects,
+                            'Quiet': False,
+                        }    
                     )
-        return
+        return response
 
     def mv(self, source_key:str, dest_key:str, acl: str = "public-read", info:bool = False):
         """
@@ -116,7 +120,7 @@ class S3:
         """
         
         response = self.cp(source_key=source_key, dest_key=dest_key, acl=acl)
-        response = self.rm(key=source_key)
+        response = self.rm(keys=[source_key])
         if info:
             return self.info(key=dest_key)
         return
