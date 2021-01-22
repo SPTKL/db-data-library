@@ -14,6 +14,11 @@ def test_ingest_translate_pgdump():
     ingestor.translate_pgdump(f'{test_root_path}/data/nypl_libraries.yml')
     assert os.path.isfile(".library/datasets/nypl_libraries/20210122/nypl_libraries.sql")
 
+def test_ingest_translate_shapefile():
+    ingestor = Ingestor()
+    ingestor.translate_shapefile(f'{test_root_path}/data/nypl_libraries.yml')
+    assert os.path.isfile(".library/datasets/nypl_libraries/20210122/nypl_libraries.shp.zip")
+    
 def test_ingest_translate_postgres():
     ingestor = Ingestor()
     ingestor.translate_postgres(f'{test_root_path}/data/nypl_libraries.yml', recipe_engine)
