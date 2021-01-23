@@ -5,10 +5,10 @@ import requests
 import json
 from .utils import format_url
 
-
-class MyDumper(yaml.Dumper):
+# Custom dumper created for list indentation
+class Dumper(yaml.Dumper):
     def increase_indent(self, flow=False, indentless=False):
-        return super(MyDumper, self).increase_indent(flow, False)
+        return super(Dumper, self).increase_indent(flow, False)
 
 
 class Config:
@@ -105,7 +105,7 @@ class Config:
     def compute_yml(self) -> str:
         return yaml.dump(
             self.compute,
-            Dumper=MyDumper,
+            Dumper=Dumper,
             default_flow_style=False,
             sort_keys=False,
             indent=2,
