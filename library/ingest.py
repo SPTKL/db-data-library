@@ -31,28 +31,38 @@ class Ingestor:
             self = args[0]
             path = args[1]
             c = Config(path)
-            _, source, destination, _ = c.compute_parsed
-            srcDS = generic_source(
-                path=source["url"]["gdalpath"],
-                options=source["options"],
-                fields=destination["fields"],
-            )
+            dataset, source, destination, _ = c.compute_parsed
+            name = dataset["name"]
+            version = dataset["version"]
             (
                 dstDS,
-                folder_path,
-                destination_path,
                 output_format,
+                output_suffix,
                 compress,
                 inplace,
             ) = func(*args, **kwargs)
 
             # initiate source and destination datasets
-            if folder_path:
+            folder_path = f"{self.base_path}/datasets/{name}/{version}"
+            destination_path = (
+                f"{folder_path}/{name}.{output_suffix}" if output_suffix else None
+            )
+
+            # Default dstDS is destination_path if no dstDS is specificed
+            dstDS = destination_path if not dstDS else dstDS
+            srcDS = generic_source(
+                path=source["url"]["gdalpath"],
+                options=source["options"],
+                fields=destination["fields"],
+            )
+
+            # Create output folder and output config
+            if folder_path and output_suffix:
                 os.makedirs(folder_path, exist_ok=True)
-                # Output config file
                 self.write_config(f"{folder_path}/config.json", c.compute_json)
                 self.write_config(f"{folder_path}/config.yml", c.compute_yml)
 
+            # Initiate vector translate
             gdal.VectorTranslate(
                 dstDS,
                 srcDS,
@@ -94,9 +104,7 @@ class Ingestor:
         postgres_url: connection string for the destination database
         """
         dstDS = postgres_source(postgres_url)
-        folder_path, destination_path = None, None
-        output_format = "PostgreSQL"
-        return dstDS, folder_path, destination_path, output_format, compress, inplace
+        return dstDS, "PostgreSQL", None, compress, inplace
 
     @translator
     def csv(
@@ -111,16 +119,7 @@ class Ingestor:
         path: path of the configuration file
         clean: remove temporary files (this is used in conjunction with s3 upload_file)
         """
-        # Initiate configuration
-        c = Config(path)
-        dataset, _, _, _ = c.compute_parsed
-        # initiate source and destination datasets
-        folder_path = (
-            f"{self.base_path}/datasets/{dataset['name']}/{dataset['version']}"
-        )
-        destination_path = f"{folder_path}/{dataset['name']}.csv"
-        dstDS = destination_path
-        return dstDS, folder_path, destination_path, "CSV", compress, inplace
+        return None, "CSV", "csv", compress, inplace
 
     @translator
     def pgdump(
@@ -135,16 +134,7 @@ class Ingestor:
         path: path of the configuration file
         clean: remove temporary files (this is used in conjunction with s3 upload_file)
         """
-        # Initiate configuration
-        c = Config(path)
-        dataset, _, _, _ = c.compute_parsed
-        # initiate source and destination datasets
-        folder_path = (
-            f"{self.base_path}/datasets/{dataset['name']}/{dataset['version']}"
-        )
-        destination_path = f"{folder_path}/{dataset['name']}.sql"
-        dstDS = destination_path
-        return dstDS, folder_path, destination_path, "PGDump", compress, inplace
+        return None, "PGDump", "sql", compress, inplace
 
     @translator
     def shapefile(self, path: str) -> bool:
@@ -154,16 +144,8 @@ class Ingestor:
         path: path of the configuration file
         clean: remove temporary files (this is used in conjunction with s3 upload_file)
         """
-        # Initiate configuration
-        c = Config(path)
-        dataset, _, _, _ = c.compute_parsed
-        name = dataset["name"]
-        # initiate source and destination datasets
-        folder_path = f"{self.base_path}/datasets/{name}/{dataset['version']}"
-        destination_path = f"{folder_path}/{name}.shp"
-        dstDS = destination_path
         compress, inplace = True, True
-        return dstDS, folder_path, destination_path, "ESRI Shapefile", compress, inplace
+        return None, "ESRI Shapefile", "shp", compress, inplace
 
     @translator
     def geojson(
@@ -178,13 +160,4 @@ class Ingestor:
         path: path of the configuration file
         clean: remove temporary files (this is used in conjunction with s3 upload_file)
         """
-        # Initiate configuration
-        c = Config(path)
-        dataset, _, _, _ = c.compute_parsed
-        # initiate source and destination datasets
-        folder_path = (
-            f"{self.base_path}/datasets/{dataset['name']}/{dataset['version']}"
-        )
-        destination_path = f"{folder_path}/{dataset['name']}.geojson"
-        dstDS = destination_path
-        return dstDS, folder_path, destination_path, "GeoJSON", compress, inplace
+        return None, "GeoJSON", "geojson", compress, inplace
