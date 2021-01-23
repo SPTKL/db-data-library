@@ -71,7 +71,6 @@ class Ingestor:
     def translate_csv(
         self,
         path: str,
-        clean: bool = False,
         compress: bool = False,
         inplace: bool = False,
     ) -> bool:
@@ -114,7 +113,6 @@ class Ingestor:
     def translate_pgdump(
         self,
         path: str,
-        clean: bool = False,
         compress: bool = False,
         inplace: bool = False,
     ) -> bool:
@@ -154,7 +152,7 @@ class Ingestor:
 
         return True
 
-    def translate_shapefile(self, path: str, clean: bool = False) -> bool:
+    def translate_shapefile(self, path: str) -> bool:
         """
         https://gdal.org/drivers/vector/pgdump.html
 
@@ -180,11 +178,10 @@ class Ingestor:
         self.translate(dstDS, srcDS, "ESRI Shapefile", source, destination)
 
         # Zipping output
-        output_path = f"{folder_path}/{name}.shp.zip"
         files = [
             f"{folder_path}/{name}.{suffix}" for suffix in ["shp", "prj", "shx", "dbf"]
         ]
-        self.compress(output_path, *files)
+        self.compress(f"{destination_path}.zip", *files)
 
         # Output config file
         self.write_config(f"{folder_path}/config.json", c.compute_json)
