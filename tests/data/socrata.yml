@@ -1,7 +1,6 @@
 dataset:
   name: &name dpr_parksproperties
   version: "{{ version }}"
-  acl: public
   source:
     # if source is socrata, the url can be computed
     socrata:
@@ -13,13 +12,13 @@ dataset:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
     geometry:
-      srcSRS: EPSG:4326
+      SRS: EPSG:4326
       type: MULTIPOLYGON
 
   destination:
     name: *name
     geometry:
-      dstSRS: EPSG:4326
+      SRS: EPSG:4326
       type: MULTIPOLYGON
     options:
       - "OVERWRITE=YES"

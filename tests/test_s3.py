@@ -13,6 +13,7 @@ s3 = S3(aws_access_key_id, aws_secret_access_key, aws_s3_endpoint, aws_s3_bucket
 version = "2021-01-22"
 
 
+
 def test_s3_upload_file():
     # Make sure file doesn't already exist
     if s3.exists(f"test/{version}/test.yml"):

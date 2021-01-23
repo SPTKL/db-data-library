@@ -17,6 +17,8 @@ aws_access_key_id = os.environ["AWS_ACCESS_KEY_ID"]
 aws_secret_access_key = os.environ["AWS_SECRET_ACCESS_KEY"]
 aws_s3_endpoint = os.environ["AWS_S3_ENDPOINT"]
 aws_s3_bucket = os.environ["AWS_S3_BUCKET"]
+recipe_engine = os.environ["RECIPE_ENGINE"]
+
 gdal.SetConfigOption("AWS_S3_ENDPOINT", aws_s3_endpoint.replace("https://", ""))
 gdal.SetConfigOption("AWS_SECRET_ACCESS_KEY", aws_secret_access_key)
 gdal.SetConfigOption("AWS_ACCESS_KEY_ID", aws_access_key_id)

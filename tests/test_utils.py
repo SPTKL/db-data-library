@@ -6,42 +6,42 @@ def test_format_url():
         dict(
             path="https://website.com/path/file.csv",
             subpath="",
-            expected="vsicul/https://website.com/path/file.csv",
+            expected="/vsicurl/https://website.com/path/file.csv",
         ),
         dict(
             path="https://website.com/path/file.zip",
             subpath="",
-            expected="vsizip/vsicurl/https://website.com/path/file.zip",
+            expected="/vsizip/vsicurl/https://website.com/path/file.zip",
         ),
         dict(
             path="https://website.com/path/file.zip",
             subpath="file.shp",
-            expected="vsizip/vsicurl/https://website.com/path/file.zip/file.shp",
+            expected="/vsizip/vsicurl/https://website.com/path/file.zip/file.shp",
         ),
         dict(
             path="https://website.com/path/file.zip",
             subpath="/file.shp",
-            expected="vsizip/vsicurl/https://website.com/path/file.zip/file.shp",
+            expected="/vsizip/vsicurl/https://website.com/path/file.zip/file.shp",
         ),
         dict(
             path="https://website.com/path/file.zip/",
             subpath="file.shp",
-            expected="vsizip/vsicurl/https://website.com/path/file.zip/file.shp",
+            expected="/vsizip/vsicurl/https://website.com/path/file.zip/file.shp",
         ),
         dict(
             path="s3://bucket/path/file.csv",
             subpath="",
-            expected="vsis3/bucket/path/file.csv",
+            expected="/vsis3/bucket/path/file.csv",
         ),
         dict(
             path="s3://bucket/path/file.zip",
             subpath="",
-            expected="vsizip/vsis3/bucket/path/file.zip",
+            expected="/vsizip/vsis3/bucket/path/file.zip",
         ),
         dict(
             path="local/directory/file.zip",
             subpath="",
-            expected="vsizip/local/directory/file.zip",
+            expected="/vsizip/local/directory/file.zip",
         ),
     ]
     for case in test_cases:

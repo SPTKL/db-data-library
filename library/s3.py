@@ -5,6 +5,7 @@ from pathlib import Path
 from .progressbar import ProgressPercentage
 from . import pp
 
+
 class S3:
     def __init__(
         self,
@@ -33,17 +34,14 @@ class S3:
     def put(self, path:str, key:str, acl:str = "public-read") -> dict:
         try:
             response = self.client.upload_file(
-                path,
-                self.bucket,
-                key,
-                ExtraArgs={"ACL": acl}
+                path, self.bucket, key, ExtraArgs={"ACL": acl}
             )
         except ClientError as e:
             logging.error(e)
             return {}
         return response
 
-    def exists(self, key:str):
+    def exists(self, key: str):
         try:
             self.client.head_object(Bucket=self.bucket, Key=key)
             return True

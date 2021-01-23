@@ -6,6 +6,11 @@ import json
 from .utils import format_url
 
 
+class MyDumper(yaml.Dumper):
+    def increase_indent(self, flow=False, indentless=False):
+        return super(MyDumper, self).increase_indent(flow, False)
+
+
 class Config:
     """
     Config will take a configuration file from the templates directly
@@ -79,7 +84,13 @@ class Config:
                 url = f"https://data.cityofnewyork.us/api/views/{_uid}/rows.csv"
             if _format == "geojson":
                 url = f"https://nycopendata.socrata.com/api/geospatial/{_uid}?method=export&format=GeoJSON"
-            config["dataset"]["source"] = {"url": {"path": url, "subpath": ""}}
+            options = config["dataset"]["source"]["options"]
+            geometry = config["dataset"]["source"]["geometry"]
+            config["dataset"]["source"] = {
+                "url": {"path": url, "subpath": ""},
+                "options": options,
+                "geometry": geometry,
+            }
 
         path = config["dataset"]["source"]["url"]["path"]
         subpath = config["dataset"]["source"]["url"]["subpath"]
@@ -92,4 +103,19 @@ class Config:
 
     @property
     def compute_yml(self) -> str:
-        return yaml.dumps(self.compute)
+        return yaml.dump(
+            self.compute,
+            Dumper=MyDumper,
+            default_flow_style=False,
+            sort_keys=False,
+            indent=2,
+        )
+
+    @property
+    def compute_parsed(self) -> (dict, dict, dict, dict):
+        config = self.compute
+        dataset = config["dataset"]
+        source = dataset["source"]
+        destination = dataset["destination"]
+        info = dataset["info"]
+        return dataset, source, destination, info
