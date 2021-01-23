@@ -2,6 +2,7 @@ import os
 from osgeo import gdal, ogr
 from .utils import parse_engine
 
+
 def format_field_names(dataset: gdal.Dataset, fields: list):
     """
     dataset: Given source data source, usually a local file / s3 url
@@ -51,9 +52,7 @@ def postgres_source(url: str) -> gdal.Dataset:
     return gdal.OpenEx(parsed, gdal.OF_VECTOR)
 
 
-def generic_source(
-    path: str, options: list = [], fields: list = []
-) -> gdal.Dataset:
+def generic_source(path: str, options: list = [], fields: list = []) -> gdal.Dataset:
     """
     path: filepath, http url or s3 file url
     e.g.

@@ -4,9 +4,46 @@ from .sources import postgres_source, generic_source
 import os
 import zipfile
 
+
 class Ingestor:
     def __init__(self):
         self.base_path = ".library"
+
+    def translate(
+        self, dstDS, srcDS, output_format: str, source: dict, destination: dict
+    ):
+        gdal.VectorTranslate(
+            dstDS,
+            srcDS,
+            format=output_format,
+            layerCreationOptions=destination["options"],
+            dstSRS=destination["geometry"]["SRS"],
+            srcSRS=source["geometry"]["SRS"],
+            geometryType=destination["geometry"]["type"],
+            layerName=destination["name"],
+            accessMode="overwrite",
+            # optional settings
+            SQLStatement=destination.get("sql", ""),
+            callback=gdal.TermProgress,
+        )
+        return True
+
+    def compress(self, path: str, *files, inplace: bool = True):
+        with zipfile.ZipFile(
+            path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9
+        ) as _zip:
+            for f in files:
+                if os.path.isfile(f):
+                    _zip.write(f, os.path.basename(f))
+                    if inplace:
+                        os.remove(f)
+                else:
+                    raise f"{f} does not exist!"
+        return True
+
+    def write_config(self, path: str, config: str):
+        with open(path, "w") as f:
+            f.write(config)
 
     def translate_postgres(self, path: str, postgres_url: str) -> bool:
         """
@@ -27,24 +64,17 @@ class Ingestor:
             fields=destination["fields"],
         )
 
-        # Initiate the translation
-        gdal.VectorTranslate(
-            dstDS,
-            srcDS,
-            format="PostgreSQL",
-            layerCreationOptions=destination["options"],
-            dstSRS=destination["geometry"]["SRS"],
-            srcSRS=source["geometry"]["SRS"],
-            geometryType=destination["geometry"]["type"],
-            layerName=destination["name"],
-            accessMode="overwrite",
-            # optional settings
-            SQLStatement=destination.get("sql", ""),
-            callback=gdal.TermProgress,
-        )
+        # Initiate translation
+        self.translate(dstDS, srcDS, "PostgreSQL", source, destination)
         return True
 
-    def translate_csv(self, path: str, clean: bool = False) -> bool:
+    def translate_csv(
+        self,
+        path: str,
+        clean: bool = False,
+        compress: bool = False,
+        inplace: bool = False,
+    ) -> bool:
         """
         https://gdal.org/drivers/vector/pgdump.html
 
@@ -55,33 +85,39 @@ class Ingestor:
         c = Config(path)
         dataset, source, destination, _ = c.compute_parsed
         # initiate source and destination datasets
-        folder_path=f"{self.base_path}/datasets/{dataset['name']}/{dataset['version']}"
+        folder_path = (
+            f"{self.base_path}/datasets/{dataset['name']}/{dataset['version']}"
+        )
         os.makedirs(folder_path, exist_ok=True)
         destination_path = f"{folder_path}/{dataset['name']}.csv"
         dstDS = destination_path
         srcDS = generic_source(
             path=source["url"]["gdalpath"],
             options=source["options"],
-            fields=destination.get("fields", ''),
+            fields=destination.get("fields", ""),
         )
 
-        # Initiate the translation
-        gdal.VectorTranslate(
-            dstDS,
-            srcDS,
-            format="CSV",
-            layerCreationOptions=destination["options"],
-            dstSRS=destination["geometry"]["SRS"],
-            srcSRS=source["geometry"]["SRS"],
-            geometryType=destination["geometry"]["type"],
-            layerName=destination["name"],
-            # optional settings
-            SQLStatement=destination.get("sql", None),
-            callback=gdal.TermProgress,
-        )
+        # Initiate translation
+        self.translate(dstDS, srcDS, "CSV", source, destination)
+
+        # Compression if needed
+        if compress:
+            output_path = f"{destination_path}.zip"
+            self.compress(output_path, destination_path, inplace=inplace)
+
+        # Output config file
+        self.write_config(f"{folder_path}/config.json", c.compute_json)
+        self.write_config(f"{folder_path}/config.yml", c.compute_yml)
+
         return True
 
-    def translate_pgdump(self, path: str, clean: bool = False) -> bool:
+    def translate_pgdump(
+        self,
+        path: str,
+        clean: bool = False,
+        compress: bool = False,
+        inplace: bool = False,
+    ) -> bool:
         """
         https://gdal.org/drivers/vector/pgdump.html
 
@@ -92,31 +128,30 @@ class Ingestor:
         c = Config(path)
         dataset, source, destination, _ = c.compute_parsed
         # initiate source and destination datasets
-        folder_path=f"{self.base_path}/datasets/{dataset['name']}/{dataset['version']}"
+        folder_path = (
+            f"{self.base_path}/datasets/{dataset['name']}/{dataset['version']}"
+        )
         os.makedirs(folder_path, exist_ok=True)
         destination_path = f"{folder_path}/{dataset['name']}.sql"
         dstDS = destination_path
         srcDS = generic_source(
             path=source["url"]["gdalpath"],
             options=source["options"],
-            fields=destination.get("fields", ''),
+            fields=destination.get("fields", ""),
         )
 
-        # Initiate the translation
-        gdal.VectorTranslate(
-            dstDS,
-            srcDS,
-            format="PGDump",
-            layerCreationOptions=destination["options"],
-            dstSRS=destination["geometry"]["SRS"],
-            srcSRS=source["geometry"]["SRS"],
-            geometryType=destination["geometry"]["type"],
-            layerName=destination["name"],
-            accessMode="overwrite",
-            # optional settings
-            SQLStatement=destination.get("sql", None),
-            callback=gdal.TermProgress,
-        )
+        # Initiate translation
+        self.translate(dstDS, srcDS, "PGDump", source, destination)
+
+        # Compression if needed
+        if compress:
+            output_path = f"{destination_path}.zip"
+            self.compress(output_path, destination_path, inplace=inplace)
+
+        # Output config file
+        self.write_config(f"{folder_path}/config.json", c.compute_json)
+        self.write_config(f"{folder_path}/config.yml", c.compute_yml)
+
         return True
 
     def translate_shapefile(self, path: str, clean: bool = False) -> bool:
@@ -129,39 +164,30 @@ class Ingestor:
         # Initiate configuration
         c = Config(path)
         dataset, source, destination, _ = c.compute_parsed
+        name = dataset["name"]
         # initiate source and destination datasets
-        folder_path=f"{self.base_path}/datasets/{dataset['name']}/{dataset['version']}"
+        folder_path = f"{self.base_path}/datasets/{name}/{dataset['version']}"
         os.makedirs(folder_path, exist_ok=True)
-        destination_path = f"{folder_path}/{dataset['name']}.shp"
+        destination_path = f"{folder_path}/{name}.shp"
         dstDS = destination_path
         srcDS = generic_source(
             path=source["url"]["gdalpath"],
             options=source["options"],
-            fields=destination.get("fields", ''),
+            fields=destination.get("fields", ""),
         )
 
         # Initiate the translation
-        gdal.VectorTranslate(
-            dstDS,
-            srcDS,
-            format="ESRI Shapefile",
-            layerCreationOptions=destination["options"],
-            dstSRS=destination["geometry"]["SRS"],
-            srcSRS=source["geometry"]["SRS"],
-            geometryType=destination["geometry"]["type"],
-            layerName=destination["name"],
-            # optional settings
-            SQLStatement=destination.get("sql", None),
-            callback=gdal.TermProgress,
-        )
+        self.translate(dstDS, srcDS, "ESRI Shapefile", source, destination)
 
         # Zipping output
-        with zipfile.ZipFile(f"{folder_path}/{dataset['name']}.shp.zip", 'w') as _zip:
-            for suffix in ['shp', 'prj', 'shx', 'dbf']:
-                file_path = f"{folder_path}/{dataset['name']}.{suffix}"
-                if os.path.isfile(file_path):
-                    _zip.write(file_path)
-                    os.remove(file_path)
-                else:
-                    raise f"{file_path} does not exist!"
+        output_path = f"{folder_path}/{name}.shp.zip"
+        files = [
+            f"{folder_path}/{name}.{suffix}" for suffix in ["shp", "prj", "shx", "dbf"]
+        ]
+        self.compress(output_path, *files)
+
+        # Output config file
+        self.write_config(f"{folder_path}/config.json", c.compute_json)
+        self.write_config(f"{folder_path}/config.yml", c.compute_yml)
+
         return True

@@ -5,6 +5,7 @@ from pathlib import Path
 from .progressbar import ProgressPercentage
 from . import pp
 
+
 class S3:
     def __init__(
         self,
@@ -29,29 +30,26 @@ class S3:
         key = f"{name}/{version}/{name}{suffix}"
         try:
             response = self.client.upload_file(
-                path,
-                self.bucket,
-                key,
-                ExtraArgs={"ACL": acl}
+                path, self.bucket, key, ExtraArgs={"ACL": acl}
             )
         except ClientError as e:
             logging.error(e)
             return {}
         return response
 
-    def exists(self, key:str):
+    def exists(self, key: str):
         try:
             self.client.head_object(Bucket=self.bucket, Key=key)
             return True
         except ClientError:
             return False
 
-    def ls(self, prefix:str, detail:bool = False) -> list:
-        response = self.client.list_objects(Bucket=self.bucket, Prefix = prefix)
-        contents = response['Contents']
+    def ls(self, prefix: str, detail: bool = False) -> list:
+        response = self.client.list_objects(Bucket=self.bucket, Prefix=prefix)
+        contents = response["Contents"]
         if detail:
             return contents
         else:
-            return [content['Key'] for content in contents]
+            return [content["Key"] for content in contents]
 
     # https://s3fs.readthedocs.io/en/latest/api.html?highlight=listdir#s3fs.core.S3FileSystem.info
