@@ -102,6 +102,8 @@ class Ingestor:
         postgres database
         path: path of the configuration
         postgres_url: connection string for the destination database
+        compress: default to False because no files created when output to "PostgreSQL"
+        inplace: default to False because no compress = False by default
         """
         dstDS = postgres_source(postgres_url)
         return dstDS, "PostgreSQL", None, compress, inplace
@@ -117,7 +119,8 @@ class Ingestor:
         https://gdal.org/drivers/vector/pgdump.html
 
         path: path of the configuration file
-        clean: remove temporary files (this is used in conjunction with s3 upload_file)
+        compress: True if compression is needed
+        inplace: True if the compressed file will replace the original output
         """
         return None, "CSV", "csv", compress, inplace
 
@@ -132,19 +135,20 @@ class Ingestor:
         https://gdal.org/drivers/vector/pgdump.html
 
         path: path of the configuration file
-        clean: remove temporary files (this is used in conjunction with s3 upload_file)
+        compress: True if compression is needed
+        inplace: True if the compressed file will replace the original output
         """
         return None, "PGDump", "sql", compress, inplace
 
     @translator
-    def shapefile(self, path: str) -> bool:
+    def shapefile(self, path: str, compress: bool = True, inplace=True) -> bool:
         """
         https://gdal.org/drivers/vector/pgdump.html
 
         path: path of the configuration file
-        clean: remove temporary files (this is used in conjunction with s3 upload_file)
+        compress: default to True so that [shp, shx, dbf, prj] are bundled
+        inplace: default to True for ease of transport
         """
-        compress, inplace = True, True
         return None, "ESRI Shapefile", "shp", compress, inplace
 
     @translator
@@ -158,6 +162,7 @@ class Ingestor:
         https://gdal.org/drivers/vector/pgdump.html
 
         path: path of the configuration file
-        clean: remove temporary files (this is used in conjunction with s3 upload_file)
+        compress: True if compression is needed
+        inplace: True if the compressed file will replace the original output
         """
         return None, "GeoJSON", "geojson", compress, inplace
