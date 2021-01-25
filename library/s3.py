@@ -24,7 +24,16 @@ class S3:
 
     def upload_file(self, name: str, version: str, path: str, acl: str = "public-read"):
         """
-        https://boto3.amazonaws.com/v1/documentation/api/latest/guide/s3-uploading-files.html
+        Given the path to a local file, uploads to s3 using put
+        Combines dataset name, version, and file suffix to create s3 key
+
+        Parameters
+        ----------
+        name: name of data schema as it will appear in s3
+        version: version of table as it will appear in s3
+        path: local path to the data to upload
+        acl: permissions
+
         """
         suffix = Path(path).suffix
         key = f"{name}/{version}/{name}{suffix}"
@@ -32,6 +41,15 @@ class S3:
         return response
 
     def put(self, path:str, key:str, acl:str = "public-read") -> dict:
+        """
+        Uploads local file to s3
+
+        Parameters
+        ----------
+        path: local path to the data to upload
+        key: path to dataset within s3 bucket
+        acl: permissions
+        """
         try:
             response = self.client.upload_file(
                 path, self.bucket, key, ExtraArgs={"ACL": acl}
@@ -42,6 +60,9 @@ class S3:
         return response
 
     def exists(self, key: str):
+        """
+        See if a particular key exists within the s3 bucket
+        """
         try:
             self.client.head_object(Bucket=self.bucket, Key=key)
             return True
@@ -49,6 +70,11 @@ class S3:
             return False
 
     def ls(self, prefix:str, detail:bool = False) -> list:
+        """
+        List all keys within a directory. If detail, list file info.
+
+        https://s3fs.readthedocs.io/en/latest/api.html?highlight=listdir#s3fs.core.S3FileSystem.info
+        """
         response = self.client.list_objects(Bucket=self.bucket, Prefix = prefix)
         if 'Contents' in response.keys():
             contents = response['Contents']
@@ -58,7 +84,6 @@ class S3:
                 return [content['Key'] for content in contents]
         else:
             return []
-    # https://s3fs.readthedocs.io/en/latest/api.html?highlight=listdir#s3fs.core.S3FileSystem.info
 
     def info(self, key:str) -> dict:
         """
