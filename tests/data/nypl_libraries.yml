@@ -23,11 +23,11 @@ dataset:
     options:
       - "OVERWRITE=YES"
     fields: []
-    sql: null 
+    sql: null
 
   info:
     description: |
-      NYPL libraries is a dataset that we webscrape and store 
+      NYPL libraries is a dataset that we webscrape and store
       in a csv format, checkout the nypl website(https://www.nypl.org/locations)
       for more information
     url: "https://www.nypl.org/locations"

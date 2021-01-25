@@ -1,5 +1,6 @@
-from library.config import Config
 from pathlib import Path
+
+from library.config import Config
 
 
 def test_config_parsed_rendered_template():

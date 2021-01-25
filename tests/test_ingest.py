@@ -1,8 +1,11 @@
-from library.ingest import Ingestor
-from sqlalchemy import create_engine
-from library import recipe_engine
-from . import test_root_path
 import os
+
+from sqlalchemy import create_engine
+
+from library import recipe_engine
+from library.ingest import Ingestor
+
+from . import test_root_path
 
 
 def test_ingest_postgres():
@@ -11,7 +14,7 @@ def test_ingest_postgres():
     pg = create_engine(recipe_engine)
     sql = """
     SELECT EXISTS (
-        SELECT FROM information_schema.tables 
+        SELECT FROM information_schema.tables
         WHERE  table_schema = 'public'
         AND    table_name   = 'nypl_libraries'
     );

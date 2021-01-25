@@ -1,5 +1,7 @@
 import os
+
 from osgeo import gdal, ogr
+
 from .utils import parse_engine
 
 
@@ -62,10 +64,7 @@ def generic_source(path: str, options: list = [], fields: list = []) -> gdal.Dat
     """
     allowed_drivers = get_allowed_drivers(path)
     dataset = gdal.OpenEx(
-        path,
-        gdal.OF_VECTOR,
-        open_options=options,
-        allowed_drivers=allowed_drivers,
+        path, gdal.OF_VECTOR, open_options=options, allowed_drivers=allowed_drivers
     )
     assert dataset, f"{path} is invalid"
     dataset = format_field_names(dataset, fields)

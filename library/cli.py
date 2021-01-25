@@ -1,6 +1,7 @@
-import time
-import typer
 import os
+import time
+
+import typer
 
 app = typer.Typer()
 

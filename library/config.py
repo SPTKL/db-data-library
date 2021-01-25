@@ -1,9 +1,12 @@
+import json
 from datetime import datetime
+
+import requests
 import yaml
 from jinja2 import Template
-import requests
-import json
+
 from .utils import format_url
+
 
 # Custom dumper created for list indentation
 class Dumper(yaml.Dumper):

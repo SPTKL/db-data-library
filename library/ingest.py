@@ -1,8 +1,10 @@
-from osgeo import gdal
-from .config import Config
-from .sources import postgres_source, generic_source
 import os
 import zipfile
+
+from osgeo import gdal
+
+from .config import Config
+from .sources import generic_source, postgres_source
 
 
 class Ingestor:
@@ -34,13 +36,9 @@ class Ingestor:
             dataset, source, destination, _ = c.compute_parsed
             name = dataset["name"]
             version = dataset["version"]
-            (
-                dstDS,
-                output_format,
-                output_suffix,
-                compress,
-                inplace,
-            ) = func(*args, **kwargs)
+            (dstDS, output_format, output_suffix, compress, inplace) = func(
+                *args, **kwargs
+            )
 
             # initiate source and destination datasets
             folder_path = f"{self.base_path}/datasets/{name}/{version}"
@@ -99,7 +97,7 @@ class Ingestor:
     ):
         """
         https://gdal.org/drivers/vector/pg.html
-        
+
         This function will take in a configuration then send to a
         postgres database
         path: path of the configuration
@@ -111,12 +109,7 @@ class Ingestor:
         return dstDS, "PostgreSQL", None, compress, inplace
 
     @translator
-    def csv(
-        self,
-        path: str,
-        compress: bool = False,
-        inplace: bool = False,
-    ):
+    def csv(self, path: str, compress: bool = False, inplace: bool = False):
         """
         https://gdal.org/drivers/vector/csv.html
 
@@ -127,12 +120,7 @@ class Ingestor:
         return None, "CSV", "csv", compress, inplace
 
     @translator
-    def pgdump(
-        self,
-        path: str,
-        compress: bool = False,
-        inplace: bool = False,
-    ):
+    def pgdump(self, path: str, compress: bool = False, inplace: bool = False):
         """
         https://gdal.org/drivers/vector/pgdump.html
 
@@ -154,12 +142,7 @@ class Ingestor:
         return None, "ESRI Shapefile", "shp", compress, inplace
 
     @translator
-    def geojson(
-        self,
-        path: str,
-        compress: bool = False,
-        inplace: bool = False,
-    ):
+    def geojson(self, path: str, compress: bool = False, inplace: bool = False):
         """
         https://gdal.org/drivers/vector/geojson.html
 

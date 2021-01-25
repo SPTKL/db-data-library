@@ -1,9 +1,11 @@
 import logging
+from pathlib import Path
+
 import boto3
 from botocore.exceptions import ClientError, ParamValidationError
-from pathlib import Path
-from .progressbar import ProgressPercentage
+
 from . import pp
+from .progressbar import ProgressPercentage
 
 
 class S3:
@@ -31,7 +33,7 @@ class S3:
         response = self.put(path, key, acl)
         return response
 
-    def put(self, path:str, key:str, acl:str = "public-read") -> dict:
+    def put(self, path: str, key: str, acl: str = "public-read") -> dict:
         try:
             response = self.client.upload_file(
                 path, self.bucket, key, ExtraArgs={"ACL": acl}
@@ -48,29 +50,33 @@ class S3:
         except ClientError:
             return False
 
-    def ls(self, prefix:str, detail:bool = False) -> list:
-        response = self.client.list_objects(Bucket=self.bucket, Prefix = prefix)
-        if 'Contents' in response.keys():
-            contents = response['Contents']
+    def ls(self, prefix: str, detail: bool = False) -> list:
+        response = self.client.list_objects(Bucket=self.bucket, Prefix=prefix)
+        if "Contents" in response.keys():
+            contents = response["Contents"]
             if detail:
                 return contents
             else:
-                return [content['Key'] for content in contents]
+                return [content["Key"] for content in contents]
         else:
             return []
+
     # https://s3fs.readthedocs.io/en/latest/api.html?highlight=listdir#s3fs.core.S3FileSystem.info
 
-    def info(self, key:str) -> dict:
+    def info(self, key: str) -> dict:
         """
         Get header info for a given file
         """
-        response = self.client.head_object(
-                    Bucket=self.bucket,
-                    Key=key,
-                )
+        response = self.client.head_object(Bucket=self.bucket, Key=key)
         return response
 
-    def cp(self, source_key:str, dest_key:str, acl: str = "public-read", info:bool = False) -> dict:
+    def cp(
+        self,
+        source_key: str,
+        dest_key: str,
+        acl: str = "public-read",
+        info: bool = False,
+    ) -> dict:
         """
         Copy a file to a new path within the same bucket
 
@@ -82,14 +88,11 @@ class S3:
         """
         try:
             response = self.client.copy_object(
-                        Bucket=self.bucket,
-                        Key=dest_key,
-                        CopySource={
-                            'Bucket': self.bucket,
-                            'Key': source_key
-                        },
-                        ACL=acl,
-                    )
+                Bucket=self.bucket,
+                Key=dest_key,
+                CopySource={"Bucket": self.bucket, "Key": source_key},
+                ACL=acl,
+            )
             if info:
                 return self.info(key=dest_key)
             return
@@ -99,22 +102,24 @@ class S3:
     def rm(self, *keys) -> dict:
         """
         Removes a files within the bucket
-        sample usage: 
+        sample usage:
         s3.rm('path/to/file')
         s3.rm('file1', 'file2', 'file3')
         s3.rm(*['file1', 'file2', 'file3'])
         """
-        objects = [{'Key':k} for k in keys]
+        objects = [{"Key": k} for k in keys]
         response = self.client.delete_objects(
-                        Bucket=self.bucket,
-                        Delete={
-                            'Objects': objects,
-                            'Quiet': False,
-                        }    
-                    )
+            Bucket=self.bucket, Delete={"Objects": objects, "Quiet": False}
+        )
         return response
 
-    def mv(self, source_key:str, dest_key:str, acl: str = "public-read", info:bool = False):
+    def mv(
+        self,
+        source_key: str,
+        dest_key: str,
+        acl: str = "public-read",
+        info: bool = False,
+    ):
         """
         Move a file to a new path within the same bucket.
         Calls cp then rm
@@ -126,7 +131,7 @@ class S3:
         acl: acl for newly created file
         info: if true, get info for file in its new location
         """
-        
+
         response = self.cp(source_key=source_key, dest_key=dest_key, acl=acl)
         response = self.rm(source_key)
         if info:

@@ -1,7 +1,8 @@
 import os
-from osgeo import gdal
 import pprint
+
 from dotenv import load_dotenv
+from osgeo import gdal
 
 # Load environmental variables
 load_dotenv()

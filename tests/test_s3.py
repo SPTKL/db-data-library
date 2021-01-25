@@ -1,17 +1,12 @@
-from library.s3 import S3
-from pathlib import Path
 from datetime import date
-from library import (
-    aws_access_key_id,
-    aws_secret_access_key,
-    aws_s3_endpoint,
-    aws_s3_bucket,
-    pp,
-)
+from pathlib import Path
+
+from library import (aws_access_key_id, aws_s3_bucket, aws_s3_endpoint,
+                     aws_secret_access_key, pp)
+from library.s3 import S3
 
 s3 = S3(aws_access_key_id, aws_secret_access_key, aws_s3_endpoint, aws_s3_bucket)
 version = "2021-01-22"
-
 
 
 def test_s3_upload_file():
@@ -22,7 +17,9 @@ def test_s3_upload_file():
     assert not s3.exists(f"test/{version}/test.yml")
 
     # Attempt to upload to {version}/test.yml
-    s3.put(key=f"test/{version}/test.yml", path=f"{Path(__file__).parent}/data/socrata.yml")
+    s3.put(
+        key=f"test/{version}/test.yml", path=f"{Path(__file__).parent}/data/socrata.yml"
+    )
 
     # Make sure file now exists
     assert s3.exists(f"test/{version}/test.yml")

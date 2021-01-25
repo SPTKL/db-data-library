@@ -27,7 +27,7 @@ dataset:
     fields: []
 
     # If there's a SQL statement we would like to perform
-    # @filename syntax can be used to indicate that the content 
+    # @filename syntax can be used to indicate that the content
     # is in the pointed filename.
     sql: |
       SELECT * FROM @filename LIMIT 5
@@ -38,9 +38,9 @@ dataset:
     description: |
       dcp_mappluto is the shoreline clipped, grabbed from bytes
       more information here, if ">" is used then it means that
-      newlines are not preserved. if "|" is used then it means 
+      newlines are not preserved. if "|" is used then it means
       that newline will be preserved
-    # A url that doesn't lead directly to the data file but a 
+    # A url that doesn't lead directly to the data file but a
     # human readable website url would be useful here
     url: https://www1.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page
     dependents:
