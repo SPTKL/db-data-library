@@ -12,3 +12,4 @@ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poet
 3. Use poetry to install dependencies `poetry install`
 4. Install pre-commit `poetry run pre-commit install`
 5. Check out what's available via the cli `poetry run library --help`
+6. To add/update documentation, run `poetry run pdoc -o docs --html library`
