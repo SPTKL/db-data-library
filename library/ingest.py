@@ -98,6 +98,8 @@ class Ingestor:
         self, path: str, postgres_url: str, compress: bool = False, inplace=False
     ):
         """
+        https://gdal.org/drivers/vector/pg.html
+        
         This function will take in a configuration then send to a
         postgres database
         path: path of the configuration
@@ -116,7 +118,7 @@ class Ingestor:
         inplace: bool = False,
     ):
         """
-        https://gdal.org/drivers/vector/pgdump.html
+        https://gdal.org/drivers/vector/csv.html
 
         path: path of the configuration file
         compress: True if compression is needed
@@ -143,7 +145,7 @@ class Ingestor:
     @translator
     def shapefile(self, path: str, compress: bool = True, inplace=True) -> bool:
         """
-        https://gdal.org/drivers/vector/pgdump.html
+        https://gdal.org/drivers/vector/shapefile.html
 
         path: path of the configuration file
         compress: default to True so that [shp, shx, dbf, prj] are bundled
@@ -159,7 +161,7 @@ class Ingestor:
         inplace: bool = False,
     ):
         """
-        https://gdal.org/drivers/vector/pgdump.html
+        https://gdal.org/drivers/vector/geojson.html
 
         path: path of the configuration file
         compress: True if compression is needed
