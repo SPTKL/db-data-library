@@ -9,25 +9,6 @@ class Ingestor:
     def __init__(self):
         self.base_path = ".library"
 
-    def translate(
-        self, dstDS, srcDS, output_format: str, source: dict, destination: dict
-    ):
-        gdal.VectorTranslate(
-            dstDS,
-            srcDS,
-            format=output_format,
-            layerCreationOptions=destination["options"],
-            dstSRS=destination["geometry"]["SRS"],
-            srcSRS=source["geometry"]["SRS"],
-            geometryType=destination["geometry"]["type"],
-            layerName=destination["name"],
-            accessMode="overwrite",
-            # optional settings
-            SQLStatement=destination.get("sql", ""),
-            callback=gdal.TermProgress,
-        )
-        return True
-
     def compress(self, path: str, *files, inplace: bool = True):
         with zipfile.ZipFile(
             path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9
@@ -38,153 +19,152 @@ class Ingestor:
                     if inplace:
                         os.remove(f)
                 else:
-                    raise f"{f} does not exist!"
+                    print(f"{f} does not exist!")
         return True
 
     def write_config(self, path: str, config: str):
         with open(path, "w") as f:
             f.write(config)
 
-    def translate_postgres(self, path: str, postgres_url: str) -> bool:
+    def translator(func):
+        def wrapper(*args, **kwargs):
+            self = args[0]
+            path = args[1]
+            c = Config(path)
+            dataset, source, destination, _ = c.compute_parsed
+            name = dataset["name"]
+            version = dataset["version"]
+            (
+                dstDS,
+                output_format,
+                output_suffix,
+                compress,
+                inplace,
+            ) = func(*args, **kwargs)
+
+            # initiate source and destination datasets
+            folder_path = f"{self.base_path}/datasets/{name}/{version}"
+            destination_path = (
+                f"{folder_path}/{name}.{output_suffix}" if output_suffix else None
+            )
+
+            # Default dstDS is destination_path if no dstDS is specificed
+            dstDS = destination_path if not dstDS else dstDS
+            srcDS = generic_source(
+                path=source["url"]["gdalpath"],
+                options=source["options"],
+                fields=destination["fields"],
+            )
+
+            # Create output folder and output config
+            if folder_path and output_suffix:
+                os.makedirs(folder_path, exist_ok=True)
+                self.write_config(f"{folder_path}/config.json", c.compute_json)
+                self.write_config(f"{folder_path}/config.yml", c.compute_yml)
+
+            # Initiate vector translate
+            gdal.VectorTranslate(
+                dstDS,
+                srcDS,
+                format=output_format,
+                layerCreationOptions=destination["options"],
+                dstSRS=destination["geometry"]["SRS"],
+                srcSRS=source["geometry"]["SRS"],
+                geometryType=destination["geometry"]["type"],
+                layerName=destination["name"],
+                accessMode="overwrite",
+                # optional settings
+                SQLStatement=destination.get("sql", ""),
+                callback=gdal.TermProgress,
+            )
+
+            # Compression if needed
+            if compress and destination_path:
+                if output_format == "ESRI Shapefile":
+                    files = [
+                        f"{destination_path[:-4]}.{suffix}"
+                        for suffix in ["shp", "prj", "shx", "dbf"]
+                    ]
+                    self.compress(f"{destination_path}.zip", *files, inplace=True)
+                else:
+                    self.compress(
+                        f"{destination_path}.zip", destination_path, inplace=inplace
+                    )
+
+        return wrapper
+
+    @translator
+    def postgres(
+        self, path: str, postgres_url: str, compress: bool = False, inplace=False
+    ):
         """
+        https://gdal.org/drivers/vector/pg.html
+        
         This function will take in a configuration then send to a
         postgres database
         path: path of the configuration
         postgres_url: connection string for the destination database
+        compress: default to False because no files created when output to "PostgreSQL"
+        inplace: default to False because no compress = False by default
         """
-        # Initiate configuration
-        c = Config(path)
-        _, source, destination, _ = c.compute_parsed
-
-        # initiate source and destination datasets
         dstDS = postgres_source(postgres_url)
-        srcDS = generic_source(
-            path=source["url"]["gdalpath"],
-            options=source["options"],
-            fields=destination["fields"],
-        )
+        return dstDS, "PostgreSQL", None, compress, inplace
 
-        # Initiate translation
-        self.translate(dstDS, srcDS, "PostgreSQL", source, destination)
-        return True
-
-    def translate_csv(
+    @translator
+    def csv(
         self,
         path: str,
         compress: bool = False,
         inplace: bool = False,
-    ) -> bool:
+    ):
         """
-        https://gdal.org/drivers/vector/pgdump.html
+        https://gdal.org/drivers/vector/csv.html
 
         path: path of the configuration file
-        clean: remove temporary files (this is used in conjunction with s3 upload_file)
+        compress: True if compression is needed
+        inplace: True if the compressed file will replace the original output
         """
-        # Initiate configuration
-        c = Config(path)
-        dataset, source, destination, _ = c.compute_parsed
-        # initiate source and destination datasets
-        folder_path = (
-            f"{self.base_path}/datasets/{dataset['name']}/{dataset['version']}"
-        )
-        os.makedirs(folder_path, exist_ok=True)
-        destination_path = f"{folder_path}/{dataset['name']}.csv"
-        dstDS = destination_path
-        srcDS = generic_source(
-            path=source["url"]["gdalpath"],
-            options=source["options"],
-            fields=destination.get("fields", ""),
-        )
+        return None, "CSV", "csv", compress, inplace
 
-        # Initiate translation
-        self.translate(dstDS, srcDS, "CSV", source, destination)
-
-        # Compression if needed
-        if compress:
-            output_path = f"{destination_path}.zip"
-            self.compress(output_path, destination_path, inplace=inplace)
-
-        # Output config file
-        self.write_config(f"{folder_path}/config.json", c.compute_json)
-        self.write_config(f"{folder_path}/config.yml", c.compute_yml)
-
-        return True
-
-    def translate_pgdump(
+    @translator
+    def pgdump(
         self,
         path: str,
         compress: bool = False,
         inplace: bool = False,
-    ) -> bool:
+    ):
         """
         https://gdal.org/drivers/vector/pgdump.html
 
         path: path of the configuration file
-        clean: remove temporary files (this is used in conjunction with s3 upload_file)
+        compress: True if compression is needed
+        inplace: True if the compressed file will replace the original output
         """
-        # Initiate configuration
-        c = Config(path)
-        dataset, source, destination, _ = c.compute_parsed
-        # initiate source and destination datasets
-        folder_path = (
-            f"{self.base_path}/datasets/{dataset['name']}/{dataset['version']}"
-        )
-        os.makedirs(folder_path, exist_ok=True)
-        destination_path = f"{folder_path}/{dataset['name']}.sql"
-        dstDS = destination_path
-        srcDS = generic_source(
-            path=source["url"]["gdalpath"],
-            options=source["options"],
-            fields=destination.get("fields", ""),
-        )
+        return None, "PGDump", "sql", compress, inplace
 
-        # Initiate translation
-        self.translate(dstDS, srcDS, "PGDump", source, destination)
-
-        # Compression if needed
-        if compress:
-            output_path = f"{destination_path}.zip"
-            self.compress(output_path, destination_path, inplace=inplace)
-
-        # Output config file
-        self.write_config(f"{folder_path}/config.json", c.compute_json)
-        self.write_config(f"{folder_path}/config.yml", c.compute_yml)
-
-        return True
-
-    def translate_shapefile(self, path: str) -> bool:
+    @translator
+    def shapefile(self, path: str, compress: bool = True, inplace=True) -> bool:
         """
-        https://gdal.org/drivers/vector/pgdump.html
+        https://gdal.org/drivers/vector/shapefile.html
 
         path: path of the configuration file
-        clean: remove temporary files (this is used in conjunction with s3 upload_file)
+        compress: default to True so that [shp, shx, dbf, prj] are bundled
+        inplace: default to True for ease of transport
         """
-        # Initiate configuration
-        c = Config(path)
-        dataset, source, destination, _ = c.compute_parsed
-        name = dataset["name"]
-        # initiate source and destination datasets
-        folder_path = f"{self.base_path}/datasets/{name}/{dataset['version']}"
-        os.makedirs(folder_path, exist_ok=True)
-        destination_path = f"{folder_path}/{name}.shp"
-        dstDS = destination_path
-        srcDS = generic_source(
-            path=source["url"]["gdalpath"],
-            options=source["options"],
-            fields=destination.get("fields", ""),
-        )
+        return None, "ESRI Shapefile", "shp", compress, inplace
 
-        # Initiate the translation
-        self.translate(dstDS, srcDS, "ESRI Shapefile", source, destination)
+    @translator
+    def geojson(
+        self,
+        path: str,
+        compress: bool = False,
+        inplace: bool = False,
+    ):
+        """
+        https://gdal.org/drivers/vector/geojson.html
 
-        # Zipping output
-        files = [
-            f"{folder_path}/{name}.{suffix}" for suffix in ["shp", "prj", "shx", "dbf"]
-        ]
-        self.compress(f"{destination_path}.zip", *files)
-
-        # Output config file
-        self.write_config(f"{folder_path}/config.json", c.compute_json)
-        self.write_config(f"{folder_path}/config.yml", c.compute_yml)
-
-        return True
+        path: path of the configuration file
+        compress: True if compression is needed
+        inplace: True if the compressed file will replace the original output
+        """
+        return None, "GeoJSON", "geojson", compress, inplace
