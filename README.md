@@ -9,7 +9,8 @@ sudo apt install -y gdal-bin libgdal-dev python3-gdal
 ```bash
 curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
 ```
-3. Use poetry to install dependencies `poetry install`
-4. Install pre-commit `poetry run pre-commit install`
-5. Check out what's available via the cli `poetry run library --help`
-6. To add/update documentation, run `poetry run pdoc -o docs --html library`
+3. Run `source $HOME/.poetry/env`
+4. Use poetry to install dependencies `poetry install`
+5. Install pre-commit `poetry run pre-commit install`
+6. Check out what's available via the cli `poetry run library --help`
+7. To add/update documentation, run `poetry run pdoc -o docs --html library`
