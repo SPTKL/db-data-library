@@ -71,7 +71,6 @@ class Archive:
 
         # Initiate ingestion
         output_files, version, acl = ingestor_of_format(path, *args, **kwargs)
-        print(output_files)
 
         # Write to s3
         for _file in output_files:
