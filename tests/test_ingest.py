@@ -7,13 +7,14 @@ from library.ingest import Ingestor
 
 from . import test_root_path
 
+pg = create_engine(recipe_engine)
+
 
 def test_ingest_postgres():
     ingestor = Ingestor()
     ingestor.postgres(
         f"{test_root_path}/data/nypl_libraries.yml", postgres_url=recipe_engine
     )
-    pg = create_engine(recipe_engine)
     sql = """
     SELECT EXISTS (
         SELECT FROM information_schema.tables
