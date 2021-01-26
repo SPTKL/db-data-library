@@ -36,3 +36,11 @@ def test_archive_3():
         output_format="postgres",
         postgres_url=recipe_engine,
     )
+
+
+def test_archive_4():
+    a(
+        f"{test_root_path}/data/nypl_libraries.yml",
+        output_format="csv",
+        version="testor",
+    )

@@ -18,9 +18,9 @@ def archive(
     latest: bool = typer.Option(False, "--latest", "-l", help="Tag with latest"),
     compress: bool = typer.Option(False, "--compress", help="Compress output"),
     inplace: bool = typer.Option(False, "--inplace", help="Only keeping zipped file"),
-    postgres_url: str = typer.Option( "", "--postgres-url", help="Postgres connection url"),
+    postgres_url: str = typer.Option("", "--postgres-url", help="Postgres connection url"),
     version: str = typer.Option("", "--version", "-v", help="Custom version input"),
-):
+) -> None:
 # fmt: on
     """
     Archive a dataset from source to destination
