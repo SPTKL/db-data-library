@@ -21,8 +21,9 @@ class Config:
     file to pass into the Ingestor
     """
 
-    def __init__(self, path: str):
+    def __init__(self, path: str, version: str = None):
         self.path = path
+        self.version = version
 
     @property
     def unparsed_unrendered_template(self) -> str:
@@ -83,10 +84,12 @@ class Config:
                 "format"
             ]
             config = self.parsed_rendered_template(version=self.version_socrata(_uid))
+
             if _format == "csv":
                 url = f"https://data.cityofnewyork.us/api/views/{_uid}/rows.csv"
             if _format == "geojson":
                 url = f"https://nycopendata.socrata.com/api/geospatial/{_uid}?method=export&format=GeoJSON"
+
             options = config["dataset"]["source"]["options"]
             geometry = config["dataset"]["source"]["geometry"]
             config["dataset"]["source"] = {
@@ -94,6 +97,9 @@ class Config:
                 "options": options,
                 "geometry": geometry,
             }
+
+        if self.version:
+            config["dataset"]["version"] = self.version
 
         path = config["dataset"]["source"]["url"]["path"]
         subpath = config["dataset"]["source"]["url"]["subpath"]
