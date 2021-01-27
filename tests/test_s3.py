@@ -1,8 +1,13 @@
 from datetime import date
 from pathlib import Path
 
-from library import (aws_access_key_id, aws_s3_bucket, aws_s3_endpoint,
-                     aws_secret_access_key, pp)
+from library import (
+    aws_access_key_id,
+    aws_s3_bucket,
+    aws_s3_endpoint,
+    aws_secret_access_key,
+    pp,
+)
 from library.s3 import S3
 
 s3 = S3(aws_access_key_id, aws_secret_access_key, aws_s3_endpoint, aws_s3_bucket)

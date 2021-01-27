@@ -25,8 +25,8 @@ class Archive:
 
     def __call__(
         self,
-        path: str,
-        output_format: str,
+        path: str = None,
+        output_format: str = "pgdump",
         push: bool = False,
         clean: bool = False,
         latest: bool = False,
@@ -44,6 +44,14 @@ class Archive:
         push: if `True` then push to s3
         clean: if `True`, the temporary files created under `.library` will be removed
         latest: if `True` then tag this current version we are processing to be the `latest`
+
+        Optional Parameters
+        ----------
+        name: name of the dataset, if you would like to use templates already included in this package
+        compress: if compression is needed, this is passed into the `ingestor`
+        inplace: if compressed zip file will replace the original file, this is passed into the `ingestor`
+        postgres_url: Please specify if `output_format=='postgres'`
+        version: specify version if using a custom version name
 
         Sample Usage
         ----------
@@ -69,6 +77,10 @@ class Archive:
         ```
         """
         # If name specified, no template path is needed
+        assert (
+            path or name
+        ), "Please specify either name of the dataset or path to the config file"
+
         _path = f"{Path(__file__).parent}/templates/{name}.yml"
         path = _path if name and os.path.isfile(_path) else path
 
