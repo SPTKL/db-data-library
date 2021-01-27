@@ -13,3 +13,12 @@ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poet
 4. Install pre-commit `poetry run pre-commit install`
 5. Check out what's available via the cli `poetry run library --help`
 6. To add/update documentation, run `poetry run pdoc -o docs --html library`
+
+## Testing:
+
+To test all functions within a script:
+`poetry run pytest tests/{test script}.py -s`
+
+To test a specific function:
+`poetry run pytest tests/{test script}.py::{test name} -s`
+> note the `-s` flag is optional, it allows print output (via stdout) to be included in the test output, otherwise it is ignored
