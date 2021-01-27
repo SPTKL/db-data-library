@@ -1,15 +1,17 @@
 import os
 import zipfile
+from functools import wraps
 
 from osgeo import gdal
 
+from . import base_path
 from .config import Config
 from .sources import generic_source, postgres_source
 
 
 class Ingestor:
     def __init__(self):
-        self.base_path = ".library"
+        self.base_path = base_path
 
     def compress(self, path: str, *files, inplace: bool = True):
         with zipfile.ZipFile(
@@ -29,22 +31,26 @@ class Ingestor:
             f.write(config)
 
     def translator(func):
-        def wrapper(*args, **kwargs):
-            self = args[0]
-            path = args[1]
-            c = Config(path)
+        @wraps(func)
+        def wrapper(self, *args, **kwargs) -> list:
+            output_files = []
+            path = args[0]
+            c = Config(path, kwargs.get("version", None))
             dataset, source, destination, _ = c.compute_parsed
             name = dataset["name"]
             version = dataset["version"]
+            acl = dataset["acl"]
             (dstDS, output_format, output_suffix, compress, inplace) = func(
-                *args, **kwargs
+                self, *args, **kwargs
             )
-
             # initiate source and destination datasets
             folder_path = f"{self.base_path}/datasets/{name}/{version}"
-            destination_path = (
-                f"{folder_path}/{name}.{output_suffix}" if output_suffix else None
-            )
+
+            if output_suffix:
+                destination_path = f"{folder_path}/{name}.{output_suffix}"
+                output_files.append(destination_path)
+            else:
+                destination_path = None
 
             # Default dstDS is destination_path if no dstDS is specificed
             dstDS = destination_path if not dstDS else dstDS
@@ -59,6 +65,8 @@ class Ingestor:
                 os.makedirs(folder_path, exist_ok=True)
                 self.write_config(f"{folder_path}/config.json", c.compute_json)
                 self.write_config(f"{folder_path}/config.yml", c.compute_yml)
+                output_files.append(f"{folder_path}/config.json")
+                output_files.append(f"{folder_path}/config.yml")
 
             # Initiate vector translate
             gdal.VectorTranslate(
@@ -84,16 +92,28 @@ class Ingestor:
                         for suffix in ["shp", "prj", "shx", "dbf"]
                     ]
                     self.compress(f"{destination_path}.zip", *files, inplace=True)
+                    output_files.remove(destination_path)
+                    output_files.append(f"{destination_path}.zip")
                 else:
                     self.compress(
                         f"{destination_path}.zip", destination_path, inplace=inplace
                     )
+                    if inplace:
+                        output_files.remove(destination_path)
+                    output_files.append(f"{destination_path}.zip")
+            return output_files, version, acl
 
         return wrapper
 
     @translator
     def postgres(
-        self, path: str, postgres_url: str, compress: bool = False, inplace=False
+        self,
+        path: str,
+        compress: bool = False,
+        inplace: bool = False,
+        postgres_url: str = None,
+        *args,
+        **kwargs,
     ):
         """
         https://gdal.org/drivers/vector/pg.html
@@ -109,7 +129,9 @@ class Ingestor:
         return dstDS, "PostgreSQL", None, compress, inplace
 
     @translator
-    def csv(self, path: str, compress: bool = False, inplace: bool = False):
+    def csv(
+        self, path: str, compress: bool = False, inplace: bool = False, *args, **kwargs
+    ):
         """
         https://gdal.org/drivers/vector/csv.html
 
@@ -120,7 +142,9 @@ class Ingestor:
         return None, "CSV", "csv", compress, inplace
 
     @translator
-    def pgdump(self, path: str, compress: bool = False, inplace: bool = False):
+    def pgdump(
+        self, path: str, compress: bool = False, inplace: bool = False, *args, **kwargs
+    ):
         """
         https://gdal.org/drivers/vector/pgdump.html
 
@@ -131,7 +155,9 @@ class Ingestor:
         return None, "PGDump", "sql", compress, inplace
 
     @translator
-    def shapefile(self, path: str, compress: bool = True, inplace=True) -> bool:
+    def shapefile(
+        self, path: str, compress: bool = True, inplace: bool = True, *args, **kwargs
+    ):
         """
         https://gdal.org/drivers/vector/shapefile.html
 
@@ -142,7 +168,9 @@ class Ingestor:
         return None, "ESRI Shapefile", "shp", compress, inplace
 
     @translator
-    def geojson(self, path: str, compress: bool = False, inplace: bool = False):
+    def geojson(
+        self, path: str, compress: bool = False, inplace: bool = False, *args, **kwargs
+    ):
         """
         https://gdal.org/drivers/vector/geojson.html
 

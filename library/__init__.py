@@ -25,12 +25,14 @@ gdal.SetConfigOption("AWS_SECRET_ACCESS_KEY", aws_secret_access_key)
 gdal.SetConfigOption("AWS_ACCESS_KEY_ID", aws_access_key_id)
 
 # Create a local .library directory to store temporary files
-if not os.path.isdir(".library"):
-    os.makedirs(".library", exist_ok=True)
+base_path = ".library"
+
+if not os.path.isdir(base_path):
+    os.makedirs(base_path, exist_ok=True)
     # create .gitignore so that files in this directory aren't tracked
-    with open(".library/.gitignore", "w") as f:
+    with open(f"{base_path}/.gitignore", "w") as f:
         f.write("*")
-    os.makedirs(".library/datasets", exist_ok=True)
-    os.makedirs(".library/configurations", exist_ok=True)
+    os.makedirs(f"{base_path}/datasets", exist_ok=True)
+    os.makedirs(f"{base_path}/configurations", exist_ok=True)
 
 __version__ = "0.1.0"

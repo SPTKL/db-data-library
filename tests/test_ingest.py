@@ -7,11 +7,14 @@ from library.ingest import Ingestor
 
 from . import test_root_path
 
+pg = create_engine(recipe_engine)
+
 
 def test_ingest_postgres():
     ingestor = Ingestor()
-    ingestor.postgres(f"{test_root_path}/data/nypl_libraries.yml", recipe_engine)
-    pg = create_engine(recipe_engine)
+    ingestor.postgres(
+        f"{test_root_path}/data/nypl_libraries.yml", postgres_url=recipe_engine
+    )
     sql = """
     SELECT EXISTS (
         SELECT FROM information_schema.tables
@@ -59,3 +62,9 @@ def test_ingest_shapefile():
     assert os.path.isfile(
         ".library/datasets/nypl_libraries/20210122/nypl_libraries.shp.zip"
     )
+
+
+def test_ingest_version_overwrite():
+    ingestor = Ingestor()
+    ingestor.csv(f"{test_root_path}/data/nypl_libraries.yml", version="test")
+    assert os.path.isfile(".library/datasets/nypl_libraries/test/nypl_libraries.csv")
