@@ -33,7 +33,7 @@ class Config:
 
     @property
     def parsed_unrendered_template(self) -> dict:
-        """parsing unrendered template"""
+        """parsing unrendered template into a dictionary"""
         return yaml.safe_load(self.unparsed_unrendered_template)
 
     def parsed_rendered_template(self, **kwargs) -> dict:
@@ -43,13 +43,13 @@ class Config:
 
     @property
     def source_type(self) -> str:
-        """determin the type of the source, either url or socrata"""
+        """determine the type of the source, either url or socrata"""
         template = self.parsed_unrendered_template
         source = template["dataset"]["source"]
         return list(source.keys())[0]
 
     def version_socrata(self, uid: str) -> str:
-        """using the socrata API to collect data last update date"""
+        """using the socrata API, collect the 'data last update' date"""
         metadata = requests.get(
             f"https://data.cityofnewyork.us/api/views/{uid}.json"
         ).json()
@@ -63,24 +63,27 @@ class Config:
     #     return None
 
     def valid_version(self, version: str) -> bool:
+        """check that a version name is valid"""
         return "{" not in version and "}" not in version
 
     @property
     def version_today(self) -> str:
-        """using today as the version name"""
+        """
+        set today as the version name - for use with unspecified
+        or invalid versions
+        """
         return datetime.today().strftime("%Y%m%d")
 
     @property
     def compute(self) -> dict:
-        """based on given yml file and compute configuration"""
+        """based on given yml file, compute the configuration"""
         if self.source_type == "url":
-            # Note that version here is only provided as an option
-            # if version is verbosely defined through yml or cli,
-            # it will not replace what's in yaml
+            # Load unrendered template to check for yml-specified
+            # version (_version)
             _config = self.parsed_unrendered_template
             _version = _config["dataset"]["version"]
 
-            # if a custom version specified, take custom version
+            # If a custom version specified from CLI, take custom version
             if self.version:
                 version = self.version
 
@@ -97,8 +100,7 @@ class Config:
             # Render template
             config = self.parsed_rendered_template(version=version)
 
-            # Overwrite with version passed through CLI/paramter
-            # even if version is specified in the config file
+            # Force overwrite of yml version with appropriate version
             config["dataset"]["version"] = version
 
         if self.source_type == "socrata":
