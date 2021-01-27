@@ -10,7 +10,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04	
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
@@ -19,7 +19,6 @@ jobs:
 
     - name: Set up GDAL and poetry
       run: |
-        sudo apt update
         sudo apt install -y gdal-bin libgdal-dev python3-gdal
         curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
         
