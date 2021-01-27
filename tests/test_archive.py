@@ -63,6 +63,7 @@ def test_archive_2():
     ]
     local_exist = [
         ".library/datasets/nypl_libraries/20210122/nypl_libraries.geojson.zip",
+        ".library/datasets/nypl_libraries/20210122/nypl_libraries.geojson",
         ".library/datasets/nypl_libraries/20210122/config.yml",
         ".library/datasets/nypl_libraries/20210122/config.json",
     ]
