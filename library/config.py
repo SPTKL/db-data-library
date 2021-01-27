@@ -62,6 +62,9 @@ class Config:
     #     # scrape from bytes to get a version
     #     return None
 
+    def valid_version(self, version: str) -> bool:
+        return "{" not in version and "}" not in version
+
     @property
     def version_today(self) -> str:
         """using today as the version name"""
@@ -74,8 +77,26 @@ class Config:
             # Note that version here is only provided as an option
             # if version is verbosely defined through yml or cli,
             # it will not replace what's in yaml
-            version = self.version if self.version else self.version_today
+            _config = self.parsed_unrendered_template
+            _version = _config["dataset"]["version"]
+
+            # if a custom version specified, take custom version
+            if self.version:
+                version = self.version
+
+            # If no custom version specified and version in config
+            # is valid, take config version (_version)
+            if not self.version and self.valid_version(_version):
+                version = _version
+
+            # If no custom version and no config version,
+            # assign today as version
+            if not self.version and not self.valid_version(_version):
+                version = self.version_today
+
+            # Render template
             config = self.parsed_rendered_template(version=version)
+
             # Overwrite with version passed through CLI/paramter
             # even if version is specified in the config file
             config["dataset"]["version"] = version
