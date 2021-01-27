@@ -1,0 +1,34 @@
+name: Update Documentation
+
+on:
+  push:
+    branches: 
+      - main
+    paths:
+      - '*.py'
+      - '.github/workflows/docs.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up GDAL and poetry
+      run: |
+        sudo apt install -y gdal-bin libgdal-dev python3-gdal
+        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
+        
+    - name: Create Docs using pdoc
+      env: 
+        PATH: $HOME/.poetry/bin:$PATH
+      run: |
+        poetry install
+        poetry run pdoc -o docs --html library
+
+    - name: Commit output
+      uses: EndBug/add-and-commit@v6
+      with:
+        author_name: GitHub Action
+        author_email: action@github.com
+        message: "🎉 Update Documentation"
+        add: 'docs/'
