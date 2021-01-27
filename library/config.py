@@ -72,8 +72,10 @@ class Config:
         """based on given yml file and compute configuration"""
         if self.source_type == "url":
             # Note that version here is only provided as an option
-            # if version is verbosely defined, it will not replace what's in yaml
-            config = self.parsed_rendered_template(version=self.version_today)
+            # if version is verbosely defined through yml or cli,
+            # it will not replace what's in yaml
+            version = self.version if self.version else self.version_today
+            config = self.parsed_rendered_template(version=version)
 
         if self.source_type == "socrata":
             # For socrata we are computing the url and add the url object to the config file
@@ -97,9 +99,6 @@ class Config:
                 "options": options,
                 "geometry": geometry,
             }
-
-        if self.version:
-            config["dataset"]["version"] = self.version
 
         path = config["dataset"]["source"]["url"]["path"]
         subpath = config["dataset"]["source"]["url"]["subpath"]

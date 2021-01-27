@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 from . import (
     aws_access_key_id,
@@ -29,8 +30,9 @@ class Archive:
         push: bool = False,
         clean: bool = False,
         latest: bool = False,
+        name: str = None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         """
         The `__call__` method allows a user to call a class instance with parameters.
@@ -66,6 +68,10 @@ class Archive:
         )
         ```
         """
+        # If name specified, no template path is needed
+        _path = f"{Path(__file__).parent}/templates/{name}.yml"
+        path = _path if name and os.path.isfile(_path) else path
+
         # Get ingestor by format
         ingestor_of_format = getattr(self.ingestor, output_format)
 
