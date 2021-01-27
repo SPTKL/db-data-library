@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.7.3'
+
     - name: Set up GDAL and poetry
       run: |
         sudo apt install -y gdal-bin libgdal-dev python3-gdal
