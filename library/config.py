@@ -76,6 +76,8 @@ class Config:
             # it will not replace what's in yaml
             version = self.version if self.version else self.version_today
             config = self.parsed_rendered_template(version=version)
+            # Overwrite even if version specified
+            config["dataset"]["version"] = version
 
         if self.source_type == "socrata":
             # For socrata we are computing the url and add the url object to the config file
