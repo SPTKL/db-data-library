@@ -39,6 +39,7 @@ def archive(
             latest=latest,
             name=name,
             compress=compress,
+            inplace=inplace,
             postgres_url=postgres_url,
             version=version,
         )
