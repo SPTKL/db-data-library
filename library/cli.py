@@ -50,7 +50,8 @@ def archive(
 @app.command()
 def show(
     name: str,
-    uploaded: bool = typer.Option(False, "--uploaded", "-u", help="Show upload dates for each file")
+    uploaded: bool = typer.Option(False, "--uploaded", "-u", help="Show upload dates for each file"),
+    version: bool = typer.Option(False, "--version", "-v", help="Show version for each file")
 ) -> None:
 # fmt: on
     """
@@ -58,14 +59,19 @@ def show(
     date for each file.
     """
     s3 = S3(aws_access_key_id, aws_secret_access_key, aws_s3_endpoint, aws_s3_bucket)
-    if not uploaded:
+    if not uploaded and not version:
         keys = s3.ls(f"datasets/{name}/")
         message = "\n".join([k.replace(f"datasets/{name}/", "") for k in keys])
         typer.echo(message)
     if uploaded:
         keys = s3.ls(f"datasets/{name}/", detail=True)
         upload_dates = {k['Key'].replace(f"datasets/{name}/", ""):str(k['LastModified']) for k in keys}
-        message = "\n".join([f"File: {v} \t Last upload date: {d}" for v, d in upload_dates.items()])
+        message = "\n".join([f"File: {f} \t Last upload date: {d}" for f, d in upload_dates.items()])
+        typer.echo(message)
+    if version:
+        keys = s3.ls(f"datasets/{name}/", detail=True)
+        upload_dates = {k['Key'].replace(f"datasets/{name}/", ""):str(k['Version']) for k in keys}
+        message = "\n".join([f"File: {f} \t Version: {v}" for f, v in upload_dates.items()])
         typer.echo(message)
 
 def run() -> None:
