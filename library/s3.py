@@ -88,7 +88,7 @@ class S3:
         key: path within the bucket of the file to copy
         dest_ket: new path for the copy
         acl: acl for newly created file
-        version: version to save as s3 metadata
+        metadata: dictionary to save as custom s3 metadata
         """
         try:
             response = self.client.copy_object(
@@ -135,7 +135,7 @@ class S3:
         source_key: path within the bucket of the file to move
         dest_ket: new path for the copy
         acl: acl for newly created file
-        version: version to save as s3 metadata
+        metadata: dictionary to save as custom s3 metadata
         info: if true, get info for file in its new location
         """
 
