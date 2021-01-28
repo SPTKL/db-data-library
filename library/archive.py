@@ -94,10 +94,15 @@ class Archive:
         for _file in output_files:
             if push:
                 key = _file.replace(base_path + "/", "")
-                self.s3.put(_file, key, acl, version=version)
+                self.s3.put(_file, key, acl, metadata={"Version": version})
             if push and latest:
                 # Upload file to a latest directory, where version metadata is version
                 # This allows us to get the version associated with each file in latest
-                self.s3.put(_file, key.replace(version, "latest"), acl, version=version)
+                self.s3.put(
+                    _file,
+                    key.replace(version, "latest"),
+                    acl,
+                    metadata={"Version": version},
+                )
             if clean:
                 os.remove(_file)

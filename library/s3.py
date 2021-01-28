@@ -34,14 +34,11 @@ class S3:
         return response
 
     def put(
-        self, path: str, key: str, acl: str = "public-read", version: str = ""
+        self, path: str, key: str, acl: str = "public-read", metadata: dict = {}
     ) -> dict:
         try:
             response = self.client.upload_file(
-                path,
-                self.bucket,
-                key,
-                ExtraArgs={"ACL": acl, "Metadata": {"Version": version}},
+                path, self.bucket, key, ExtraArgs={"ACL": acl, "Metadata": metadata}
             )
         except ClientError as e:
             logging.error(e)
@@ -80,7 +77,7 @@ class S3:
         source_key: str,
         dest_key: str,
         acl: str = "public-read",
-        version: str = "",
+        metadata: dict = {},
         info: bool = False,
     ) -> dict:
         """
@@ -99,7 +96,7 @@ class S3:
                 Key=dest_key,
                 CopySource={"Bucket": self.bucket, "Key": source_key},
                 ACL=acl,
-                Metadata={"Version": version},
+                Metadata=metadata,
             )
             if info:
                 return self.info(key=dest_key)
@@ -126,7 +123,7 @@ class S3:
         source_key: str,
         dest_key: str,
         acl: str = "public-read",
-        version: str = "",
+        metadata: dict = {},
         info: bool = False,
     ):
         """
@@ -143,7 +140,7 @@ class S3:
         """
 
         response = self.cp(
-            source_key=source_key, dest_key=dest_key, acl=acl, version=version
+            source_key=source_key, dest_key=dest_key, acl=acl, metadata=metadata
         )
         response = self.rm(source_key)
         if info:
