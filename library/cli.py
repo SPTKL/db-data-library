@@ -4,7 +4,9 @@ from typing import Optional
 
 import typer
 
+from . import aws_access_key_id, aws_s3_bucket, aws_s3_endpoint, aws_secret_access_key
 from .archive import Archive
+from .s3 import S3
 
 app = typer.Typer()
 
@@ -44,6 +46,27 @@ def archive(
             version=version,
         )
 
+# fmt: off
+@app.command()
+def show(
+    name: str,
+    uploaded: bool = typer.Option(False, "--uploaded", "-u", help="Show upload dates for each file")
+) -> None:
+# fmt: on
+    """
+    Display files available in the s3 library for a given dataset. Option to display latest upload
+    date for each file.
+    """
+    s3 = S3(aws_access_key_id, aws_secret_access_key, aws_s3_endpoint, aws_s3_bucket)
+    if not uploaded:
+        keys = s3.ls(f"datasets/{name}/")
+        message = "\n".join([k.replace(f"datasets/{name}/", "") for k in keys])
+        typer.echo(message)
+    if uploaded:
+        keys = s3.ls(f"datasets/{name}/", detail=True)
+        upload_dates = {k['Key'].replace(f"datasets/{name}/", ""):str(k['LastModified']) for k in keys}
+        message = "\n".join([f"File: {v} \t Last upload date: {d}" for v, d in upload_dates.items()])
+        typer.echo(message)
 
 def run() -> None:
     """Run commands."""
