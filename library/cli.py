@@ -69,9 +69,9 @@ def show(
         message = "\n".join([f"File: {f} \t Last upload date: {d}" for f, d in upload_dates.items()])
         typer.echo(message)
     if version:
-        keys = s3.ls(f"datasets/{name}/", detail=True)
-        upload_dates = {k['Key'].replace(f"datasets/{name}/", ""):str(k['Version']) for k in keys}
-        message = "\n".join([f"File: {f} \t Version: {v}" for f, v in upload_dates.items()])
+        keys = s3.ls(f"datasets/{name}/")
+        versions = {k.replace(f"datasets/{name}/", ""):s3.info(k)["Metadata"]["version"] for k in keys}
+        message = "\n".join([f"File: {f} \t Version: {v}" for f, v in versions.items()])
         typer.echo(message)
 
 def run() -> None:
