@@ -32,7 +32,7 @@ def test_s3_upload_file():
 
 
 def test_s3_ls():
-    pp.pprint(s3.ls("test"))
+    pp.pprint(s3.ls("test", detail=True))
     assert True
 
 

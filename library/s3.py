@@ -33,10 +33,12 @@ class S3:
         response = self.put(path, key, acl)
         return response
 
-    def put(self, path: str, key: str, acl: str = "public-read") -> dict:
+    def put(
+        self, path: str, key: str, acl: str = "public-read", metadata: dict = {}
+    ) -> dict:
         try:
             response = self.client.upload_file(
-                path, self.bucket, key, ExtraArgs={"ACL": acl}
+                path, self.bucket, key, ExtraArgs={"ACL": acl, "Metadata": metadata}
             )
         except ClientError as e:
             logging.error(e)
@@ -75,6 +77,7 @@ class S3:
         source_key: str,
         dest_key: str,
         acl: str = "public-read",
+        metadata: dict = {},
         info: bool = False,
     ) -> dict:
         """
@@ -85,6 +88,7 @@ class S3:
         key: path within the bucket of the file to copy
         dest_ket: new path for the copy
         acl: acl for newly created file
+        metadata: dictionary to save as custom s3 metadata
         """
         try:
             response = self.client.copy_object(
@@ -92,6 +96,7 @@ class S3:
                 Key=dest_key,
                 CopySource={"Bucket": self.bucket, "Key": source_key},
                 ACL=acl,
+                Metadata=metadata,
             )
             if info:
                 return self.info(key=dest_key)
@@ -118,6 +123,7 @@ class S3:
         source_key: str,
         dest_key: str,
         acl: str = "public-read",
+        metadata: dict = {},
         info: bool = False,
     ):
         """
@@ -129,10 +135,13 @@ class S3:
         source_key: path within the bucket of the file to move
         dest_ket: new path for the copy
         acl: acl for newly created file
+        metadata: dictionary to save as custom s3 metadata
         info: if true, get info for file in its new location
         """
 
-        response = self.cp(source_key=source_key, dest_key=dest_key, acl=acl)
+        response = self.cp(
+            source_key=source_key, dest_key=dest_key, acl=acl, metadata=metadata
+        )
         response = self.rm(source_key)
         if info:
             return self.info(key=dest_key)
