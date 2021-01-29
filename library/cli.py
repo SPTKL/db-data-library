@@ -48,6 +48,34 @@ def archive(
 
 # fmt: off
 @app.command()
+def delete(
+    name: str = typer.Option(None, "--name", "-n", help="Name of the dataset to remove"),
+    version: str = typer.Option(None, "--version", "-v", help="Version of dataset to remove. \
+        If not specified, all versions of a particular dataset will be deleted"),
+    extension: str = typer.Option(None, "--extension", "-e", help="Extension of file to remove. \
+        If not specified, all files of a particular version will be deleted"),
+    key: str = typer.Option(None, "--key", "-k", help="Full key of dataset to remove. \
+        If provided, will take precedent over the other 3 optional arguments"),
+) -> None:
+# fmt: on
+    """
+    Delete a file from s3 library
+    """
+    s3 = S3(aws_access_key_id, aws_secret_access_key, aws_s3_endpoint, aws_s3_bucket)
+    if key:
+        typer.echo(f"Deleting: {key}")
+        s3.rm(key)
+    elif name:
+        keys = s3.ls(f"datasets/{name}/")
+        if version:
+            keys = [k for k in keys if (k.split("/")[2] == version)]
+            if extension:
+                keys = [k for k in keys if (k.split(".")[1] == extension)]
+        message = "\n\t".join(keys)
+        typer.echo(f"Deleting:\n\t{message}")
+        s3.rm(*keys)
+        
+# fmt: off
 def show(
     name: str,
     uploaded: bool = typer.Option(False, "--uploaded", "-u", help="Show upload dates for each file"),
@@ -73,6 +101,7 @@ def show(
         versions = {k.replace(f"datasets/{name}/", ""):s3.info(k)["Metadata"]["version"] for k in keys}
         message = "\n".join([f"File: {f} \t Version: {v}" for f, v in versions.items()])
         typer.echo(message)
+
 
 def run() -> None:
     """Run commands."""
