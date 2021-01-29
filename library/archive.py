@@ -104,5 +104,19 @@ class Archive:
                     acl,
                     metadata={"version": version},
                 )
+
+                # Find all files in latest where the version (stored in s3 metadata)
+                # does not match the version of the file currently getting added to latest
+                keys_in_latest = self.s3.ls(key.rsplit("/", 1)[0])
+                diff_version = [
+                    k
+                    for k in keys_in_latest
+                    if self.s3.info(k)["Metadata"]["version"] != version
+                ]
+
+                # Remove keys from the latest directory that have versions different
+                # from the version of the file currently getting added to latest
+                s3.rm(*diff_version)
+
             if clean:
                 os.remove(_file)
