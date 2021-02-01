@@ -28,7 +28,7 @@ jobs:
     - name: Set up GDAL and poetry
       run: |
         apt update
-        apt install -y gdal-bin libgdal-dev python3-gdal
+        apt install -y gdal-bin libgdal-dev python3-gdal g++
 
     - name: Install Python dependencies, create docs
       run: |
