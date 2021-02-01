@@ -11,6 +11,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-20.04
+    container: osgeo/gdal:ubuntu-small-3.2.1
     env:
       RECIPE_ENGINE: ${{ secrets.RECIPE_ENGINE }}
       AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
@@ -20,14 +21,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '3.8'
 
     - name: Set up GDAL and poetry
       run: |
-        sudo apt update
-        sudo apt install -y gdal-bin libgdal-dev python3-gdal g++
+        apt update
+        apt install -y git python3-pip
 
     - name: Install Python dependencies, create docs
       run: |
@@ -36,10 +34,21 @@ jobs:
         python3.8 -m pip install pdoc
         python3.8 -m pdoc -o docs --html --force library
 
-    - name: Commit output
-      uses: EndBug/add-and-commit@v6
+    - name: Commit files
+      continue-on-error: true
+      id: commit
+      run: |
+        ls -l docs/
+        git status
+
+        DATE=$(date)
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add docs/
+        git commit -m "🎉 Update Docs $DATE" -a
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      continue-on-error: true
       with:
-        author_name: GitHub Action
-        author_email: action@github.com
-        message: "🎉 Update Documentation"
-        add: 'docs/'
+        github_token: ${{ secrets.GITHUB_TOKEN }}
