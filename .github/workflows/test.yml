@@ -26,17 +26,14 @@ jobs:
         curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
 
     - name: Poetry Install
-      shell: bash
       env:
         PATH: "$PATH:$HOME/.poetry/bin"
       run: |
-        source $HOME/.poetry/env
+        . $HOME/.poetry/env
         poetry config virtualenvs.create false --local
 
     - name: Pytests
-      shell: bash
       env:
         PATH: "$PATH:$HOME/.poetry/bin"
       run: |
-        source $HOME/.poetry/env
         poetry run pytest -s
