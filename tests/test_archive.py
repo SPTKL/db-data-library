@@ -144,3 +144,43 @@ def test_archive_4():
     for f in s3_not_exist:
         assert not a.s3.exists(f)
     start_clean(local_exist + local_not_exist, s3_exist + s3_not_exist)
+
+
+def test_archive_5():
+    s3_not_exist = [
+        "datasets/nypl_libraries/testor/nypl_libraries.csv.zip",
+        "datasets/nypl_libraries/latest/nypl_libraries.csv.zip",
+        "datasets/nypl_libraries/latest/nypl_libraries.csv",
+        "datasets/nypl_libraries/latest/config.yml",
+        "datasets/nypl_libraries/latest/config.json",
+    ]
+    s3_exist = [
+        "datasets/nypl_libraries/testor/config.yml",
+        "datasets/nypl_libraries/testor/config.json",
+        "datasets/nypl_libraries/testor/nypl_libraries.csv",
+    ]
+    local_exist = [
+        ".library/datasets/nypl_libraries/testor/nypl_libraries.csv",
+        ".library/datasets/nypl_libraries/testor/config.yml",
+        ".library/datasets/nypl_libraries/testor/config.json",
+    ]
+    local_not_exist = [".library/datasets/nypl_libraries/testor/nypl_libraries.csv.zip"]
+    start_clean(local_exist + local_not_exist, s3_exist + s3_not_exist)
+    a(
+        name="nypl_libraries",
+        output_format="csv",
+        push=True,
+        clean=False,
+        compress=False,
+        latest=False,
+        version="testor",
+    )
+    for f in local_exist:
+        assert os.path.isfile(f)
+    for f in local_not_exist:
+        assert not os.path.isfile(f)
+    for f in s3_exist:
+        assert a.s3.exists(f)
+    for f in s3_not_exist:
+        assert not a.s3.exists(f)
+    start_clean(local_exist + local_not_exist, s3_exist + s3_not_exist)
