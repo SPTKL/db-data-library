@@ -21,19 +21,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
 
-    - name: Install Dependencies
+    - name: Set up GDAL and poetry
       run: |
         apt update
-        apt install -y python3-pip python3-distutils git
-        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
+        apt install -y gdal-bin libgdal-dev python3-gdal
 
-    - name: Poetry Install
+    - name: Install Python dependencies, create docs
       run: |
-        . $HOME/.poetry/env
-        poetry config virtualenvs.create false --local
-        poetry install
-        poetry run pdoc -o docs --html --force library
+        python3.8 -m pip install --upgrade pip
+        python3.8 -m pip install .
+        python3.8 -m pip install pdoc
+        python3.8 -m pdoc -o docs --html --force library
 
     - name: Commit output
       uses: EndBug/add-and-commit@v6
