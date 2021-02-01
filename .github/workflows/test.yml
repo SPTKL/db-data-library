@@ -1,33 +1,38 @@
-name: Run Tests
+name: Pytest
 
 on:
   push:
-  pull_request:
-    branches:
-      - master
+    paths-ignore:
+      - "*.html"
+      - "*.md"
 
 jobs:
   test:
     runs-on: ubuntu-20.04
-    container: debian:stable
+    container: osgeo/gdal:ubuntu-small-3.2.1
+    env:
+      RECIPE_ENGINE: ${{ secrets.RECIPE_ENGINE }}
+      AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_S3_BUCKET: edm-recipes
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '3.8'
 
-    - name: Set up GDAL and poetry
+    - name: Install Dependencies
       run: |
         apt update
-        apt install -y gdal-bin libgdal-dev python3-gdal curl
+        apt install -y python3-pip python3-distutils
         curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
 
-    - name: Run pytests
+    - name: Poetry Install
+      env:
+        PATH: "$PATH:$HOME/.poetry/bin"
       run: |
         source $HOME/.poetry/env
-        poetry install
-        poetry run pytest tests/test_utils.py -s
-        poetry run pytest tests/test_config.py -s
-        poetry run pytest tests/test_ingest.py -s
-        poetry run pytest tests/test_s3.py -s
-        poetry run pytest tests/test_archive.py -s
+        poetry config virtualenvs.create false --local
+
+    - name: Pytests
+      run: |
+        source $HOME/.poetry/env
+        poetry run pytest -s
