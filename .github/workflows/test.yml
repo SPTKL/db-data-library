@@ -10,15 +10,13 @@ jobs:
   test:
     runs-on: ubuntu-20.04
     container: osgeo/gdal:ubuntu-small-3.2.1
-    defaults:
-      run:
-        shell: bash
     env:
       RECIPE_ENGINE: ${{ secrets.RECIPE_ENGINE }}
       AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_S3_BUCKET: edm-recipes
+      PATH: "$PATH:$HOME/.poetry/bin"
     steps:
     - uses: actions/checkout@v2
 
@@ -29,13 +27,13 @@ jobs:
         curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
 
     - name: Poetry Install
-      env:
-        PATH: "$PATH:$HOME/.poetry/bin"
+      shell: bash
       run: |
         source $HOME/.poetry/env
         poetry config virtualenvs.create false --local
 
     - name: Pytests
+      shell: bash
       run: |
         source $HOME/.poetry/env
         poetry run pytest -s
