@@ -11,7 +11,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-20.04
-    container: osgeo/gdal:ubuntu-small-3.2.1
     env:
       RECIPE_ENGINE: ${{ secrets.RECIPE_ENGINE }}
       AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
