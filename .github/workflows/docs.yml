@@ -32,7 +32,7 @@ jobs:
         python3.8 -m pip install --upgrade pip
         python3.8 -m pip install .
         python3.8 -m pip install pdoc
-        python3.8 -m pdoc -o docs --html --force library
+        python3.8 -m pdoc -f -o docs --html library
 
     - name: Commit files
       continue-on-error: true
