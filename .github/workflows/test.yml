@@ -16,7 +16,6 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_S3_BUCKET: edm-recipes
-      PATH: "$PATH:$HOME/.poetry/bin"
     steps:
     - uses: actions/checkout@v2
 
@@ -28,12 +27,16 @@ jobs:
 
     - name: Poetry Install
       shell: bash
+      env:
+        PATH: "$PATH:$HOME/.poetry/bin"
       run: |
         source $HOME/.poetry/env
         poetry config virtualenvs.create false --local
 
     - name: Pytests
       shell: bash
+      env:
+        PATH: "$PATH:$HOME/.poetry/bin"
       run: |
         source $HOME/.poetry/env
         poetry run pytest -s
