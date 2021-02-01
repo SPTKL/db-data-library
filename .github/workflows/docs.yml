@@ -33,7 +33,7 @@ jobs:
         . $HOME/.poetry/env
         poetry config virtualenvs.create false --local
         poetry install
-        poetry run pdoc -o docs --html library
+        poetry run pdoc -o docs --html --force library
 
     - name: Commit output
       uses: EndBug/add-and-commit@v6
