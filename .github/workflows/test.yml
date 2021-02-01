@@ -5,6 +5,7 @@ on:
     paths-ignore:
       - "*.html"
       - "*.md"
+      - ".github/*"
 
 jobs:
   test:
