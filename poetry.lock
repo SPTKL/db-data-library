@@ -112,11 +112,14 @@ python-versions = "*"
 
 [[package]]
 name = "gdal"
-version = "2.4.0"
+version = "3.2.1"
 description = "GDAL: Geospatial Data Abstraction Library"
 category = "main"
 optional = false
 python-versions = "*"
+
+[package.extras]
+numpy = ["numpy (>1.0.0)"]
 
 [[package]]
 name = "identify"
@@ -504,7 +507,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "d8087f1322797149116732b2f234dab70cb178339fe6137eb75d0244fe6fdf25"
+content-hash = "72e2995b4f298b3432badf719dc7d9e4be5b935cafd54d5efac3dc5739d13d9b"
 
 [metadata.files]
 appdirs = [
@@ -556,7 +559,7 @@ filelock = [
     {file = "filelock-3.0.12.tar.gz", hash = "sha256:18d82244ee114f543149c66a6e0c14e9c4f8a1044b5cdaadd0f82159d6a6ff59"},
 ]
 gdal = [
-    {file = "GDAL-2.4.0.tar.gz", hash = "sha256:b725a580e6faa0bc17edc3e6caa1da9e6efc401fab19e8482631ee179132b4df"},
+    {file = "GDAL-3.2.1.tar.gz", hash = "sha256:41e928fbe6880a7b38124b8dff9efe82f3d4e1bc17f771fda46bf222289ab9a4"},
 ]
 identify = [
     {file = "identify-1.5.13-py2.py3-none-any.whl", hash = "sha256:9dfb63a2e871b807e3ba62f029813552a24b5289504f5b071dea9b041aee9fe4"},
