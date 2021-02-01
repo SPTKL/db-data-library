@@ -2,10 +2,9 @@ name: Pytest
 
 on:
   push:
-    paths-ignore:
-      - "*.html"
-      - "*.md"
-      - "*.yml"
+    paths:
+      - "**.py"
+      - "**.toml"
 
 jobs:
   test:
