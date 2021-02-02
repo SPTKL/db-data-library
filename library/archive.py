@@ -116,7 +116,7 @@ class Archive:
 
                 # Remove keys from the latest directory that have versions different
                 # from the version of the file currently getting added to latest
-                s3.rm(*diff_version)
+                self.s3.rm(*diff_version)
 
             if clean:
                 os.remove(_file)
