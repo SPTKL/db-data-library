@@ -76,6 +76,7 @@ def delete(
         s3.rm(*keys)
 
 # fmt: off
+@app.command()
 def show(
     name: str,
     uploaded: bool = typer.Option(False, "--uploaded", "-u", help="Show upload dates for each file"),
