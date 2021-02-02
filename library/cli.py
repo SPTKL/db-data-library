@@ -9,6 +9,7 @@ from .archive import Archive
 from .s3 import S3
 
 app = typer.Typer()
+s3 = S3(aws_access_key_id, aws_secret_access_key, aws_s3_endpoint, aws_s3_bucket)
 
 # fmt: off
 @app.command()
@@ -61,7 +62,6 @@ def delete(
     """
     Delete a file from s3 library
     """
-    s3 = S3(aws_access_key_id, aws_secret_access_key, aws_s3_endpoint, aws_s3_bucket)
     if key:
         typer.echo(f"Deleting: {key}")
         s3.rm(key)
@@ -74,7 +74,7 @@ def delete(
         message = "\n\t".join(keys)
         typer.echo(f"Deleting:\n\t{message}")
         s3.rm(*keys)
-        
+
 # fmt: off
 def show(
     name: str,
@@ -86,7 +86,6 @@ def show(
     Display files available in the s3 library for a given dataset. Option to display latest upload
     date for each file.
     """
-    s3 = S3(aws_access_key_id, aws_secret_access_key, aws_s3_endpoint, aws_s3_bucket)
     if not uploaded and not version:
         keys = s3.ls(f"datasets/{name}/")
         message = "\n".join([k.replace(f"datasets/{name}/", "") for k in keys])
