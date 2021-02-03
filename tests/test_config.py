@@ -51,3 +51,8 @@ def test_config_compute_parsed():
     assert "fields" in list(destination.keys())
     assert "options" in list(destination.keys())
     assert "geometry" in list(destination.keys())
+
+
+def test_config_script():
+    config = Config(f"{Path(__file__).parent}/data/bpl_libraries.yml").compute
+    assert True
