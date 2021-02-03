@@ -53,13 +53,15 @@ gdal.SetConfigOption(&#34;AWS_SECRET_ACCESS_KEY&#34;, aws_secret_access_key)
 gdal.SetConfigOption(&#34;AWS_ACCESS_KEY_ID&#34;, aws_access_key_id)
 
 # Create a local .library directory to store temporary files
-if not os.path.isdir(&#34;.library&#34;):
-    os.makedirs(&#34;.library&#34;, exist_ok=True)
+base_path = &#34;.library&#34;
+
+if not os.path.isdir(base_path):
+    os.makedirs(base_path, exist_ok=True)
     # create .gitignore so that files in this directory aren&#39;t tracked
-    with open(&#34;.library/.gitignore&#34;, &#34;w&#34;) as f:
+    with open(f&#34;{base_path}/.gitignore&#34;, &#34;w&#34;) as f:
         f.write(&#34;*&#34;)
-    os.makedirs(&#34;.library/datasets&#34;, exist_ok=True)
-    os.makedirs(&#34;.library/configurations&#34;, exist_ok=True)
+    os.makedirs(f&#34;{base_path}/datasets&#34;, exist_ok=True)
+    os.makedirs(f&#34;{base_path}/configurations&#34;, exist_ok=True)
 
 __version__ = &#34;0.1.0&#34;</code></pre>
 </details>
@@ -67,6 +69,10 @@ __version__ = &#34;0.1.0&#34;</code></pre>
 <section>
 <h2 class="section-title" id="header-submodules">Sub-modules</h2>
 <dl>
+<dt><code class="name"><a title="library.archive" href="archive.html">library.archive</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt><code class="name"><a title="library.cli" href="cli.html">library.cli</a></code></dt>
 <dd>
 <div class="desc"></div>
@@ -112,6 +118,7 @@ __version__ = &#34;0.1.0&#34;</code></pre>
 <ul id="index">
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
+<li><code><a title="library.archive" href="archive.html">library.archive</a></code></li>
 <li><code><a title="library.cli" href="cli.html">library.cli</a></code></li>
 <li><code><a title="library.config" href="config.html">library.config</a></code></li>
 <li><code><a title="library.ingest" href="ingest.html">library.ingest</a></code></li>

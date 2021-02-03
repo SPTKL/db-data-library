@@ -28,34 +28,107 @@
 </summary>
 <pre><code class="python">import os
 import time
+from typing import Optional
 
 import typer
 
+from . import aws_access_key_id, aws_s3_bucket, aws_s3_endpoint, aws_secret_access_key
+from .archive import Archive
+from .s3 import S3
+
 app = typer.Typer()
+s3 = S3(aws_access_key_id, aws_secret_access_key, aws_s3_endpoint, aws_s3_bucket)
 
-
+# fmt: off
 @app.command()
-def ingest(name: str, config: str):
+def archive(
+    path: str = typer.Option(None, &#34;--path&#34;, &#34;-f&#34;, help=&#34;Path to config yml&#34;),
+    output_format: str = typer.Option(&#34;pgdump&#34;, &#34;--output-format&#34;, &#34;-o&#34;, help=&#34;csv, geojson, shapefile, pgdump and postgres&#34;),
+    push: bool = typer.Option(False, &#34;--s3&#34;, &#34;-s&#34;, help=&#34;Push to s3&#34;),
+    clean: bool = typer.Option(False, &#34;--clean&#34;, &#34;-c&#34;, help=&#34;Remove temporary files&#34;),
+    latest: bool = typer.Option(False, &#34;--latest&#34;, &#34;-l&#34;, help=&#34;Tag with latest&#34;),
+    name: str = typer.Option(None, &#34;--name&#34;, &#34;-n&#34;, help=&#34;Name of the dataset, if supplied, \&#34;path\&#34; will ignored&#34;),
+    compress: bool = typer.Option(False, &#34;--compress&#34;, help=&#34;Compress output&#34;),
+    inplace: bool = typer.Option(False, &#34;--inplace&#34;, help=&#34;Only keeping zipped file&#34;),
+    postgres_url: str = typer.Option(None, &#34;--postgres-url&#34;, help=&#34;Postgres connection url&#34;),
+    version: str = typer.Option(None, &#34;--version&#34;, &#34;-v&#34;, help=&#34;Custom version input&#34;),
+) -&gt; None:
+# fmt: on
     &#34;&#34;&#34;
-    ingest a dataset from source to destination
+    Archive a dataset from source to destination
     &#34;&#34;&#34;
-    typer.echo(f&#34;ingesting {name} using {config} ...&#34;)
+    if not name and not path:
+        message = typer.style(&#34;\nPlease specify dataset NAME or PATH to configuration\n&#34;, fg=typer.colors.RED)
+        typer.echo(message)
+    else:
+        a = Archive()
+        a(
+            path=path,
+            output_format=output_format,
+            push=push,
+            clean=clean,
+            latest=latest,
+            name=name,
+            compress=compress,
+            inplace=inplace,
+            postgres_url=postgres_url,
+            version=version,
+        )
 
-
+# fmt: off
 @app.command()
-def show(name: str):
+def delete(
+    name: str = typer.Option(None, &#34;--name&#34;, &#34;-n&#34;, help=&#34;Name of the dataset to remove&#34;),
+    version: str = typer.Option(None, &#34;--version&#34;, &#34;-v&#34;, help=&#34;Version of dataset to remove. \
+        If not specified, all versions of a particular dataset will be deleted&#34;),
+    extension: str = typer.Option(None, &#34;--extension&#34;, &#34;-e&#34;, help=&#34;Extension of file to remove. \
+        If not specified, all files of a particular version will be deleted&#34;),
+    key: str = typer.Option(None, &#34;--key&#34;, &#34;-k&#34;, help=&#34;Full key of dataset to remove. \
+        If provided, will take precedent over the other 3 optional arguments&#34;),
+) -&gt; None:
+# fmt: on
     &#34;&#34;&#34;
-    show versions available for given dataset
+    Delete a file from s3 library
     &#34;&#34;&#34;
-    typer.echo(f&#34;showing {name} ...&#34;)
+    if key:
+        typer.echo(f&#34;Deleting: {key}&#34;)
+        s3.rm(key)
+    elif name:
+        keys = s3.ls(f&#34;datasets/{name}/&#34;)
+        if version:
+            keys = [k for k in keys if (k.split(&#34;/&#34;)[2] == version)]
+            if extension:
+                keys = [k for k in keys if (k.split(&#34;.&#34;)[1] == extension)]
+        message = &#34;\n\t&#34;.join(keys)
+        typer.echo(f&#34;Deleting:\n\t{message}&#34;)
+        s3.rm(*keys)
 
-
+# fmt: off
 @app.command()
-def load(name: str):
+def show(
+    name: str,
+    uploaded: bool = typer.Option(False, &#34;--uploaded&#34;, &#34;-u&#34;, help=&#34;Show upload dates for each file&#34;),
+    version: bool = typer.Option(False, &#34;--version&#34;, &#34;-v&#34;, help=&#34;Show version for each file&#34;)
+) -&gt; None:
+# fmt: on
     &#34;&#34;&#34;
-    load a dataset from s3/database to a build database
+    Display files available in the s3 library for a given dataset. Option to display latest upload
+    date for each file.
     &#34;&#34;&#34;
-    typer.echo(f&#34;loading {name} to database ...&#34;)
+    if not uploaded and not version:
+        keys = s3.ls(f&#34;datasets/{name}/&#34;)
+        message = &#34;\n&#34;.join([k.replace(f&#34;datasets/{name}/&#34;, &#34;&#34;) for k in keys])
+        typer.echo(message)
+    if uploaded:
+        keys = s3.ls(f&#34;datasets/{name}/&#34;, detail=True)
+        upload_dates = {k[&#39;Key&#39;].replace(f&#34;datasets/{name}/&#34;, &#34;&#34;):str(k[&#39;LastModified&#39;]) for k in keys}
+        message = &#34;\n&#34;.join([f&#34;File: {f} \t Last upload date: {d}&#34; for f, d in upload_dates.items()])
+        typer.echo(message)
+    if version:
+        keys = s3.ls(f&#34;datasets/{name}/&#34;)
+        versions = {k.replace(f&#34;datasets/{name}/&#34;, &#34;&#34;):s3.info(k)[&#34;Metadata&#34;][&#34;version&#34;] for k in keys}
+        message = &#34;\n&#34;.join([f&#34;File: {f} \t Version: {v}&#34; for f, v in versions.items()])
+        typer.echo(message)
 
 
 def run() -&gt; None:
@@ -70,38 +143,86 @@ def run() -&gt; None:
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="library.cli.ingest"><code class="name flex">
-<span>def <span class="ident">ingest</span></span>(<span>name: str, config: str)</span>
+<dt id="library.cli.archive"><code class="name flex">
+<span>def <span class="ident">archive</span></span>(<span>path: str = &lt;typer.models.OptionInfo object&gt;, output_format: str = &lt;typer.models.OptionInfo object&gt;, push: bool = &lt;typer.models.OptionInfo object&gt;, clean: bool = &lt;typer.models.OptionInfo object&gt;, latest: bool = &lt;typer.models.OptionInfo object&gt;, name: str = &lt;typer.models.OptionInfo object&gt;, compress: bool = &lt;typer.models.OptionInfo object&gt;, inplace: bool = &lt;typer.models.OptionInfo object&gt;, postgres_url: str = &lt;typer.models.OptionInfo object&gt;, version: str = &lt;typer.models.OptionInfo object&gt;) ‑> NoneType</span>
 </code></dt>
 <dd>
-<div class="desc"><p>ingest a dataset from source to destination</p></div>
+<div class="desc"><p>Archive a dataset from source to destination</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@app.command()
-def ingest(name: str, config: str):
+def archive(
+    path: str = typer.Option(None, &#34;--path&#34;, &#34;-f&#34;, help=&#34;Path to config yml&#34;),
+    output_format: str = typer.Option(&#34;pgdump&#34;, &#34;--output-format&#34;, &#34;-o&#34;, help=&#34;csv, geojson, shapefile, pgdump and postgres&#34;),
+    push: bool = typer.Option(False, &#34;--s3&#34;, &#34;-s&#34;, help=&#34;Push to s3&#34;),
+    clean: bool = typer.Option(False, &#34;--clean&#34;, &#34;-c&#34;, help=&#34;Remove temporary files&#34;),
+    latest: bool = typer.Option(False, &#34;--latest&#34;, &#34;-l&#34;, help=&#34;Tag with latest&#34;),
+    name: str = typer.Option(None, &#34;--name&#34;, &#34;-n&#34;, help=&#34;Name of the dataset, if supplied, \&#34;path\&#34; will ignored&#34;),
+    compress: bool = typer.Option(False, &#34;--compress&#34;, help=&#34;Compress output&#34;),
+    inplace: bool = typer.Option(False, &#34;--inplace&#34;, help=&#34;Only keeping zipped file&#34;),
+    postgres_url: str = typer.Option(None, &#34;--postgres-url&#34;, help=&#34;Postgres connection url&#34;),
+    version: str = typer.Option(None, &#34;--version&#34;, &#34;-v&#34;, help=&#34;Custom version input&#34;),
+) -&gt; None:
+# fmt: on
     &#34;&#34;&#34;
-    ingest a dataset from source to destination
+    Archive a dataset from source to destination
     &#34;&#34;&#34;
-    typer.echo(f&#34;ingesting {name} using {config} ...&#34;)</code></pre>
+    if not name and not path:
+        message = typer.style(&#34;\nPlease specify dataset NAME or PATH to configuration\n&#34;, fg=typer.colors.RED)
+        typer.echo(message)
+    else:
+        a = Archive()
+        a(
+            path=path,
+            output_format=output_format,
+            push=push,
+            clean=clean,
+            latest=latest,
+            name=name,
+            compress=compress,
+            inplace=inplace,
+            postgres_url=postgres_url,
+            version=version,
+        )</code></pre>
 </details>
 </dd>
-<dt id="library.cli.load"><code class="name flex">
-<span>def <span class="ident">load</span></span>(<span>name: str)</span>
+<dt id="library.cli.delete"><code class="name flex">
+<span>def <span class="ident">delete</span></span>(<span>name: str = &lt;typer.models.OptionInfo object&gt;, version: str = &lt;typer.models.OptionInfo object&gt;, extension: str = &lt;typer.models.OptionInfo object&gt;, key: str = &lt;typer.models.OptionInfo object&gt;) ‑> NoneType</span>
 </code></dt>
 <dd>
-<div class="desc"><p>load a dataset from s3/database to a build database</p></div>
+<div class="desc"><p>Delete a file from s3 library</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@app.command()
-def load(name: str):
+def delete(
+    name: str = typer.Option(None, &#34;--name&#34;, &#34;-n&#34;, help=&#34;Name of the dataset to remove&#34;),
+    version: str = typer.Option(None, &#34;--version&#34;, &#34;-v&#34;, help=&#34;Version of dataset to remove. \
+        If not specified, all versions of a particular dataset will be deleted&#34;),
+    extension: str = typer.Option(None, &#34;--extension&#34;, &#34;-e&#34;, help=&#34;Extension of file to remove. \
+        If not specified, all files of a particular version will be deleted&#34;),
+    key: str = typer.Option(None, &#34;--key&#34;, &#34;-k&#34;, help=&#34;Full key of dataset to remove. \
+        If provided, will take precedent over the other 3 optional arguments&#34;),
+) -&gt; None:
+# fmt: on
     &#34;&#34;&#34;
-    load a dataset from s3/database to a build database
+    Delete a file from s3 library
     &#34;&#34;&#34;
-    typer.echo(f&#34;loading {name} to database ...&#34;)</code></pre>
+    if key:
+        typer.echo(f&#34;Deleting: {key}&#34;)
+        s3.rm(key)
+    elif name:
+        keys = s3.ls(f&#34;datasets/{name}/&#34;)
+        if version:
+            keys = [k for k in keys if (k.split(&#34;/&#34;)[2] == version)]
+            if extension:
+                keys = [k for k in keys if (k.split(&#34;.&#34;)[1] == extension)]
+        message = &#34;\n\t&#34;.join(keys)
+        typer.echo(f&#34;Deleting:\n\t{message}&#34;)
+        s3.rm(*keys)</code></pre>
 </details>
 </dd>
 <dt id="library.cli.run"><code class="name flex">
@@ -119,20 +240,40 @@ def load(name: str):
 </details>
 </dd>
 <dt id="library.cli.show"><code class="name flex">
-<span>def <span class="ident">show</span></span>(<span>name: str)</span>
+<span>def <span class="ident">show</span></span>(<span>name: str, uploaded: bool = &lt;typer.models.OptionInfo object&gt;, version: bool = &lt;typer.models.OptionInfo object&gt;) ‑> NoneType</span>
 </code></dt>
 <dd>
-<div class="desc"><p>show versions available for given dataset</p></div>
+<div class="desc"><p>Display files available in the s3 library for a given dataset. Option to display latest upload
+date for each file.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@app.command()
-def show(name: str):
+def show(
+    name: str,
+    uploaded: bool = typer.Option(False, &#34;--uploaded&#34;, &#34;-u&#34;, help=&#34;Show upload dates for each file&#34;),
+    version: bool = typer.Option(False, &#34;--version&#34;, &#34;-v&#34;, help=&#34;Show version for each file&#34;)
+) -&gt; None:
+# fmt: on
     &#34;&#34;&#34;
-    show versions available for given dataset
+    Display files available in the s3 library for a given dataset. Option to display latest upload
+    date for each file.
     &#34;&#34;&#34;
-    typer.echo(f&#34;showing {name} ...&#34;)</code></pre>
+    if not uploaded and not version:
+        keys = s3.ls(f&#34;datasets/{name}/&#34;)
+        message = &#34;\n&#34;.join([k.replace(f&#34;datasets/{name}/&#34;, &#34;&#34;) for k in keys])
+        typer.echo(message)
+    if uploaded:
+        keys = s3.ls(f&#34;datasets/{name}/&#34;, detail=True)
+        upload_dates = {k[&#39;Key&#39;].replace(f&#34;datasets/{name}/&#34;, &#34;&#34;):str(k[&#39;LastModified&#39;]) for k in keys}
+        message = &#34;\n&#34;.join([f&#34;File: {f} \t Last upload date: {d}&#34; for f, d in upload_dates.items()])
+        typer.echo(message)
+    if version:
+        keys = s3.ls(f&#34;datasets/{name}/&#34;)
+        versions = {k.replace(f&#34;datasets/{name}/&#34;, &#34;&#34;):s3.info(k)[&#34;Metadata&#34;][&#34;version&#34;] for k in keys}
+        message = &#34;\n&#34;.join([f&#34;File: {f} \t Version: {v}&#34; for f, v in versions.items()])
+        typer.echo(message)</code></pre>
 </details>
 </dd>
 </dl>
@@ -153,8 +294,8 @@ def show(name: str):
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="library.cli.ingest" href="#library.cli.ingest">ingest</a></code></li>
-<li><code><a title="library.cli.load" href="#library.cli.load">load</a></code></li>
+<li><code><a title="library.cli.archive" href="#library.cli.archive">archive</a></code></li>
+<li><code><a title="library.cli.delete" href="#library.cli.delete">delete</a></code></li>
 <li><code><a title="library.cli.run" href="#library.cli.run">run</a></code></li>
 <li><code><a title="library.cli.show" href="#library.cli.show">show</a></code></li>
 </ul>

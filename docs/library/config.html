@@ -49,8 +49,9 @@ class Config:
     file to pass into the Ingestor
     &#34;&#34;&#34;
 
-    def __init__(self, path: str):
+    def __init__(self, path: str, version: str = None):
         self.path = path
+        self.version = version
 
     @property
     def unparsed_unrendered_template(self) -&gt; str:
@@ -60,7 +61,7 @@ class Config:
 
     @property
     def parsed_unrendered_template(self) -&gt; dict:
-        &#34;&#34;&#34;parsing unrendered template&#34;&#34;&#34;
+        &#34;&#34;&#34;parsing unrendered template into a dictionary&#34;&#34;&#34;
         return yaml.safe_load(self.unparsed_unrendered_template)
 
     def parsed_rendered_template(self, **kwargs) -&gt; dict:
@@ -70,13 +71,13 @@ class Config:
 
     @property
     def source_type(self) -&gt; str:
-        &#34;&#34;&#34;determin the type of the source, either url or socrata&#34;&#34;&#34;
+        &#34;&#34;&#34;determine the type of the source, either url or socrata&#34;&#34;&#34;
         template = self.parsed_unrendered_template
         source = template[&#34;dataset&#34;][&#34;source&#34;]
         return list(source.keys())[0]
 
     def version_socrata(self, uid: str) -&gt; str:
-        &#34;&#34;&#34;using the socrata API to collect data last update date&#34;&#34;&#34;
+        &#34;&#34;&#34;using the socrata API, collect the &#39;data last update&#39; date&#34;&#34;&#34;
         metadata = requests.get(
             f&#34;https://data.cityofnewyork.us/api/views/{uid}.json&#34;
         ).json()
@@ -89,18 +90,46 @@ class Config:
     #     # scrape from bytes to get a version
     #     return None
 
+    def valid_version(self, version: str) -&gt; bool:
+        &#34;&#34;&#34;check that a version name is valid&#34;&#34;&#34;
+        return &#34;{&#34; not in version and &#34;}&#34; not in version
+
     @property
     def version_today(self) -&gt; str:
-        &#34;&#34;&#34;using today as the version name&#34;&#34;&#34;
+        &#34;&#34;&#34;
+        set today as the version name - for use with unspecified
+        or invalid versions
+        &#34;&#34;&#34;
         return datetime.today().strftime(&#34;%Y%m%d&#34;)
 
     @property
     def compute(self) -&gt; dict:
-        &#34;&#34;&#34;based on given yml file and compute configuration&#34;&#34;&#34;
+        &#34;&#34;&#34;based on given yml file, compute the configuration&#34;&#34;&#34;
         if self.source_type == &#34;url&#34;:
-            # Note that version here is only provided as an option
-            # if version is verbosely defined, it will not replace what&#39;s in yaml
-            config = self.parsed_rendered_template(version=self.version_today)
+            # Load unrendered template to check for yml-specified
+            # version (_version)
+            _config = self.parsed_unrendered_template
+            _version = _config[&#34;dataset&#34;][&#34;version&#34;]
+
+            # If a custom version specified from CLI, take custom version
+            if self.version:
+                version = self.version
+
+            # If no custom version specified and version in config
+            # is valid, take config version (_version)
+            if not self.version and self.valid_version(_version):
+                version = _version
+
+            # If no custom version and no config version,
+            # assign today as version
+            if not self.version and not self.valid_version(_version):
+                version = self.version_today
+
+            # Render template
+            config = self.parsed_rendered_template(version=version)
+
+            # Force overwrite of yml version with appropriate version
+            config[&#34;dataset&#34;][&#34;version&#34;] = version
 
         if self.source_type == &#34;socrata&#34;:
             # For socrata we are computing the url and add the url object to the config file
@@ -111,10 +140,12 @@ class Config:
                 &#34;format&#34;
             ]
             config = self.parsed_rendered_template(version=self.version_socrata(_uid))
+
             if _format == &#34;csv&#34;:
                 url = f&#34;https://data.cityofnewyork.us/api/views/{_uid}/rows.csv&#34;
             if _format == &#34;geojson&#34;:
                 url = f&#34;https://nycopendata.socrata.com/api/geospatial/{_uid}?method=export&amp;format=GeoJSON&#34;
+
             options = config[&#34;dataset&#34;][&#34;source&#34;][&#34;options&#34;]
             geometry = config[&#34;dataset&#34;][&#34;source&#34;][&#34;geometry&#34;]
             config[&#34;dataset&#34;][&#34;source&#34;] = {
@@ -163,7 +194,7 @@ class Config:
 <dl>
 <dt id="library.config.Config"><code class="flex name class">
 <span>class <span class="ident">Config</span></span>
-<span>(</span><span>path: str)</span>
+<span>(</span><span>path: str, version: str = None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Config will take a configuration file from the templates directly
@@ -180,8 +211,9 @@ file to pass into the Ingestor</p></div>
     file to pass into the Ingestor
     &#34;&#34;&#34;
 
-    def __init__(self, path: str):
+    def __init__(self, path: str, version: str = None):
         self.path = path
+        self.version = version
 
     @property
     def unparsed_unrendered_template(self) -&gt; str:
@@ -191,7 +223,7 @@ file to pass into the Ingestor</p></div>
 
     @property
     def parsed_unrendered_template(self) -&gt; dict:
-        &#34;&#34;&#34;parsing unrendered template&#34;&#34;&#34;
+        &#34;&#34;&#34;parsing unrendered template into a dictionary&#34;&#34;&#34;
         return yaml.safe_load(self.unparsed_unrendered_template)
 
     def parsed_rendered_template(self, **kwargs) -&gt; dict:
@@ -201,13 +233,13 @@ file to pass into the Ingestor</p></div>
 
     @property
     def source_type(self) -&gt; str:
-        &#34;&#34;&#34;determin the type of the source, either url or socrata&#34;&#34;&#34;
+        &#34;&#34;&#34;determine the type of the source, either url or socrata&#34;&#34;&#34;
         template = self.parsed_unrendered_template
         source = template[&#34;dataset&#34;][&#34;source&#34;]
         return list(source.keys())[0]
 
     def version_socrata(self, uid: str) -&gt; str:
-        &#34;&#34;&#34;using the socrata API to collect data last update date&#34;&#34;&#34;
+        &#34;&#34;&#34;using the socrata API, collect the &#39;data last update&#39; date&#34;&#34;&#34;
         metadata = requests.get(
             f&#34;https://data.cityofnewyork.us/api/views/{uid}.json&#34;
         ).json()
@@ -220,18 +252,46 @@ file to pass into the Ingestor</p></div>
     #     # scrape from bytes to get a version
     #     return None
 
+    def valid_version(self, version: str) -&gt; bool:
+        &#34;&#34;&#34;check that a version name is valid&#34;&#34;&#34;
+        return &#34;{&#34; not in version and &#34;}&#34; not in version
+
     @property
     def version_today(self) -&gt; str:
-        &#34;&#34;&#34;using today as the version name&#34;&#34;&#34;
+        &#34;&#34;&#34;
+        set today as the version name - for use with unspecified
+        or invalid versions
+        &#34;&#34;&#34;
         return datetime.today().strftime(&#34;%Y%m%d&#34;)
 
     @property
     def compute(self) -&gt; dict:
-        &#34;&#34;&#34;based on given yml file and compute configuration&#34;&#34;&#34;
+        &#34;&#34;&#34;based on given yml file, compute the configuration&#34;&#34;&#34;
         if self.source_type == &#34;url&#34;:
-            # Note that version here is only provided as an option
-            # if version is verbosely defined, it will not replace what&#39;s in yaml
-            config = self.parsed_rendered_template(version=self.version_today)
+            # Load unrendered template to check for yml-specified
+            # version (_version)
+            _config = self.parsed_unrendered_template
+            _version = _config[&#34;dataset&#34;][&#34;version&#34;]
+
+            # If a custom version specified from CLI, take custom version
+            if self.version:
+                version = self.version
+
+            # If no custom version specified and version in config
+            # is valid, take config version (_version)
+            if not self.version and self.valid_version(_version):
+                version = _version
+
+            # If no custom version and no config version,
+            # assign today as version
+            if not self.version and not self.valid_version(_version):
+                version = self.version_today
+
+            # Render template
+            config = self.parsed_rendered_template(version=version)
+
+            # Force overwrite of yml version with appropriate version
+            config[&#34;dataset&#34;][&#34;version&#34;] = version
 
         if self.source_type == &#34;socrata&#34;:
             # For socrata we are computing the url and add the url object to the config file
@@ -242,10 +302,12 @@ file to pass into the Ingestor</p></div>
                 &#34;format&#34;
             ]
             config = self.parsed_rendered_template(version=self.version_socrata(_uid))
+
             if _format == &#34;csv&#34;:
                 url = f&#34;https://data.cityofnewyork.us/api/views/{_uid}/rows.csv&#34;
             if _format == &#34;geojson&#34;:
                 url = f&#34;https://nycopendata.socrata.com/api/geospatial/{_uid}?method=export&amp;format=GeoJSON&#34;
+
             options = config[&#34;dataset&#34;][&#34;source&#34;][&#34;options&#34;]
             geometry = config[&#34;dataset&#34;][&#34;source&#34;][&#34;geometry&#34;]
             config[&#34;dataset&#34;][&#34;source&#34;] = {
@@ -286,18 +348,39 @@ file to pass into the Ingestor</p></div>
 <dl>
 <dt id="library.config.Config.compute"><code class="name">var <span class="ident">compute</span> : dict</code></dt>
 <dd>
-<div class="desc"><p>based on given yml file and compute configuration</p></div>
+<div class="desc"><p>based on given yml file, compute the configuration</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def compute(self) -&gt; dict:
-    &#34;&#34;&#34;based on given yml file and compute configuration&#34;&#34;&#34;
+    &#34;&#34;&#34;based on given yml file, compute the configuration&#34;&#34;&#34;
     if self.source_type == &#34;url&#34;:
-        # Note that version here is only provided as an option
-        # if version is verbosely defined, it will not replace what&#39;s in yaml
-        config = self.parsed_rendered_template(version=self.version_today)
+        # Load unrendered template to check for yml-specified
+        # version (_version)
+        _config = self.parsed_unrendered_template
+        _version = _config[&#34;dataset&#34;][&#34;version&#34;]
+
+        # If a custom version specified from CLI, take custom version
+        if self.version:
+            version = self.version
+
+        # If no custom version specified and version in config
+        # is valid, take config version (_version)
+        if not self.version and self.valid_version(_version):
+            version = _version
+
+        # If no custom version and no config version,
+        # assign today as version
+        if not self.version and not self.valid_version(_version):
+            version = self.version_today
+
+        # Render template
+        config = self.parsed_rendered_template(version=version)
+
+        # Force overwrite of yml version with appropriate version
+        config[&#34;dataset&#34;][&#34;version&#34;] = version
 
     if self.source_type == &#34;socrata&#34;:
         # For socrata we are computing the url and add the url object to the config file
@@ -308,10 +391,12 @@ def compute(self) -&gt; dict:
             &#34;format&#34;
         ]
         config = self.parsed_rendered_template(version=self.version_socrata(_uid))
+
         if _format == &#34;csv&#34;:
             url = f&#34;https://data.cityofnewyork.us/api/views/{_uid}/rows.csv&#34;
         if _format == &#34;geojson&#34;:
             url = f&#34;https://nycopendata.socrata.com/api/geospatial/{_uid}?method=export&amp;format=GeoJSON&#34;
+
         options = config[&#34;dataset&#34;][&#34;source&#34;][&#34;options&#34;]
         geometry = config[&#34;dataset&#34;][&#34;source&#34;][&#34;geometry&#34;]
         config[&#34;dataset&#34;][&#34;source&#34;] = {
@@ -375,27 +460,27 @@ def compute_yml(self) -&gt; str:
 </dd>
 <dt id="library.config.Config.parsed_unrendered_template"><code class="name">var <span class="ident">parsed_unrendered_template</span> : dict</code></dt>
 <dd>
-<div class="desc"><p>parsing unrendered template</p></div>
+<div class="desc"><p>parsing unrendered template into a dictionary</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def parsed_unrendered_template(self) -&gt; dict:
-    &#34;&#34;&#34;parsing unrendered template&#34;&#34;&#34;
+    &#34;&#34;&#34;parsing unrendered template into a dictionary&#34;&#34;&#34;
     return yaml.safe_load(self.unparsed_unrendered_template)</code></pre>
 </details>
 </dd>
 <dt id="library.config.Config.source_type"><code class="name">var <span class="ident">source_type</span> : str</code></dt>
 <dd>
-<div class="desc"><p>determin the type of the source, either url or socrata</p></div>
+<div class="desc"><p>determine the type of the source, either url or socrata</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def source_type(self) -&gt; str:
-    &#34;&#34;&#34;determin the type of the source, either url or socrata&#34;&#34;&#34;
+    &#34;&#34;&#34;determine the type of the source, either url or socrata&#34;&#34;&#34;
     template = self.parsed_unrendered_template
     source = template[&#34;dataset&#34;][&#34;source&#34;]
     return list(source.keys())[0]</code></pre>
@@ -417,14 +502,18 @@ def unparsed_unrendered_template(self) -&gt; str:
 </dd>
 <dt id="library.config.Config.version_today"><code class="name">var <span class="ident">version_today</span> : str</code></dt>
 <dd>
-<div class="desc"><p>using today as the version name</p></div>
+<div class="desc"><p>set today as the version name - for use with unspecified
+or invalid versions</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def version_today(self) -&gt; str:
-    &#34;&#34;&#34;using today as the version name&#34;&#34;&#34;
+    &#34;&#34;&#34;
+    set today as the version name - for use with unspecified
+    or invalid versions
+    &#34;&#34;&#34;
     return datetime.today().strftime(&#34;%Y%m%d&#34;)</code></pre>
 </details>
 </dd>
@@ -446,17 +535,31 @@ def version_today(self) -&gt; str:
     return yaml.safe_load(template.render(**kwargs))</code></pre>
 </details>
 </dd>
+<dt id="library.config.Config.valid_version"><code class="name flex">
+<span>def <span class="ident">valid_version</span></span>(<span>self, version: str) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>check that a version name is valid</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def valid_version(self, version: str) -&gt; bool:
+    &#34;&#34;&#34;check that a version name is valid&#34;&#34;&#34;
+    return &#34;{&#34; not in version and &#34;}&#34; not in version</code></pre>
+</details>
+</dd>
 <dt id="library.config.Config.version_socrata"><code class="name flex">
 <span>def <span class="ident">version_socrata</span></span>(<span>self, uid: str) ‑> str</span>
 </code></dt>
 <dd>
-<div class="desc"><p>using the socrata API to collect data last update date</p></div>
+<div class="desc"><p>using the socrata API, collect the 'data last update' date</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def version_socrata(self, uid: str) -&gt; str:
-    &#34;&#34;&#34;using the socrata API to collect data last update date&#34;&#34;&#34;
+    &#34;&#34;&#34;using the socrata API, collect the &#39;data last update&#39; date&#34;&#34;&#34;
     metadata = requests.get(
         f&#34;https://data.cityofnewyork.us/api/views/{uid}.json&#34;
     ).json()
@@ -535,6 +638,7 @@ def version_today(self) -&gt; str:
 <li><code><a title="library.config.Config.parsed_unrendered_template" href="#library.config.Config.parsed_unrendered_template">parsed_unrendered_template</a></code></li>
 <li><code><a title="library.config.Config.source_type" href="#library.config.Config.source_type">source_type</a></code></li>
 <li><code><a title="library.config.Config.unparsed_unrendered_template" href="#library.config.Config.unparsed_unrendered_template">unparsed_unrendered_template</a></code></li>
+<li><code><a title="library.config.Config.valid_version" href="#library.config.Config.valid_version">valid_version</a></code></li>
 <li><code><a title="library.config.Config.version_socrata" href="#library.config.Config.version_socrata">version_socrata</a></code></li>
 <li><code><a title="library.config.Config.version_today" href="#library.config.Config.version_today">version_today</a></code></li>
 </ul>
