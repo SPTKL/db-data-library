@@ -17,3 +17,9 @@ def test_dpr_capitalprojects():
     assert os.path.isfile(
         ".library/datasets/dpr_capitalprojects/test/dpr_capitalprojects.csv"
     )
+
+
+def test_nypl_libraries():
+    ingestor = Ingestor()
+    ingestor.csv(f"{template_path}/nypl_libraries.yml", version="test")
+    assert os.path.isfile(".library/datasets/nypl_libraries/test/nypl_libraries.csv")
