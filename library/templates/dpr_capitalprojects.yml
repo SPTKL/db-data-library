@@ -1,5 +1,5 @@
 dataset:
-  name: &name bpl_libraries
+  name: &name dpr_capitalprojects
   version: "{{ version }}"
   acl: public-read
   source:
@@ -26,9 +26,7 @@ dataset:
 
   info:
     description: |
-      BPL libraries is a dataset that we webscrape and store
-      in a csv format, checkout the Brooklyn Public Library
-      website(https://www.bklynlibrary.org/locations) for
-      more information
-    url: "https://www.bklynlibrary.org/locations"
+      ### DPR Capital Projects
+      check [here] for metadata
+    url: "https://www.nycgovparks.org/bigapps"
     dependents: []

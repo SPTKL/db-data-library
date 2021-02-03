@@ -2,6 +2,8 @@ from pathlib import Path
 
 from library.config import Config
 
+from . import template_path
+
 
 def test_config_parsed_rendered_template():
     c = Config(f"{Path(__file__).parent}/data/url.yml")
@@ -54,5 +56,5 @@ def test_config_compute_parsed():
 
 
 def test_config_script():
-    config = Config(f"{Path(__file__).parent}/data/bpl_libraries.yml").compute
+    config = Config(f"{template_path}/bpl_libraries.yml").compute
     assert True

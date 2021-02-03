@@ -68,15 +68,3 @@ def test_ingest_version_overwrite():
     ingestor = Ingestor()
     ingestor.csv(f"{test_root_path}/data/nypl_libraries.yml", version="test")
     assert os.path.isfile(".library/datasets/nypl_libraries/test/nypl_libraries.csv")
-
-
-def test_ingest_csv_script():
-    ingestor = Ingestor()
-    ingestor.csv(f"{test_root_path}/data/bpl_libraries.yml", version="test")
-    assert os.path.isfile(".library/datasets/bpl_libraries/test/bpl_libraries.csv")
-
-
-def test_ingest_pgdump_script():
-    ingestor = Ingestor()
-    ingestor.pgdump(f"{test_root_path}/data/bpl_libraries.yml", version="test")
-    assert os.path.isfile(".library/datasets/bpl_libraries/test/bpl_libraries.sql")
