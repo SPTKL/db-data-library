@@ -79,6 +79,7 @@ class Ingestor:
                 geometryType=destination["geometry"]["type"],
                 layerName=destination["name"],
                 accessMode="overwrite",
+                makeValid=True,
                 # optional settings
                 SQLStatement=destination.get("sql", ""),
                 callback=gdal.TermProgress,
