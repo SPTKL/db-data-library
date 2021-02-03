@@ -70,6 +70,10 @@ class S3:
         Get header info for a given file
         """
         response = self.client.head_object(Bucket=self.bucket, Key=key)
+        # Set custom metadata keys to lowercase for compatibility with both
+        # DigitalOcean and minio standards
+        meta_lower = {k.lower(): v for k, v in response.get("Metadata").items()}
+        response.update({"Metadata": meta_lower})
         return response
 
     def cp(

@@ -39,10 +39,10 @@ def test_s3_ls():
 def test_s3_info():
     print("\nTest info...")
     if not s3.exists(f"test/{version}/test.yml"):
-        s3.upload_file(
-            name="test",
-            version=version,
+        s3.put(
+            key=f"test/{version}/test.yml",
             path=f"{Path(__file__).parent}/data/socrata.yml",
+            metadata={"Version": version},
         )
 
     # Make sure file exists before trying to pull info
