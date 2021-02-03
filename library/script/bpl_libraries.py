@@ -10,7 +10,7 @@ class Scriptor:
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
 
-    def ingest(self) -> pd.Dataframe:
+    def ingest(self) -> pd.DataFrame:
         url = "https://www.bklynlibrary.org/locations/json"
         response = requests.get(url)
         content = json.loads(response.content)
