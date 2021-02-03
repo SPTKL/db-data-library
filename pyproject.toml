@@ -16,6 +16,7 @@ SQLAlchemy = "^1.3.22"
 psycopg2-binary = "^2.8.6"
 GDAL = "*"
 pandas = "^1.2.1"
+beautifulsoup4 = "^4.9.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
