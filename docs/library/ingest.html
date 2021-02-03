@@ -107,6 +107,7 @@ class Ingestor:
                 geometryType=destination[&#34;geometry&#34;][&#34;type&#34;],
                 layerName=destination[&#34;name&#34;],
                 accessMode=&#34;overwrite&#34;,
+                makeValid=True,
                 # optional settings
                 SQLStatement=destination.get(&#34;sql&#34;, &#34;&#34;),
                 callback=gdal.TermProgress,
@@ -297,6 +298,7 @@ class Ingestor:
                 geometryType=destination[&#34;geometry&#34;][&#34;type&#34;],
                 layerName=destination[&#34;name&#34;],
                 accessMode=&#34;overwrite&#34;,
+                makeValid=True,
                 # optional settings
                 SQLStatement=destination.get(&#34;sql&#34;, &#34;&#34;),
                 callback=gdal.TermProgress,
@@ -624,6 +626,7 @@ def shapefile(
             geometryType=destination[&#34;geometry&#34;][&#34;type&#34;],
             layerName=destination[&#34;name&#34;],
             accessMode=&#34;overwrite&#34;,
+            makeValid=True,
             # optional settings
             SQLStatement=destination.get(&#34;sql&#34;, &#34;&#34;),
             callback=gdal.TermProgress,
