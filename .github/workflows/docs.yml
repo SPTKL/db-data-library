@@ -9,7 +9,7 @@ on:
       - '.github/workflows/docs.yml'
 
 jobs:
-  deploy:
+  create_docs:
     runs-on: ubuntu-20.04
     container: osgeo/gdal:ubuntu-small-3.2.1
     env:
@@ -34,11 +34,28 @@ jobs:
         python3.8 -m pip install pdoc3
         python3.8 -m pdoc -f -o docs --html library
 
+    - name: Archive artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: docs
+        path: docs/library
+
+  commit:
+    runs-on: ubuntu-20.04
+    needs: create_docs
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v2
+      with:
+        name: docs
+        path: docs/library
+
     - name: Commit files
       continue-on-error: true
       id: commit
       run: |
         ls -l docs/
+        ls -l docs/library
         git status
 
         DATE=$(date)
