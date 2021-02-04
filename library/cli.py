@@ -4,6 +4,7 @@ import time
 from typing import Optional
 
 import typer
+from rich import box
 from rich.console import Console
 from rich.table import Table
 
@@ -105,11 +106,11 @@ def show(
         if output_json:
             console.print(json.dumps(_info, indent=4, default=str))
         else:
-            table = Table(show_header=True, header_style="bold magenta1")
-            table.add_column("Key", justify="left")
-            table.add_column("Version", justify="right")
-            table.add_column("LastModified", justify="right")
-            table.add_column("Url", justify="left")
+            table = Table(show_header=True, header_style="bold magenta1", box=box.SIMPLE)
+            table.add_column("Key", justify="left", style="bold blue")
+            table.add_column("Version", justify="right", style="green")
+            table.add_column("LastModified", justify="right", style="green")
+            table.add_column("Url", justify="left", style="green")
             for info in _info:
                 table.add_row(
                     '/'.join(info['Key'].split('/')[-2:]),
@@ -122,11 +123,18 @@ def show(
     if not detail:
         versions = list(set([info['Metadata']['version'] for info in _info]))
         latest_version = [info['Metadata']['version'] for info in _info if 'latest/config.json' in info['Key']][0]
-        for version in versions:
-            message = version
-            if version == latest_version:
-                message = f'{version} (latest)'
-            console.print(message)
+        output = {
+            'versions': versions,
+            'latest': latest_version
+        }
+        if output_json:
+            console.print(json.dumps(output, indent=4, default=str))
+        else:
+            for version in versions:
+                message = version
+                if version == latest_version:
+                    message = f'{version} (latest)'
+                console.print(message)
 
 def run() -> None:
     """Run commands."""
