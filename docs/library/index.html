@@ -42,8 +42,9 @@ load_dotenv()
 # Initialize pretty print
 pp = pprint.PrettyPrinter(indent=4)
 
-# gdal configure aws s3 connection info
+# gdal pg config, turn off warning
 gdal.SetConfigOption(&#34;PG_USE_COPY&#34;, &#34;YES&#34;)
+gdal.SetConfigOption(&#34;CPL_LOG&#34;, &#34;/dev/null&#34;)
 
 # gdal configure aws s3 connection info
 aws_access_key_id = os.environ[&#34;AWS_ACCESS_KEY_ID&#34;]
