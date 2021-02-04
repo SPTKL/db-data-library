@@ -10,4 +10,4 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-
 
 RUN . $HOME/.poetry/env;\
     poetry config virtualenvs.create false --local;\
-    poetry install
+    poetry install --no-dev

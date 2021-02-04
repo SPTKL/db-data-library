@@ -133,3 +133,7 @@ dmypy.json
 
 # library output folder
 .library
+
+# Other
+docs/
+tests/
