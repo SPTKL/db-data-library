@@ -328,7 +328,7 @@ virtualenv = ">=20.0.8"
 name = "psycopg2-binary"
 version = "2.8.6"
 description = "psycopg2 - Python-PostgreSQL Database Adapter"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
 
@@ -458,7 +458,7 @@ python-versions = ">=3.5"
 name = "sqlalchemy"
 version = "1.3.23"
 description = "Database Abstraction Library"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -561,13 +561,8 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 
 [metadata]
 lock-version = "1.1"
-<<<<<<< HEAD
-python-versions = "^3.7"
-content-hash = "507bb8209e09c973a4a6ab8cda81a092fd0ca29d16a91d736fbde490a4d55223"
-=======
 python-versions = ">=3.7.1,<4.0"
-content-hash = "e082d3f1f49d03152b1753009a67db94e851ca8b80ad9130fccc31d59e615c77"
->>>>>>> 098840d112ce624ed4c8d64c61c4efe68ee7b904
+content-hash = "ec96d6152d8ef0a2067f51612e1246545c5802320cc54589677c9aba5aebcaec"
 
 [metadata.files]
 appdirs = [

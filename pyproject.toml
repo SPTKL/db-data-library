@@ -13,6 +13,8 @@ requests = "^2.25.1"
 boto3 = "^1.16.58"
 python-dotenv = "^0.15.0"
 GDAL = "^3.2.1"
+pandas = "^1.2.1"
+beautifulsoup4 = "^4.9.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
