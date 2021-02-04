@@ -83,6 +83,7 @@ def delete(
 @app.command()
 def show(
     name: str,
+    detail: bool = typer.Option(False, "--detail", help="detailed info including key, version and last modified"),
     output_json: bool = typer.Option(False, "--json", help="output info in json format"),
 ) -> None:
 # fmt: on
@@ -90,29 +91,42 @@ def show(
     Display files available in the s3 library for a given dataset.
     Options to display in table format for json format
     """
-    _list = s3.ls(f"datasets/{name}/", detail=True)
-    _keys = [l['Key'] for l in _list]
+    _keys = s3.ls(f"datasets/{name}/")
     _info = []
     for key in _keys:
         info = s3.info(key)
         info.pop('ResponseMetadata')
         info['Key'] = key
+        info['Url'] = f'{aws_s3_endpoint}/{aws_s3_bucket}/{key}'
+        info['LastModified'] = info['LastModified'].isoformat()
         _info.append(info)
 
-    if output_json:
-        console.print(json.dumps(_info, indent=4, default=str))
-    else:
-        table = Table(show_header=True, header_style="bold magenta1")
-        table.add_column("Key", justify="left")
-        table.add_column("Version", justify="right", width=10)
-        table.add_column("LastModified", style="dim", justify="right")
-        for info in _info:
-            table.add_row(
-                info['Key'],
-                info['Metadata']['version'],
-                info['LastModified'].strftime("%Y/%m/%d, %H:%M:%S"),
-            )
-        console.print(table)
+    if detail:
+        if output_json:
+            console.print(json.dumps(_info, indent=4, default=str))
+        else:
+            table = Table(show_header=True, header_style="bold magenta1")
+            table.add_column("Key", justify="left")
+            table.add_column("Version", justify="right", width=10)
+            table.add_column("LastModified", style="dim", justify="right")
+            table.add_column("Url", style="dim", justify="left")
+            for info in _info:
+                table.add_row(
+                    info['Key'],
+                    info['Metadata']['version'],
+                    info['LastModified'],
+                    info['Url'],
+                )
+            console.print(table)
+
+    if not detail:
+        versions = list(set([info['Metadata']['version'] for info in _info]))
+        latest_version = [info['Metadata']['version'] for info in _info if 'latest/config.json' in info['Key']][0]
+        for version in versions:
+            message = version
+            if version == latest_version:
+                message = f'{version} (latest)'
+            console.print(message)
 
 def run() -> None:
     """Run commands."""

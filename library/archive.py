@@ -83,6 +83,7 @@ class Archive:
 
         _path = f"{Path(__file__).parent}/templates/{name}.yml"
         path = _path if name and os.path.isfile(_path) else path
+        name = os.path.basename(path).split(".")[0]
 
         # Get ingestor by format
         ingestor_of_format = getattr(self.ingestor, output_format)
@@ -107,7 +108,7 @@ class Archive:
 
                 # Find all files in latest where the version (stored in s3 metadata)
                 # does not match the version of the file currently getting added to latest
-                keys_in_latest = self.s3.ls(key.rsplit("/", 1)[0])
+                keys_in_latest = self.s3.ls(f"datasets/{name}/latest")
                 diff_version = [
                     k
                     for k in keys_in_latest
