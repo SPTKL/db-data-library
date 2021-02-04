@@ -1,5 +1,5 @@
 dataset:
-  name: &name nypl_libraries
+  name: &name dpr_capitalprojects
   version: "{{ version }}"
   acl: public-read
   source:
@@ -7,8 +7,9 @@ dataset:
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
-      - "X_POSSIBLE_NAMES=lon"
-      - "Y_POSSIBLE_NAMES=lat"
+      - "GEOM_POSSIBLE_NAMES=the_geom"
+      - "X_POSSIBLE_NAMES=longitude,Longitude,Lon,lon,x"
+      - "Y_POSSIBLE_NAMES=latitude,Latitude,Lat,lat,y"
     geometry:
       SRS: EPSG:4326
       type: POINT
@@ -25,8 +26,7 @@ dataset:
 
   info:
     description: |
-      NYPL libraries is a dataset that we webscrape and store
-      in a csv format, checkout the nypl website(https://www.nypl.org/locations)
-      for more information
-    url: "https://www.nypl.org/locations"
+      ### DPR Capital Projects
+      check [here] for metadata
+    url: "https://www.nycgovparks.org/bigapps"
     dependents: []

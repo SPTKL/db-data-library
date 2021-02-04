@@ -1,7 +1,7 @@
 # db-data-library
 
 ## Instructions:
-1. Make sure you have GDAL installed (we are using version `2.4.0+dfsg-1+b1`)
+1. Make sure you have GDAL installed (we are using version `3.2.1+dfsg-1+b1`)
 ```bash
 sudo apt install -y gdal-bin libgdal-dev python3-gdal
 ```
