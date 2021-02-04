@@ -1,3 +1,4 @@
+import importlib
 import json
 from datetime import datetime
 
@@ -43,7 +44,7 @@ class Config:
 
     @property
     def source_type(self) -> str:
-        """determine the type of the source, either url or socrata"""
+        """determine the type of the source, either url, socrata or script"""
         template = self.parsed_unrendered_template
         source = template["dataset"]["source"]
         return list(source.keys())[0]
@@ -77,6 +78,27 @@ class Config:
     @property
     def compute(self) -> dict:
         """based on given yml file, compute the configuration"""
+        if self.source_type == "script":
+            if self.version:
+                version = self.version
+            else:
+                version = self.version_today
+            config = self.parsed_rendered_template(version=version)
+            _config = self.parsed_unrendered_template
+
+            script_name = _config["dataset"]["source"]["script"]
+            module = importlib.import_module(f"library.script.{script_name}")
+            scriptor = module.Scriptor()
+            url = scriptor.runner()
+
+            options = config["dataset"]["source"]["options"]
+            geometry = config["dataset"]["source"]["geometry"]
+            config["dataset"]["source"] = {
+                "url": {"path": url, "subpath": ""},
+                "options": options,
+                "geometry": geometry,
+            }
+
         if self.source_type == "url":
             # Load unrendered template to check for yml-specified
             # version (_version)

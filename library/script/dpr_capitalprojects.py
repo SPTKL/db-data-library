@@ -1,0 +1,42 @@
+import json
+
+import pandas as pd
+import requests
+
+from . import df_to_tempfile
+
+
+class Scriptor:
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+
+    def ingest(self) -> pd.DataFrame:
+        url = "https://www.nycgovparks.org/bigapps/DPR_CapitalProjectTracker_001.json"
+        data = json.loads(requests.get(url).content)
+        df = pd.DataFrame(data)
+        df = df[["TrackerID", "FMSID", "Title", "TotalFunding", "Locations"]]
+        df["Locations"] = df["Locations"].apply(lambda x: x.get("Location"))
+        df2 = df.drop(columns=["Locations"]).join(df["Locations"].explode().to_frame())
+        horiz_exploded = pd.json_normalize(df2["Locations"])
+        horiz_exploded.index = df2.index
+        df3 = pd.concat([df2, horiz_exploded], axis=1).drop(columns=["Locations"])
+        df3 = df3.rename(
+            columns={
+                "TrackerID": "proj_id",
+                "FMSID": "fmsid",
+                "Title": "desc",
+                "TotalFunding": "total_funding",
+                "ParkID": "park_id",
+                "Latitude": "lat",
+                "Longitude": "lon",
+            }
+        )
+        df3 = df3[
+            ["proj_id", "fmsid", "desc", "total_funding", "park_id", "lat", "lon"]
+        ]
+        return df3
+
+    def runner(self) -> str:
+        df = self.ingest()
+        local_path = df_to_tempfile(df)
+        return local_path

@@ -1,5 +1,5 @@
 dataset:
-  name: &name nypl_libraries
+  name: &name uscourts_courts
   version: "{{ version }}"
   acl: public-read
   source:
@@ -25,8 +25,7 @@ dataset:
 
   info:
     description: |
-      NYPL libraries is a dataset that we webscrape and store
-      in a csv format, checkout the nypl website(https://www.nypl.org/locations)
-      for more information
-    url: "https://www.nypl.org/locations"
+      ### Federal Courts
+      in NYC, used for facilities database
+    url: "https://www.uscourts.gov/"
     dependents: []

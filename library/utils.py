@@ -1,3 +1,4 @@
+import os
 from urllib.parse import urlparse
 
 
@@ -28,6 +29,9 @@ def format_url(path: str, subpath: str) -> str:
     Adds "vsicurl" if [url] contains http
     - https://rawgithubcontent.come/somerepo/somefile.csv
     """
+    if os.path.isfile(path):
+        return path
+
     if len(subpath) > 0:
         subpath = subpath[1:] if subpath[0] == "/" else subpath
     path = path[:-1] if path[-1] == "/" else path
