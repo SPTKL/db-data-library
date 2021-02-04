@@ -15,6 +15,7 @@ python-dotenv = "^0.15.0"
 GDAL = "^3.2.1"
 pandas = "^1.2.1"
 beautifulsoup4 = "^4.9.3"
+rich = "^9.10.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
