@@ -3,6 +3,9 @@ import pprint
 
 from dotenv import load_dotenv
 from osgeo import gdal
+from rich.traceback import install
+
+install()
 
 # Load environmental variables
 load_dotenv()
