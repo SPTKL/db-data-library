@@ -26,7 +26,8 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import json
+<pre><code class="python">import importlib
+import json
 from datetime import datetime
 
 import requests
@@ -71,7 +72,7 @@ class Config:
 
     @property
     def source_type(self) -&gt; str:
-        &#34;&#34;&#34;determine the type of the source, either url or socrata&#34;&#34;&#34;
+        &#34;&#34;&#34;determine the type of the source, either url, socrata or script&#34;&#34;&#34;
         template = self.parsed_unrendered_template
         source = template[&#34;dataset&#34;][&#34;source&#34;]
         return list(source.keys())[0]
@@ -105,6 +106,27 @@ class Config:
     @property
     def compute(self) -&gt; dict:
         &#34;&#34;&#34;based on given yml file, compute the configuration&#34;&#34;&#34;
+        if self.source_type == &#34;script&#34;:
+            if self.version:
+                version = self.version
+            else:
+                version = self.version_today
+            config = self.parsed_rendered_template(version=version)
+            _config = self.parsed_unrendered_template
+
+            script_name = _config[&#34;dataset&#34;][&#34;source&#34;][&#34;script&#34;]
+            module = importlib.import_module(f&#34;library.script.{script_name}&#34;)
+            scriptor = module.Scriptor()
+            url = scriptor.runner()
+
+            options = config[&#34;dataset&#34;][&#34;source&#34;][&#34;options&#34;]
+            geometry = config[&#34;dataset&#34;][&#34;source&#34;][&#34;geometry&#34;]
+            config[&#34;dataset&#34;][&#34;source&#34;] = {
+                &#34;url&#34;: {&#34;path&#34;: url, &#34;subpath&#34;: &#34;&#34;},
+                &#34;options&#34;: options,
+                &#34;geometry&#34;: geometry,
+            }
+
         if self.source_type == &#34;url&#34;:
             # Load unrendered template to check for yml-specified
             # version (_version)
@@ -233,7 +255,7 @@ file to pass into the Ingestor</p></div>
 
     @property
     def source_type(self) -&gt; str:
-        &#34;&#34;&#34;determine the type of the source, either url or socrata&#34;&#34;&#34;
+        &#34;&#34;&#34;determine the type of the source, either url, socrata or script&#34;&#34;&#34;
         template = self.parsed_unrendered_template
         source = template[&#34;dataset&#34;][&#34;source&#34;]
         return list(source.keys())[0]
@@ -267,6 +289,27 @@ file to pass into the Ingestor</p></div>
     @property
     def compute(self) -&gt; dict:
         &#34;&#34;&#34;based on given yml file, compute the configuration&#34;&#34;&#34;
+        if self.source_type == &#34;script&#34;:
+            if self.version:
+                version = self.version
+            else:
+                version = self.version_today
+            config = self.parsed_rendered_template(version=version)
+            _config = self.parsed_unrendered_template
+
+            script_name = _config[&#34;dataset&#34;][&#34;source&#34;][&#34;script&#34;]
+            module = importlib.import_module(f&#34;library.script.{script_name}&#34;)
+            scriptor = module.Scriptor()
+            url = scriptor.runner()
+
+            options = config[&#34;dataset&#34;][&#34;source&#34;][&#34;options&#34;]
+            geometry = config[&#34;dataset&#34;][&#34;source&#34;][&#34;geometry&#34;]
+            config[&#34;dataset&#34;][&#34;source&#34;] = {
+                &#34;url&#34;: {&#34;path&#34;: url, &#34;subpath&#34;: &#34;&#34;},
+                &#34;options&#34;: options,
+                &#34;geometry&#34;: geometry,
+            }
+
         if self.source_type == &#34;url&#34;:
             # Load unrendered template to check for yml-specified
             # version (_version)
@@ -356,6 +399,27 @@ file to pass into the Ingestor</p></div>
 <pre><code class="python">@property
 def compute(self) -&gt; dict:
     &#34;&#34;&#34;based on given yml file, compute the configuration&#34;&#34;&#34;
+    if self.source_type == &#34;script&#34;:
+        if self.version:
+            version = self.version
+        else:
+            version = self.version_today
+        config = self.parsed_rendered_template(version=version)
+        _config = self.parsed_unrendered_template
+
+        script_name = _config[&#34;dataset&#34;][&#34;source&#34;][&#34;script&#34;]
+        module = importlib.import_module(f&#34;library.script.{script_name}&#34;)
+        scriptor = module.Scriptor()
+        url = scriptor.runner()
+
+        options = config[&#34;dataset&#34;][&#34;source&#34;][&#34;options&#34;]
+        geometry = config[&#34;dataset&#34;][&#34;source&#34;][&#34;geometry&#34;]
+        config[&#34;dataset&#34;][&#34;source&#34;] = {
+            &#34;url&#34;: {&#34;path&#34;: url, &#34;subpath&#34;: &#34;&#34;},
+            &#34;options&#34;: options,
+            &#34;geometry&#34;: geometry,
+        }
+
     if self.source_type == &#34;url&#34;:
         # Load unrendered template to check for yml-specified
         # version (_version)
@@ -473,14 +537,14 @@ def parsed_unrendered_template(self) -&gt; dict:
 </dd>
 <dt id="library.config.Config.source_type"><code class="name">var <span class="ident">source_type</span> : str</code></dt>
 <dd>
-<div class="desc"><p>determine the type of the source, either url or socrata</p></div>
+<div class="desc"><p>determine the type of the source, either url, socrata or script</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def source_type(self) -&gt; str:
-    &#34;&#34;&#34;determine the type of the source, either url or socrata&#34;&#34;&#34;
+    &#34;&#34;&#34;determine the type of the source, either url, socrata or script&#34;&#34;&#34;
     template = self.parsed_unrendered_template
     source = template[&#34;dataset&#34;][&#34;source&#34;]
     return list(source.keys())[0]</code></pre>
