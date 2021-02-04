@@ -98,7 +98,7 @@ def show(
         info.pop('ResponseMetadata')
         info['Key'] = key
         info['Url'] = f'{aws_s3_endpoint}/{aws_s3_bucket}/{key}'
-        info['LastModified'] = info['LastModified'].isoformat()
+        info['LastModified'] = info['LastModified'].isoformat()[:10]
         _info.append(info)
 
     if detail:
@@ -107,12 +107,12 @@ def show(
         else:
             table = Table(show_header=True, header_style="bold magenta1")
             table.add_column("Key", justify="left")
-            table.add_column("Version", justify="right", width=10)
-            table.add_column("LastModified", style="dim", justify="right")
-            table.add_column("Url", style="dim", justify="left")
+            table.add_column("Version", justify="right")
+            table.add_column("LastModified", justify="right")
+            table.add_column("Url", justify="left")
             for info in _info:
                 table.add_row(
-                    info['Key'],
+                    '/'.join(info['Key'].split('/')[-2:]),
                     info['Metadata']['version'],
                     info['LastModified'],
                     info['Url'],
