@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from osgeo import gdal
 from rich.traceback import install
 
+# Use rich to handle exceptions
 install()
 
 # Load environmental variables
