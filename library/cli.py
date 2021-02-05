@@ -1,13 +1,18 @@
+import json
 import os
 import time
 from typing import Optional
 
 import typer
+from rich import box
+from rich.console import Console
+from rich.table import Table
 
 from . import aws_access_key_id, aws_s3_bucket, aws_s3_endpoint, aws_secret_access_key
 from .archive import Archive
 from .s3 import S3
 
+console = Console()
 app = typer.Typer()
 s3 = S3(aws_access_key_id, aws_secret_access_key, aws_s3_endpoint, aws_s3_bucket)
 
@@ -79,29 +84,57 @@ def delete(
 @app.command()
 def show(
     name: str,
-    uploaded: bool = typer.Option(False, "--uploaded", "-u", help="Show upload dates for each file"),
-    version: bool = typer.Option(False, "--version", "-v", help="Show version for each file")
+    detail: bool = typer.Option(False, "--detail", help="detailed info including key, version and last modified"),
+    output_json: bool = typer.Option(False, "--json", help="output info in json format"),
 ) -> None:
 # fmt: on
     """
-    Display files available in the s3 library for a given dataset. Option to display latest upload
-    date for each file.
+    Display files available in the s3 library for a given dataset.
+    Options to display in table format for json format
     """
-    if not uploaded and not version:
-        keys = s3.ls(f"datasets/{name}/")
-        message = "\n".join([k.replace(f"datasets/{name}/", "") for k in keys])
-        typer.echo(message)
-    if uploaded:
-        keys = s3.ls(f"datasets/{name}/", detail=True)
-        upload_dates = {k['Key'].replace(f"datasets/{name}/", ""):str(k['LastModified']) for k in keys}
-        message = "\n".join([f"File: {f} \t Last upload date: {d}" for f, d in upload_dates.items()])
-        typer.echo(message)
-    if version:
-        keys = s3.ls(f"datasets/{name}/")
-        versions = {k.replace(f"datasets/{name}/", ""):s3.info(k)["Metadata"]["version"] for k in keys}
-        message = "\n".join([f"File: {f} \t Version: {v}" for f, v in versions.items()])
-        typer.echo(message)
+    _keys = s3.ls(f"datasets/{name}/")
+    _info = []
+    for key in _keys:
+        info = s3.info(key)
+        info.pop('ResponseMetadata')
+        info['Key'] = key
+        info['Url'] = f'{aws_s3_endpoint}/{aws_s3_bucket}/{key}'
+        info['LastModified'] = info['LastModified'].isoformat()[:10]
+        _info.append(info)
 
+    if detail:
+        if output_json:
+            console.print(json.dumps(_info, indent=4, default=str))
+        else:
+            table = Table(show_header=True, header_style="bold magenta1", box=box.SIMPLE)
+            table.add_column("Key", justify="left", style="bold blue")
+            table.add_column("Version", justify="right", style="green")
+            table.add_column("LastModified", justify="right", style="green")
+            table.add_column("Url", justify="left", style="green")
+            for info in _info:
+                table.add_row(
+                    '/'.join(info['Key'].split('/')[-2:]),
+                    info['Metadata']['version'],
+                    info['LastModified'],
+                    info['Url'],
+                )
+            console.print(table)
+
+    if not detail:
+        versions = list(set([info['Metadata']['version'] for info in _info]))
+        latest_version = [info['Metadata']['version'] for info in _info if 'latest/config.json' in info['Key']][0]
+        output = {
+            'versions': versions,
+            'latest': latest_version
+        }
+        if output_json:
+            console.print(json.dumps(output, indent=4, default=str))
+        else:
+            for version in versions:
+                message = version
+                if version == latest_version:
+                    message = f'{version} (latest)'
+                console.print(message)
 
 def run() -> None:
     """Run commands."""
