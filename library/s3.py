@@ -45,7 +45,7 @@ class S3:
         self, path: str, key: str, acl: str = "public-read", metadata: dict = {}
     ) -> dict:
         with Progress(
-            SpinnerColumn(style="white"),
+            SpinnerColumn(spinner_name="earth"),
             TextColumn("[progress.description]{task.description}"),
             BarColumn(bar_width=30),
             TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
