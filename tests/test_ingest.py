@@ -1,13 +1,8 @@
 import os
 
-from sqlalchemy import create_engine
-
-from library import recipe_engine
 from library.ingest import Ingestor
 
-from . import test_root_path
-
-pg = create_engine(recipe_engine)
+from . import pg, recipe_engine, test_root_path
 
 
 def test_ingest_postgres():

@@ -53,9 +53,9 @@ def test_s3_info():
     # Pull file info
     info = s3.info(key=f"test/{version}/test.yml")
     if info:
-        pp.pprint(info)
+        console.print(info)
     else:
-        pp.pprint("File exists, but no info retrieved.")
+        console.print("File exists, but no info retrieved.")
     s3.rm(f"test/{version}/test.yml")
 
 
