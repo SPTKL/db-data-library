@@ -27,10 +27,20 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">import os
+import sys
 import zipfile
 from functools import wraps
+from math import floor
 
 from osgeo import gdal
+from rich.progress import (
+    BarColumn,
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    TimeElapsedColumn,
+    TimeRemainingColumn,
+)
 
 from . import base_path
 from .config import Config
@@ -97,21 +107,36 @@ class Ingestor:
                 output_files.append(f&#34;{folder_path}/config.yml&#34;)
 
             # Initiate vector translate
-            gdal.VectorTranslate(
-                dstDS,
-                srcDS,
-                format=output_format,
-                layerCreationOptions=destination[&#34;options&#34;],
-                dstSRS=destination[&#34;geometry&#34;][&#34;SRS&#34;],
-                srcSRS=source[&#34;geometry&#34;][&#34;SRS&#34;],
-                geometryType=destination[&#34;geometry&#34;][&#34;type&#34;],
-                layerName=destination[&#34;name&#34;],
-                accessMode=&#34;overwrite&#34;,
-                makeValid=True,
-                # optional settings
-                SQLStatement=destination.get(&#34;sql&#34;, &#34;&#34;),
-                callback=gdal.TermProgress,
-            )
+            with Progress(
+                SpinnerColumn(spinner_name=&#34;earth&#34;),
+                TextColumn(&#34;[progress.description]{task.description}&#34;),
+                BarColumn(bar_width=30),
+                TextColumn(&#34;[progress.percentage]{task.percentage:&gt;3.0f}%&#34;),
+                TimeRemainingColumn(),
+                transient=True,
+            ) as progress:
+                task = progress.add_task(
+                    f&#34;[green]Ingesting [bold]{destination[&#39;name&#39;]}[/bold]&#34;, total=1000
+                )
+
+                def update_progress(complete, message, unknown):
+                    progress.update(task, completed=floor(complete * 1000))
+
+                gdal.VectorTranslate(
+                    dstDS,
+                    srcDS,
+                    format=output_format,
+                    layerCreationOptions=destination[&#34;options&#34;],
+                    dstSRS=destination[&#34;geometry&#34;][&#34;SRS&#34;],
+                    srcSRS=source[&#34;geometry&#34;][&#34;SRS&#34;],
+                    geometryType=destination[&#34;geometry&#34;][&#34;type&#34;],
+                    layerName=destination[&#34;name&#34;],
+                    accessMode=&#34;overwrite&#34;,
+                    makeValid=True,
+                    # optional settings
+                    SQLStatement=destination.get(&#34;sql&#34;, &#34;&#34;),
+                    callback=update_progress,
+                )
 
             # Compression if needed
             if compress and destination_path:
@@ -288,21 +313,36 @@ class Ingestor:
                 output_files.append(f&#34;{folder_path}/config.yml&#34;)
 
             # Initiate vector translate
-            gdal.VectorTranslate(
-                dstDS,
-                srcDS,
-                format=output_format,
-                layerCreationOptions=destination[&#34;options&#34;],
-                dstSRS=destination[&#34;geometry&#34;][&#34;SRS&#34;],
-                srcSRS=source[&#34;geometry&#34;][&#34;SRS&#34;],
-                geometryType=destination[&#34;geometry&#34;][&#34;type&#34;],
-                layerName=destination[&#34;name&#34;],
-                accessMode=&#34;overwrite&#34;,
-                makeValid=True,
-                # optional settings
-                SQLStatement=destination.get(&#34;sql&#34;, &#34;&#34;),
-                callback=gdal.TermProgress,
-            )
+            with Progress(
+                SpinnerColumn(spinner_name=&#34;earth&#34;),
+                TextColumn(&#34;[progress.description]{task.description}&#34;),
+                BarColumn(bar_width=30),
+                TextColumn(&#34;[progress.percentage]{task.percentage:&gt;3.0f}%&#34;),
+                TimeRemainingColumn(),
+                transient=True,
+            ) as progress:
+                task = progress.add_task(
+                    f&#34;[green]Ingesting [bold]{destination[&#39;name&#39;]}[/bold]&#34;, total=1000
+                )
+
+                def update_progress(complete, message, unknown):
+                    progress.update(task, completed=floor(complete * 1000))
+
+                gdal.VectorTranslate(
+                    dstDS,
+                    srcDS,
+                    format=output_format,
+                    layerCreationOptions=destination[&#34;options&#34;],
+                    dstSRS=destination[&#34;geometry&#34;][&#34;SRS&#34;],
+                    srcSRS=source[&#34;geometry&#34;][&#34;SRS&#34;],
+                    geometryType=destination[&#34;geometry&#34;][&#34;type&#34;],
+                    layerName=destination[&#34;name&#34;],
+                    accessMode=&#34;overwrite&#34;,
+                    makeValid=True,
+                    # optional settings
+                    SQLStatement=destination.get(&#34;sql&#34;, &#34;&#34;),
+                    callback=update_progress,
+                )
 
             # Compression if needed
             if compress and destination_path:
@@ -616,21 +656,36 @@ def shapefile(
             output_files.append(f&#34;{folder_path}/config.yml&#34;)
 
         # Initiate vector translate
-        gdal.VectorTranslate(
-            dstDS,
-            srcDS,
-            format=output_format,
-            layerCreationOptions=destination[&#34;options&#34;],
-            dstSRS=destination[&#34;geometry&#34;][&#34;SRS&#34;],
-            srcSRS=source[&#34;geometry&#34;][&#34;SRS&#34;],
-            geometryType=destination[&#34;geometry&#34;][&#34;type&#34;],
-            layerName=destination[&#34;name&#34;],
-            accessMode=&#34;overwrite&#34;,
-            makeValid=True,
-            # optional settings
-            SQLStatement=destination.get(&#34;sql&#34;, &#34;&#34;),
-            callback=gdal.TermProgress,
-        )
+        with Progress(
+            SpinnerColumn(spinner_name=&#34;earth&#34;),
+            TextColumn(&#34;[progress.description]{task.description}&#34;),
+            BarColumn(bar_width=30),
+            TextColumn(&#34;[progress.percentage]{task.percentage:&gt;3.0f}%&#34;),
+            TimeRemainingColumn(),
+            transient=True,
+        ) as progress:
+            task = progress.add_task(
+                f&#34;[green]Ingesting [bold]{destination[&#39;name&#39;]}[/bold]&#34;, total=1000
+            )
+
+            def update_progress(complete, message, unknown):
+                progress.update(task, completed=floor(complete * 1000))
+
+            gdal.VectorTranslate(
+                dstDS,
+                srcDS,
+                format=output_format,
+                layerCreationOptions=destination[&#34;options&#34;],
+                dstSRS=destination[&#34;geometry&#34;][&#34;SRS&#34;],
+                srcSRS=source[&#34;geometry&#34;][&#34;SRS&#34;],
+                geometryType=destination[&#34;geometry&#34;][&#34;type&#34;],
+                layerName=destination[&#34;name&#34;],
+                accessMode=&#34;overwrite&#34;,
+                makeValid=True,
+                # optional settings
+                SQLStatement=destination.get(&#34;sql&#34;, &#34;&#34;),
+                callback=update_progress,
+            )
 
         # Compression if needed
         if compress and destination_path:

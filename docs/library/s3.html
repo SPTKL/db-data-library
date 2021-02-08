@@ -27,13 +27,21 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">import logging
+import os
 from pathlib import Path
 
 import boto3
 from botocore.exceptions import ClientError, ParamValidationError
+from rich.progress import (
+    BarColumn,
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    TimeElapsedColumn,
+    TimeRemainingColumn,
+)
 
 from . import pp
-from .progressbar import ProgressPercentage
 
 
 class S3:
@@ -64,13 +72,33 @@ class S3:
     def put(
         self, path: str, key: str, acl: str = &#34;public-read&#34;, metadata: dict = {}
     ) -&gt; dict:
-        try:
-            response = self.client.upload_file(
-                path, self.bucket, key, ExtraArgs={&#34;ACL&#34;: acl, &#34;Metadata&#34;: metadata}
+        with Progress(
+            SpinnerColumn(spinner_name=&#34;earth&#34;),
+            TextColumn(&#34;[progress.description]{task.description}&#34;),
+            BarColumn(bar_width=30),
+            TextColumn(&#34;[progress.percentage]{task.percentage:&gt;3.0f}%&#34;),
+            TimeRemainingColumn(),
+            transient=True,
+        ) as progress:
+            size = os.stat(path).st_size
+            task = progress.add_task(
+                f&#34;[green]Uploading [bold]{os.path.basename(path)}[/bold]&#34;, total=size
             )
-        except ClientError as e:
-            logging.error(e)
-            return {}
+
+            def update_progress(complete):
+                progress.update(task, completed=complete)
+
+            try:
+                response = self.client.upload_file(
+                    path,
+                    self.bucket,
+                    key,
+                    ExtraArgs={&#34;ACL&#34;: acl, &#34;Metadata&#34;: metadata},
+                    Callback=update_progress,
+                )
+            except ClientError as e:
+                logging.error(e)
+                return {}
         return response
 
     def exists(self, key: str):
@@ -227,13 +255,33 @@ class S3:
     def put(
         self, path: str, key: str, acl: str = &#34;public-read&#34;, metadata: dict = {}
     ) -&gt; dict:
-        try:
-            response = self.client.upload_file(
-                path, self.bucket, key, ExtraArgs={&#34;ACL&#34;: acl, &#34;Metadata&#34;: metadata}
+        with Progress(
+            SpinnerColumn(spinner_name=&#34;earth&#34;),
+            TextColumn(&#34;[progress.description]{task.description}&#34;),
+            BarColumn(bar_width=30),
+            TextColumn(&#34;[progress.percentage]{task.percentage:&gt;3.0f}%&#34;),
+            TimeRemainingColumn(),
+            transient=True,
+        ) as progress:
+            size = os.stat(path).st_size
+            task = progress.add_task(
+                f&#34;[green]Uploading [bold]{os.path.basename(path)}[/bold]&#34;, total=size
             )
-        except ClientError as e:
-            logging.error(e)
-            return {}
+
+            def update_progress(complete):
+                progress.update(task, completed=complete)
+
+            try:
+                response = self.client.upload_file(
+                    path,
+                    self.bucket,
+                    key,
+                    ExtraArgs={&#34;ACL&#34;: acl, &#34;Metadata&#34;: metadata},
+                    Callback=update_progress,
+                )
+            except ClientError as e:
+                logging.error(e)
+                return {}
         return response
 
     def exists(self, key: str):
@@ -521,13 +569,33 @@ Calls cp then rm</p>
 <pre><code class="python">def put(
     self, path: str, key: str, acl: str = &#34;public-read&#34;, metadata: dict = {}
 ) -&gt; dict:
-    try:
-        response = self.client.upload_file(
-            path, self.bucket, key, ExtraArgs={&#34;ACL&#34;: acl, &#34;Metadata&#34;: metadata}
+    with Progress(
+        SpinnerColumn(spinner_name=&#34;earth&#34;),
+        TextColumn(&#34;[progress.description]{task.description}&#34;),
+        BarColumn(bar_width=30),
+        TextColumn(&#34;[progress.percentage]{task.percentage:&gt;3.0f}%&#34;),
+        TimeRemainingColumn(),
+        transient=True,
+    ) as progress:
+        size = os.stat(path).st_size
+        task = progress.add_task(
+            f&#34;[green]Uploading [bold]{os.path.basename(path)}[/bold]&#34;, total=size
         )
-    except ClientError as e:
-        logging.error(e)
-        return {}
+
+        def update_progress(complete):
+            progress.update(task, completed=complete)
+
+        try:
+            response = self.client.upload_file(
+                path,
+                self.bucket,
+                key,
+                ExtraArgs={&#34;ACL&#34;: acl, &#34;Metadata&#34;: metadata},
+                Callback=update_progress,
+            )
+        except ClientError as e:
+            logging.error(e)
+            return {}
     return response</code></pre>
 </details>
 </dd>
