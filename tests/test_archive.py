@@ -1,14 +1,10 @@
 import os
 
-from sqlalchemy import create_engine
-
-from library import recipe_engine
 from library.archive import Archive
 
-from . import test_root_path
+from . import pg, recipe_engine, test_root_path
 
 a = Archive()
-pg = create_engine(recipe_engine)
 
 
 def start_clean(local_files: list, s3_files: list):
