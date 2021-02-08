@@ -1,11 +1,19 @@
 import logging
+import os
 from pathlib import Path
 
 import boto3
 from botocore.exceptions import ClientError, ParamValidationError
+from rich.progress import (
+    BarColumn,
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    TimeElapsedColumn,
+    TimeRemainingColumn,
+)
 
 from . import pp
-from .progressbar import ProgressPercentage
 
 
 class S3:
@@ -36,13 +44,33 @@ class S3:
     def put(
         self, path: str, key: str, acl: str = "public-read", metadata: dict = {}
     ) -> dict:
-        try:
-            response = self.client.upload_file(
-                path, self.bucket, key, ExtraArgs={"ACL": acl, "Metadata": metadata}
+        with Progress(
+            SpinnerColumn(spinner_name="earth"),
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(bar_width=30),
+            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+            TimeRemainingColumn(),
+            transient=True,
+        ) as progress:
+            size = os.stat(path).st_size
+            task = progress.add_task(
+                f"[green]Uploading [bold]{os.path.basename(path)}[/bold]", total=size
             )
-        except ClientError as e:
-            logging.error(e)
-            return {}
+
+            def update_progress(complete):
+                progress.update(task, completed=complete)
+
+            try:
+                response = self.client.upload_file(
+                    path,
+                    self.bucket,
+                    key,
+                    ExtraArgs={"ACL": acl, "Metadata": metadata},
+                    Callback=update_progress,
+                )
+            except ClientError as e:
+                logging.error(e)
+                return {}
         return response
 
     def exists(self, key: str):

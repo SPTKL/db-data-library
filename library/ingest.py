@@ -1,8 +1,18 @@
 import os
+import sys
 import zipfile
 from functools import wraps
+from math import floor
 
 from osgeo import gdal
+from rich.progress import (
+    BarColumn,
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    TimeElapsedColumn,
+    TimeRemainingColumn,
+)
 
 from . import base_path
 from .config import Config
@@ -69,21 +79,36 @@ class Ingestor:
                 output_files.append(f"{folder_path}/config.yml")
 
             # Initiate vector translate
-            gdal.VectorTranslate(
-                dstDS,
-                srcDS,
-                format=output_format,
-                layerCreationOptions=destination["options"],
-                dstSRS=destination["geometry"]["SRS"],
-                srcSRS=source["geometry"]["SRS"],
-                geometryType=destination["geometry"]["type"],
-                layerName=destination["name"],
-                accessMode="overwrite",
-                makeValid=True,
-                # optional settings
-                SQLStatement=destination.get("sql", ""),
-                callback=gdal.TermProgress,
-            )
+            with Progress(
+                SpinnerColumn(spinner_name="earth"),
+                TextColumn("[progress.description]{task.description}"),
+                BarColumn(bar_width=30),
+                TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+                TimeRemainingColumn(),
+                transient=True,
+            ) as progress:
+                task = progress.add_task(
+                    f"[green]Ingesting [bold]{destination['name']}[/bold]", total=1000
+                )
+
+                def update_progress(complete, message, unknown):
+                    progress.update(task, completed=floor(complete * 1000))
+
+                gdal.VectorTranslate(
+                    dstDS,
+                    srcDS,
+                    format=output_format,
+                    layerCreationOptions=destination["options"],
+                    dstSRS=destination["geometry"]["SRS"],
+                    srcSRS=source["geometry"]["SRS"],
+                    geometryType=destination["geometry"]["type"],
+                    layerName=destination["name"],
+                    accessMode="overwrite",
+                    makeValid=True,
+                    # optional settings
+                    SQLStatement=destination.get("sql", ""),
+                    callback=update_progress,
+                )
 
             # Compression if needed
             if compress and destination_path:
