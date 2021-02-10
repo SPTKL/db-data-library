@@ -98,6 +98,9 @@ class Ingestor:
                 fields=destination[&#34;fields&#34;],
             )
 
+            layerName = srcDS.GetLayer(0).GetName()
+            sql = destination.get(&#34;sql&#34;, &#34;&#34;).replace(&#34;@filename&#34;, layerName)
+
             # Create output folder and output config
             if folder_path and output_suffix:
                 os.makedirs(folder_path, exist_ok=True)
@@ -134,7 +137,8 @@ class Ingestor:
                     accessMode=&#34;overwrite&#34;,
                     makeValid=True,
                     # optional settings
-                    SQLStatement=destination.get(&#34;sql&#34;, &#34;&#34;),
+                    SQLStatement=sql,
+                    SQLDialect=&#34;sqlite&#34;,
                     callback=update_progress,
                 )
 
@@ -304,6 +308,9 @@ class Ingestor:
                 fields=destination[&#34;fields&#34;],
             )
 
+            layerName = srcDS.GetLayer(0).GetName()
+            sql = destination.get(&#34;sql&#34;, &#34;&#34;).replace(&#34;@filename&#34;, layerName)
+
             # Create output folder and output config
             if folder_path and output_suffix:
                 os.makedirs(folder_path, exist_ok=True)
@@ -340,7 +347,8 @@ class Ingestor:
                     accessMode=&#34;overwrite&#34;,
                     makeValid=True,
                     # optional settings
-                    SQLStatement=destination.get(&#34;sql&#34;, &#34;&#34;),
+                    SQLStatement=sql,
+                    SQLDialect=&#34;sqlite&#34;,
                     callback=update_progress,
                 )
 
@@ -647,6 +655,9 @@ def shapefile(
             fields=destination[&#34;fields&#34;],
         )
 
+        layerName = srcDS.GetLayer(0).GetName()
+        sql = destination.get(&#34;sql&#34;, &#34;&#34;).replace(&#34;@filename&#34;, layerName)
+
         # Create output folder and output config
         if folder_path and output_suffix:
             os.makedirs(folder_path, exist_ok=True)
@@ -683,7 +694,8 @@ def shapefile(
                 accessMode=&#34;overwrite&#34;,
                 makeValid=True,
                 # optional settings
-                SQLStatement=destination.get(&#34;sql&#34;, &#34;&#34;),
+                SQLStatement=sql,
+                SQLDialect=&#34;sqlite&#34;,
                 callback=update_progress,
             )
 
