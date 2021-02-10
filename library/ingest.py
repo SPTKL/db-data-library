@@ -70,6 +70,9 @@ class Ingestor:
                 fields=destination["fields"],
             )
 
+            layerName = srcDS.GetLayer(0).GetName()
+            sql = destination.get("sql", "").replace("@filename", layerName)
+
             # Create output folder and output config
             if folder_path and output_suffix:
                 os.makedirs(folder_path, exist_ok=True)
@@ -106,7 +109,8 @@ class Ingestor:
                     accessMode="overwrite",
                     makeValid=True,
                     # optional settings
-                    SQLStatement=destination.get("sql", ""),
+                    SQLStatement=sql,
+                    SQLDialect="sqlite",
                     callback=update_progress,
                 )
 
