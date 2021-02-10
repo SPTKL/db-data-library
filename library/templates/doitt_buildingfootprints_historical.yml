@@ -1,0 +1,38 @@
+dataset:
+  name: &name doitt_buildingfootprints_historical
+  version: "{{ version }}"
+  acl: public-read
+  source:
+    url:
+      path: https://data.cityofnewyork.us/api/geospatial/5niu-gu57?method=export&format=GeoJSON
+      subpath: ""    
+    options:
+      - "AUTODETECT_TYPE=NO"
+      - "EMPTY_STRING_AS_NULL=YES"  
+      - "GEOM_POSSIBLE_NAMES=the_geom"  
+    geometry:
+      SRS: EPSG:4326
+      type: MULTIPOLYGON
+
+  destination:
+    name: &name
+    geometry:
+      SRS: EPSG:4326
+      type: MULTIPOLYGON
+    options:
+      - "OVERWRITE=YES"
+      - "PRECISION=NO"
+    fields: []
+    sql: null
+  
+  info:
+    description: |
+      ### Building Footprints
+      Shapefile of historical footprint outlines of buildings in New York City. 
+      Please see the following link for additional documentation- 
+      https://github.com/CityOfNewYork/nyc-planimetrics/blob/master/Capture_Rules.md.
+      Previously posted versions of the data are retained to comply with Local Law 106 of 2015 and 
+      can be provided upon request made to Open Data.
+    url: "https://data.cityofnewyork.us/Housing-Development/Building-Footprints-Historical-Shape/s5zg-yzea"
+    dependents: []
+  

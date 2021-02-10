@@ -1,0 +1,36 @@
+dataset:
+  name: &name dcp_colp
+  version: "{{ version }}"
+  acl: public-read
+  source:
+    url:
+      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nyc_colp_csv_202011.zip/COLP_2020.csv
+      subpath: ""    
+    options:
+      - "AUTODETECT_TYPE=NO"
+      - "EMPTY_STRING_AS_NULL=YES"  
+      - "GEOM_POSSIBLE_NAMES=geom"  
+    geometry:
+      SRS: EPSG:2263
+      type: POINT
+
+  destination:
+    name: &name
+    geometry:
+      SRS: EPSG:4326
+      type: POINT
+    options:
+      - "OVERWRITE=YES"
+      - "PRECISION=NO"
+    fields: []
+    sql: null
+  
+  info:
+    description: |
+      ### City Owned and Leased Properties
+      A downloadable spreadsheet and geodatabase that list city properties with types of uses, location and other information
+      This dataset identifies City property under the jurisdiction of NYC Parks, which may be managed partially or solely by the Agency.
+      More information: https://www1.nyc.gov/site/planning/about/publications/colp.page
+    url: "https://www1.nyc.gov/site/planning/about/publications/colp.page"
+    dependents: []
+  
