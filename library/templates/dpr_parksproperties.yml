@@ -14,7 +14,7 @@ dataset:
       type: MULTIPOLYGON
 
   destination:
-    name: &name
+    name: *name
     geometry:
       SRS: EPSG:4326
       type: MULTIPOLYGON
