@@ -4,7 +4,7 @@ dataset:
   acl: public-read
   source:
     url:
-      path: s3://edm-storage/TAX_LOT_POLY_SHP/{{ version }}/tax_lot_poly_shp.zip
+      path: s3://edm-publishing/datasets/tax_lot_polygon/staging/gis_tax_lot_polygon.zip
       subpath: ""
     options:
       - "AUTODETECT_TYPE=NO"
