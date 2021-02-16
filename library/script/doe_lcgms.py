@@ -30,7 +30,7 @@ class Scriptor:
         )
         df = pd.read_html(r.text)
         df = df[0]  # first page of worksheet
-        df.columns = df.iloc[0]  # First row as column names
+        df.columns = df.iloc[0].str.replace("\t", " ")  # First row as column names
         df = df[1:]
         return df
 
