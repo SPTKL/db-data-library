@@ -4,7 +4,7 @@ dataset:
   acl: public-read
   source:
     socrata:
-      uid: w3t7-k3ej
+      uid: uic8-njst
       format: csv   
     options:
       - "AUTODETECT_TYPE=NO"
