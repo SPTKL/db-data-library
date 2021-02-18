@@ -5,7 +5,7 @@ dataset:
   source:
     socrata:
       uid: uic8-njst
-      format: csv   
+      format: geojson   
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"  
