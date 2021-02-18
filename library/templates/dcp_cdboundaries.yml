@@ -1,5 +1,5 @@
 dataset:
-  name: &name dcp_boundaries
+  name: &name dcp_cdboundaries
   version: "{{ version}}"
   acl: public-read
 
