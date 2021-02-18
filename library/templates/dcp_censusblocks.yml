@@ -1,0 +1,36 @@
+dataset:
+  name: &name dcp_censusblocks
+  version: "{{ version }}"
+  acl: public-read
+
+  source:
+    url:
+      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nycb2010_{{ version }}.zip
+      subpath: nycb2010_{{ version }}/nycb2010.shp
+    geometry:
+      SRS: EPSG:4326
+      type: MULTIPOLYGON
+    options:
+      - "AUTODETECT_TYPE=NO"
+      - "STRING_EMPTY_AS_NULL=YES"
+
+  destination:
+    name: *name
+    geometry:
+      SRS: EPSG:4326
+      type: MULTIPOLYGON
+    options:
+      - "OVERWRITE=YES"
+      - "PRECISION=NO"
+    fields: []
+    sql: null
+  info:
+    description: |
+      ### ESRI Shapefile
+      The Census Blocks for the 2010 US Census clipped to shoreline. These boundary files are derived
+      from the US Census Bureau's TIGER project and have been geographically modified to fit the
+      New York City base map. Because some census blocks are under water not all census blocks
+      are contained in this file, only census blocks that are partially or totally located on land have
+      been mapped in this file.
+    url: https://www1.nyc.gov/site/planning/data-maps/open-data/districts-download-metadata.page
+    dependents: []
