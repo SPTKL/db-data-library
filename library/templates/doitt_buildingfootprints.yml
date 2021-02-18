@@ -4,8 +4,8 @@ dataset:
   acl: public-read
   source:
     socrata:
-      uid: w3t7-k3ej
-      format: csv   
+      uid: uic8-njst
+      format: geojson   
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"  
