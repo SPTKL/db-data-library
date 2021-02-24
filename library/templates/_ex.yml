@@ -11,12 +11,12 @@ dataset:
   
   source:
     ## Data can come from different types of sources
-    # If data comes from the NYC open data site, then use the socrate field, specifying the uid and file formar
+    # If data comes from the NYC open data site, then use the socrata field, specifying the uid and file formar
     # i.e for data available at https://data.cityofnewyork.us/api/views/crns-fw6u/rows.csv
     # uid: crns-fw6u
     # format: csv
     socrata:
-      uid:
+      uid: 
       format: csv | geojson 
 
     ## For data coming from the BYTES page from City Planning and other sources. Then use the url field
@@ -40,6 +40,9 @@ dataset:
     # SRS: EPSG:4326
     # type: MULTIPOLYGON
     geometry:
+      # Usual values:
+      # For data from OpenData (socrata) => EPSG:4326
+      # For data from BYTES site =>  EPSG:2263
       SRS:
       type:
 
@@ -58,6 +61,7 @@ dataset:
     # SRS: EPSG:4326
     # type: MULTIPOLYGON 
     geometry:
+      # Default SRS is EPSG:4326 (For internal use), unless directed otherwise
       SRS:
       type:
     
@@ -66,7 +70,7 @@ dataset:
       - "OVERWRITE=YES"
       - "PRECISION=NO"
 
-    # If fields will be renamed, they are listed here as a python list. If not, list is empty.
+    # If fields will be renamed, they are added as a list. If not, value is an empty list.
     fields: []
 
     sql: null
@@ -75,7 +79,7 @@ dataset:
   info:  
     description:
 
-    # If data is dependent on other sources, they are listed as a python list. If not, list is empty.
+    # If data is dependent on other sources, they are added as a list. If not, value is an empty list.
     dependents: []
 
 
