@@ -29,5 +29,6 @@ dataset:
     description: |
       ### ESRI Shapefile
       The Census Tracts for the 2010 US Census (Clipped to shoreline).
+      Source will be updated once the 2020 Census data is available.
     url: https://www1.nyc.gov/site/planning/data-maps/open-data/districts-download-metadata.page
     dependents: []
