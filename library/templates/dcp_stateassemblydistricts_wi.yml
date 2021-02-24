@@ -5,8 +5,8 @@ dataset:
 
   source:
     url:
-      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nyadwi_{{ version }}.zip
-      subpath: nyadwi_{{ version }}/nyad.shp
+      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nyad_{{ version }}.zip
+      subpath: nyad_{{ version }}/nyad.shp
     geometry:
       SRS: EPSG:4326
       type: MULTIPOLYGON
