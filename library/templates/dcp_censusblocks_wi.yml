@@ -27,7 +27,7 @@ dataset:
   info:
     description: |
       ### ESRI Shapefile
-      The Census Blocks for the current US Census (Water included). 
+      The Census Blocks for the 2010 US Census (Water included). 
       Source will be updated once the 2020 census data is available
     url:
     dependents: []
