@@ -1,5 +1,5 @@
 dataset:
-  name: &name dcp_stateassemblydistricts
+  name: &name dcp_stateassemblydistricts_wi
   version: "{{ version }}"
   acl: public-read
 
@@ -8,7 +8,7 @@ dataset:
       path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nyadwi_{{ version }}.zip
       subpath: nyadwi_{{ version }}/nyadwi.shp
     geometry:
-      SRS: EPSG:4326
+      SRS: EPSG:2263
       type: MULTIPOLYGON
     options:
       - "AUTODETECT_TYPE=NO"
@@ -30,7 +30,7 @@ dataset:
       ### ESRI Shapefile
       New York State Assembly District boundaries for the City of New York (Water included). 
       These district boundaries represent the redistricting as of the US Census 2010.
-      Source will be updated once the 2020 Census data is available.
+      Source will be updated once the boundaries get redistricted in response to the 2020 Census.
     url: https://www1.nyc.gov/site/planning/data-maps/open-data/districts-download-metadata.page
     dependents: []
 
