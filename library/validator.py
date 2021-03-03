@@ -54,30 +54,31 @@ class Validator:
         dataset = file['dataset']
         return (dataset['name'] == name) and (dataset['name'] == dataset['destination']['name'])
 
+    # Check for acl value
+    def acl_is_valid(self, file) -> bool:
+        dataset = file['dataset']
+        return dataset['acl'] in ['public-read', 'private']
+
+    # Check that source has either an url or socrata field. NOT BOTH
+    def has_url_or_socrata(self, file):
+        dataset = file['dataset']
+        source_fields = list(dataset['source'].keys())
+        return ('url' in source_fields) ^ ('socrata' in source_fields)
 
     def validate_file(self, path):
+
+        # Check if path ends with a .yml file
+        extension = path.split('/')[-1].split('.')[-1]
+        assert extension in ['yml', 'yaml'], 'Invalid file type'
 
         f = self.__load_file(path)
         name = path.split('/')[-1].split('.')[0]
 
-        print(f'{name}')
-
         # TODO: Validate tree structure
-               
+      
         assert self.dataset_name_matches(name, f), 'Dataset name must match file and destination name'
-
-        """# Check for acl value
-        acl_valid_value = dataset['acl'] in ['public-read', 'private']
-        assert acl_valid_value, 'Invalid value for acl. It must be either "public-read" or "private"'
-
-        # Check that source has either an url or socrata field. NOT BOTH
-        source_fields = list(dataset['source'].keys())
-        url_socrata = ('url' in source_fields) ^ ('socrata' in source_fields)
-        assert url_socrata, 'Source cannot have both url and socrata'""" 
+        assert self.acl_is_valid(f), 'Invalid value for acl. It must be either "public-read" or "private"'
+        assert self.has_url_or_socrata(f), 'Source cannot have both url and socrata' 
                 
-        return True
-
-
-
-        
+        return True   
 
