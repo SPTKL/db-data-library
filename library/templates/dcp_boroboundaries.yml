@@ -5,7 +5,7 @@ dataset:
   source:
     url:
       path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nybb_{{ version }}.zip
-      subpath: nybb_{{ version }}/nybb.shp
+      subpath: nybb_20d/nybb.shp
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES" 
