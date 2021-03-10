@@ -1,4 +1,58 @@
 import yaml
+from typing import Literal, List
+from pydantic import BaseModel, ValidationError, validator
+
+VALID_ACL_VALUES = ('public-read', 'private')
+VALID_GEOMETRY_TYPES = ('POINT', 'LINE', 'POLYGON', 'MULTIPOLYGON', 'MULTILINESTRING', 'LINESTRING', 'NONE')
+VALID_SOCRATA_FORMATS = ('csv', 'geojson')
+
+# Create schema
+class GeometryType(BaseModel):
+    SRS: str
+    type: Literal[VALID_GEOMETRY_TYPES]
+
+class Url(BaseModel):
+    path: str # Specify field name and data type
+    subpath: str = "" # Set default value
+
+class Socrata(BaseModel):
+    uid: str
+    format: Literal[VALID_SOCRATA_FORMATS] # Use Literal[tuple(dtype)] to define specific, valid values
+
+class SourceSection(BaseModel):
+    url: Url = None # Pass another schema as a data type
+    socrata: Socrata = None
+    script: str = None
+    geometry: GeometryType
+    options: List[str] = [] # Use List[dtype] for a list field value
+
+    print()
+    @validator('url', 'socrata')    
+    def validate_source(cls, v, values, **kwargs):
+        print(values)
+        return v
+
+
+class DestinationSection(BaseModel):
+    name: str
+    geometry: GeometryType
+    options: List[str] = []
+    fields: List[str] = []
+    sql: str = None 
+
+class InfoSection(BaseModel):
+    info: str = None
+    url: str = None
+    dependents: List[str] = None
+
+class Dataset(BaseModel):
+    """name: str
+    version: str
+    acl: Literal[VALID_ACL_VALUES]
+    source: SourceSection
+    destination: DestinationSection
+    info: InfoSection = None"""
+    source: SourceSection
 
 class Validator:
     """ 
@@ -7,42 +61,6 @@ class Validator:
     and values of the files are valid according to the requirements of
     the library.
     """
-
-    def __init__(self):               
-        # Correct fields, children and data types
-        # 'field_name': ['d_type': class, 'nullable': boolean']
-        self.valid_tree = {
-            'name': {'d_type': str, 'nullable': False},
-            'version': {'d_type': str, 'nullable': False},
-            'acl': {'d_type': str, 'nullable': False},
-            
-            'source': {
-                # add url or socrata
-                'options': {'d_type': [], 'nullable': False},
-                'geometry': {
-                    'SRS': {'d_type': str, 'nullable': False},
-                    'type': {'d_type': str, 'nullable': False}
-                }
-            },
-
-            'destination': {
-                'name': {'d_type': str, 'nullable': False},
-                'geometry': {
-                    'SRS': {'d_type': str, 'nullable': False},
-                    'type': {'d_type': str, 'nullable': False}
-                },
-                'options': {'d_type': [], 'nullable': False},
-                'fields': {'d_type': [], 'nullable': False},
-                'sql': {'d_type': str, 'nullable': True}  
-            },
-
-            # Some fields are optional
-            'info': {
-                'description': {'d_type': str, 'nullable': True},
-                'url': {'d_type': str, 'nullable': True},
-                'dependent': {'d_type': str, 'nullable': True}
-            }
-        }
 
     def __load_file(self, path):
         with open(path, 'r') as stream:
@@ -53,11 +71,6 @@ class Validator:
     def dataset_name_matches(self, name, file) -> bool:
         dataset = file['dataset']
         return (dataset['name'] == name) and (dataset['name'] == dataset['destination']['name'])
-
-    # Check for acl value
-    def acl_is_valid(self, file) -> bool:
-        dataset = file['dataset']
-        return dataset['acl'] in ['public-read', 'private']
 
     # Check that source has either an url or socrata field. NOT BOTH
     def has_url_or_socrata(self, file):
@@ -82,3 +95,18 @@ class Validator:
                 
         return True   
 
+    def tree_is_valid(self, file) -> bool:
+        if(file['dataset'] == None):
+            return False
+
+        try:
+            input_ds = Dataset(source=file['dataset']['source'])
+            
+
+        except ValidationError as e:
+            print(e.json())
+            return False
+        
+        
+        return True
+        
