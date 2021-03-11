@@ -78,13 +78,13 @@ class Validator:
         return True
 
     # Check that source name matches filename and destination
-    def dataset_name_matches(self, name) -> bool:
-        dataset = self.__file['dataset']
+    def dataset_name_matches(self, name, file) -> bool:
+        dataset = file['dataset']
         return (dataset['name'] == name) and (dataset['name'] == dataset['destination']['name'])
 
     # Check that source has only one source from either url, socrata or script
-    def has_only_one_source(self):
-        dataset = self.__file['dataset']
+    def has_only_one_source(self, file):
+        dataset = file['dataset']
         source_fields = list(dataset['source'].keys())
         # In other words: if url is in source, socrata or script cannot be.
         # If url is NOT in source. Only one from socrata or url can be. (XOR operator ^)
@@ -93,17 +93,19 @@ class Validator:
         if ('url' in source_fields) \
         else (('socrata' in source_fields) ^ ('script' in source_fields)) 
 
-    def file_is_valid(self):
+    def validate_file(self, path):
 
         # Check if path ends with a .yml file
-        extension = self.path.split('/')[-1].split('.')[-1]
+        extension = path.split('/')[-1].split('.')[-1]
         assert extension in ['yml', 'yaml'], 'Invalid file type'
 
-        name = self.path.split('/')[-1].split('.')[0]
+        f = self.__load_file(path)
+        name = path.split('/')[-1].split('.')[0]
 
-        assert self.tree_is_valid, 'Wrong fields'
-        assert self.dataset_name_matches(name), 'Dataset name must match file and destination name'
-        assert self.has_only_one_source, 'Source can only have one property from either url, socrata or script' 
+        # TODO: Validate tree structure
+        assert self.tree_is_valid(f), 'Wrong fields'
+        assert self.dataset_name_matches(name, f), 'Dataset name must match file and destination name'
+        assert self.has_only_one_source(f), 'Source can only have one property from either url, socrata or script' 
                 
         return True   
 
