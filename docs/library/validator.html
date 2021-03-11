@@ -29,6 +29,7 @@
 <pre><code class="python">import yaml
 from typing import Literal, List
 from pydantic import BaseModel, ValidationError, validator
+from functools import cached_property
 
 VALID_ACL_VALUES = (&#39;public-read&#39;, &#39;private&#39;)
 VALID_GEOMETRY_TYPES = (&#39;POINT&#39;, &#39;LINE&#39;, &#39;POLYGON&#39;, &#39;MULTIPOLYGON&#39;, &#39;MULTILINESTRING&#39;, &#39;LINESTRING&#39;, &#39;NONE&#39;)
@@ -82,19 +83,36 @@ class Validator:
     the library.
     &#34;&#34;&#34;
 
-    def __load_file(self, path):
-        with open(path, &#39;r&#39;) as stream:
+    def __init__(self, path):
+        self.path = path
+
+    @cached_property
+    def __file(self):
+        with open(self.path, &#39;r&#39;) as stream:
             y = yaml.load(stream, Loader=yaml.FullLoader)
             return y
 
+    def tree_is_valid(self) -&gt; bool:
+        if(self.__file[&#39;dataset&#39;] == None):
+            return False
+
+        try:
+            input_ds = Dataset(**self.__file[&#39;dataset&#39;])          
+
+        except ValidationError as e:
+            print(e.json())
+            return False       
+        
+        return True
+
     # Check that source name matches filename and destination
-    def dataset_name_matches(self, name, file) -&gt; bool:
-        dataset = file[&#39;dataset&#39;]
+    def dataset_name_matches(self, name) -&gt; bool:
+        dataset = self.__file[&#39;dataset&#39;]
         return (dataset[&#39;name&#39;] == name) and (dataset[&#39;name&#39;] == dataset[&#39;destination&#39;][&#39;name&#39;])
 
     # Check that source has only one source from either url, socrata or script
-    def has_only_one_source(self, file):
-        dataset = file[&#39;dataset&#39;]
+    def has_only_one_source(self):
+        dataset = self.__file[&#39;dataset&#39;]
         source_fields = list(dataset[&#39;source&#39;].keys())
         # In other words: if url is in source, socrata or script cannot be.
         # If url is NOT in source. Only one from socrata or url can be. (XOR operator ^)
@@ -103,36 +121,21 @@ class Validator:
         if (&#39;url&#39; in source_fields) \
         else ((&#39;socrata&#39; in source_fields) ^ (&#39;script&#39; in source_fields)) 
 
-    def validate_file(self, path):
+    def file_is_valid(self):
 
         # Check if path ends with a .yml file
-        extension = path.split(&#39;/&#39;)[-1].split(&#39;.&#39;)[-1]
+        extension = self.path.split(&#39;/&#39;)[-1].split(&#39;.&#39;)[-1]
         assert extension in [&#39;yml&#39;, &#39;yaml&#39;], &#39;Invalid file type&#39;
 
-        f = self.__load_file(path)
-        name = path.split(&#39;/&#39;)[-1].split(&#39;.&#39;)[0]
+        name = self.path.split(&#39;/&#39;)[-1].split(&#39;.&#39;)[0]
 
-        # TODO: Validate tree structure
-      
-        assert self.dataset_name_matches(name, f), &#39;Dataset name must match file and destination name&#39;
-        assert self.acl_is_valid(f), &#39;Invalid value for acl. It must be either &#34;public-read&#34; or &#34;private&#34;&#39;
-        assert self.has_url_or_socrata(f), &#39;Source cannot have both url and socrata&#39; 
+        assert self.tree_is_valid, &#39;Wrong fields&#39;
+        assert self.dataset_name_matches(name), &#39;Dataset name must match file and destination name&#39;
+        assert self.has_only_one_source, &#39;Source can only have one property from either url, socrata or script&#39; 
                 
         return True   
 
-    def tree_is_valid(self, file) -&gt; bool:
-        if(file[&#39;dataset&#39;] == None):
-            return False
 
-        try:
-            input_ds = Dataset(**file[&#39;dataset&#39;])          
-
-        except ValidationError as e:
-            print(e.json())
-            return False
-        
-        
-        return True
         </code></pre>
 </details>
 </section>
@@ -426,6 +429,7 @@ class Validator:
 </dd>
 <dt id="library.validator.Validator"><code class="flex name class">
 <span>class <span class="ident">Validator</span></span>
+<span>(</span><span>path)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Validator takes as input the path of a configuration file
@@ -444,19 +448,36 @@ the library.</p></div>
     the library.
     &#34;&#34;&#34;
 
-    def __load_file(self, path):
-        with open(path, &#39;r&#39;) as stream:
+    def __init__(self, path):
+        self.path = path
+
+    @cached_property
+    def __file(self):
+        with open(self.path, &#39;r&#39;) as stream:
             y = yaml.load(stream, Loader=yaml.FullLoader)
             return y
 
+    def tree_is_valid(self) -&gt; bool:
+        if(self.__file[&#39;dataset&#39;] == None):
+            return False
+
+        try:
+            input_ds = Dataset(**self.__file[&#39;dataset&#39;])          
+
+        except ValidationError as e:
+            print(e.json())
+            return False       
+        
+        return True
+
     # Check that source name matches filename and destination
-    def dataset_name_matches(self, name, file) -&gt; bool:
-        dataset = file[&#39;dataset&#39;]
+    def dataset_name_matches(self, name) -&gt; bool:
+        dataset = self.__file[&#39;dataset&#39;]
         return (dataset[&#39;name&#39;] == name) and (dataset[&#39;name&#39;] == dataset[&#39;destination&#39;][&#39;name&#39;])
 
     # Check that source has only one source from either url, socrata or script
-    def has_only_one_source(self, file):
-        dataset = file[&#39;dataset&#39;]
+    def has_only_one_source(self):
+        dataset = self.__file[&#39;dataset&#39;]
         source_fields = list(dataset[&#39;source&#39;].keys())
         # In other words: if url is in source, socrata or script cannot be.
         # If url is NOT in source. Only one from socrata or url can be. (XOR operator ^)
@@ -465,41 +486,24 @@ the library.</p></div>
         if (&#39;url&#39; in source_fields) \
         else ((&#39;socrata&#39; in source_fields) ^ (&#39;script&#39; in source_fields)) 
 
-    def validate_file(self, path):
+    def file_is_valid(self):
 
         # Check if path ends with a .yml file
-        extension = path.split(&#39;/&#39;)[-1].split(&#39;.&#39;)[-1]
+        extension = self.path.split(&#39;/&#39;)[-1].split(&#39;.&#39;)[-1]
         assert extension in [&#39;yml&#39;, &#39;yaml&#39;], &#39;Invalid file type&#39;
 
-        f = self.__load_file(path)
-        name = path.split(&#39;/&#39;)[-1].split(&#39;.&#39;)[0]
+        name = self.path.split(&#39;/&#39;)[-1].split(&#39;.&#39;)[0]
 
-        # TODO: Validate tree structure
-      
-        assert self.dataset_name_matches(name, f), &#39;Dataset name must match file and destination name&#39;
-        assert self.acl_is_valid(f), &#39;Invalid value for acl. It must be either &#34;public-read&#34; or &#34;private&#34;&#39;
-        assert self.has_url_or_socrata(f), &#39;Source cannot have both url and socrata&#39; 
+        assert self.tree_is_valid, &#39;Wrong fields&#39;
+        assert self.dataset_name_matches(name), &#39;Dataset name must match file and destination name&#39;
+        assert self.has_only_one_source, &#39;Source can only have one property from either url, socrata or script&#39; 
                 
-        return True   
-
-    def tree_is_valid(self, file) -&gt; bool:
-        if(file[&#39;dataset&#39;] == None):
-            return False
-
-        try:
-            input_ds = Dataset(**file[&#39;dataset&#39;])          
-
-        except ValidationError as e:
-            print(e.json())
-            return False
-        
-        
-        return True</code></pre>
+        return True   </code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
 <dt id="library.validator.Validator.dataset_name_matches"><code class="name flex">
-<span>def <span class="ident">dataset_name_matches</span></span>(<span>self, name, file) ‑> bool</span>
+<span>def <span class="ident">dataset_name_matches</span></span>(<span>self, name) ‑> bool</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -507,13 +511,13 @@ the library.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def dataset_name_matches(self, name, file) -&gt; bool:
-    dataset = file[&#39;dataset&#39;]
+<pre><code class="python">def dataset_name_matches(self, name) -&gt; bool:
+    dataset = self.__file[&#39;dataset&#39;]
     return (dataset[&#39;name&#39;] == name) and (dataset[&#39;name&#39;] == dataset[&#39;destination&#39;][&#39;name&#39;])</code></pre>
 </details>
 </dd>
-<dt id="library.validator.Validator.has_only_one_source"><code class="name flex">
-<span>def <span class="ident">has_only_one_source</span></span>(<span>self, file)</span>
+<dt id="library.validator.Validator.file_is_valid"><code class="name flex">
+<span>def <span class="ident">file_is_valid</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -521,8 +525,32 @@ the library.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def has_only_one_source(self, file):
-    dataset = file[&#39;dataset&#39;]
+<pre><code class="python">def file_is_valid(self):
+
+    # Check if path ends with a .yml file
+    extension = self.path.split(&#39;/&#39;)[-1].split(&#39;.&#39;)[-1]
+    assert extension in [&#39;yml&#39;, &#39;yaml&#39;], &#39;Invalid file type&#39;
+
+    name = self.path.split(&#39;/&#39;)[-1].split(&#39;.&#39;)[0]
+
+    assert self.tree_is_valid, &#39;Wrong fields&#39;
+    assert self.dataset_name_matches(name), &#39;Dataset name must match file and destination name&#39;
+    assert self.has_only_one_source, &#39;Source can only have one property from either url, socrata or script&#39; 
+            
+    return True   </code></pre>
+</details>
+</dd>
+<dt id="library.validator.Validator.has_only_one_source"><code class="name flex">
+<span>def <span class="ident">has_only_one_source</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_only_one_source(self):
+    dataset = self.__file[&#39;dataset&#39;]
     source_fields = list(dataset[&#39;source&#39;].keys())
     # In other words: if url is in source, socrata or script cannot be.
     # If url is NOT in source. Only one from socrata or url can be. (XOR operator ^)
@@ -533,7 +561,7 @@ the library.</p></div>
 </details>
 </dd>
 <dt id="library.validator.Validator.tree_is_valid"><code class="name flex">
-<span>def <span class="ident">tree_is_valid</span></span>(<span>self, file) ‑> bool</span>
+<span>def <span class="ident">tree_is_valid</span></span>(<span>self) ‑> bool</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -541,46 +569,18 @@ the library.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def tree_is_valid(self, file) -&gt; bool:
-    if(file[&#39;dataset&#39;] == None):
+<pre><code class="python">def tree_is_valid(self) -&gt; bool:
+    if(self.__file[&#39;dataset&#39;] == None):
         return False
 
     try:
-        input_ds = Dataset(**file[&#39;dataset&#39;])          
+        input_ds = Dataset(**self.__file[&#39;dataset&#39;])          
 
     except ValidationError as e:
         print(e.json())
-        return False
-    
+        return False       
     
     return True</code></pre>
-</details>
-</dd>
-<dt id="library.validator.Validator.validate_file"><code class="name flex">
-<span>def <span class="ident">validate_file</span></span>(<span>self, path)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def validate_file(self, path):
-
-    # Check if path ends with a .yml file
-    extension = path.split(&#39;/&#39;)[-1].split(&#39;.&#39;)[-1]
-    assert extension in [&#39;yml&#39;, &#39;yaml&#39;], &#39;Invalid file type&#39;
-
-    f = self.__load_file(path)
-    name = path.split(&#39;/&#39;)[-1].split(&#39;.&#39;)[0]
-
-    # TODO: Validate tree structure
-  
-    assert self.dataset_name_matches(name, f), &#39;Dataset name must match file and destination name&#39;
-    assert self.acl_is_valid(f), &#39;Invalid value for acl. It must be either &#34;public-read&#34; or &#34;private&#34;&#39;
-    assert self.has_url_or_socrata(f), &#39;Source cannot have both url and socrata&#39; 
-            
-    return True   </code></pre>
 </details>
 </dd>
 </dl>
@@ -665,9 +665,9 @@ the library.</p></div>
 <h4><code><a title="library.validator.Validator" href="#library.validator.Validator">Validator</a></code></h4>
 <ul class="">
 <li><code><a title="library.validator.Validator.dataset_name_matches" href="#library.validator.Validator.dataset_name_matches">dataset_name_matches</a></code></li>
+<li><code><a title="library.validator.Validator.file_is_valid" href="#library.validator.Validator.file_is_valid">file_is_valid</a></code></li>
 <li><code><a title="library.validator.Validator.has_only_one_source" href="#library.validator.Validator.has_only_one_source">has_only_one_source</a></code></li>
 <li><code><a title="library.validator.Validator.tree_is_valid" href="#library.validator.Validator.tree_is_valid">tree_is_valid</a></code></li>
-<li><code><a title="library.validator.Validator.validate_file" href="#library.validator.Validator.validate_file">validate_file</a></code></li>
 </ul>
 </li>
 </ul>
