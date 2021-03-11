@@ -1,6 +1,7 @@
 import yaml
 from typing import Literal, List
 from pydantic import BaseModel, ValidationError, validator
+from functools import cached_property
 
 VALID_ACL_VALUES = ('public-read', 'private')
 VALID_GEOMETRY_TYPES = ('POINT', 'LINE', 'POLYGON', 'MULTIPOLYGON', 'MULTILINESTRING', 'LINESTRING', 'NONE')
@@ -54,19 +55,36 @@ class Validator:
     the library.
     """
 
-    def __load_file(self, path):
-        with open(path, 'r') as stream:
+    def __init__(self, path):
+        self.path = path
+
+    @cached_property
+    def __file(self):
+        with open(self.path, 'r') as stream:
             y = yaml.load(stream, Loader=yaml.FullLoader)
             return y
 
+    def tree_is_valid(self) -> bool:
+        if(self.__file['dataset'] == None):
+            return False
+
+        try:
+            input_ds = Dataset(**self.__file['dataset'])          
+
+        except ValidationError as e:
+            print(e.json())
+            return False       
+        
+        return True
+
     # Check that source name matches filename and destination
-    def dataset_name_matches(self, name, file) -> bool:
-        dataset = file['dataset']
+    def dataset_name_matches(self, name) -> bool:
+        dataset = self.__file['dataset']
         return (dataset['name'] == name) and (dataset['name'] == dataset['destination']['name'])
 
     # Check that source has only one source from either url, socrata or script
-    def has_only_one_source(self, file):
-        dataset = file['dataset']
+    def has_only_one_source(self):
+        dataset = self.__file['dataset']
         source_fields = list(dataset['source'].keys())
         # In other words: if url is in source, socrata or script cannot be.
         # If url is NOT in source. Only one from socrata or url can be. (XOR operator ^)
@@ -75,34 +93,19 @@ class Validator:
         if ('url' in source_fields) \
         else (('socrata' in source_fields) ^ ('script' in source_fields)) 
 
-    def validate_file(self, path):
+    def file_is_valid(self):
 
         # Check if path ends with a .yml file
-        extension = path.split('/')[-1].split('.')[-1]
+        extension = self.path.split('/')[-1].split('.')[-1]
         assert extension in ['yml', 'yaml'], 'Invalid file type'
 
-        f = self.__load_file(path)
-        name = path.split('/')[-1].split('.')[0]
+        name = self.path.split('/')[-1].split('.')[0]
 
-        # TODO: Validate tree structure
-      
-        assert self.dataset_name_matches(name, f), 'Dataset name must match file and destination name'
-        assert self.acl_is_valid(f), 'Invalid value for acl. It must be either "public-read" or "private"'
-        assert self.has_url_or_socrata(f), 'Source cannot have both url and socrata' 
+        assert self.tree_is_valid, 'Wrong fields'
+        assert self.dataset_name_matches(name), 'Dataset name must match file and destination name'
+        assert self.has_only_one_source, 'Source can only have one property from either url, socrata or script' 
                 
         return True   
 
-    def tree_is_valid(self, file) -> bool:
-        if(file['dataset'] == None):
-            return False
 
-        try:
-            input_ds = Dataset(**file['dataset'])          
-
-        except ValidationError as e:
-            print(e.json())
-            return False
-        
-        
-        return True
         
