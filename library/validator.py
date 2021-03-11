@@ -101,7 +101,6 @@ class Validator:
 
         name = self.path.split('/')[-1].split('.')[0]
 
-        # TODO: Validate tree structure
         assert self.tree_is_valid, 'Wrong fields'
         assert self.dataset_name_matches(name), 'Dataset name must match file and destination name'
         assert self.has_only_one_source, 'Source can only have one property from either url, socrata or script' 
