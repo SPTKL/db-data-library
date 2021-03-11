@@ -64,6 +64,7 @@ class Validator:
             y = yaml.load(stream, Loader=yaml.FullLoader)
             return y
 
+    @property
     def tree_is_valid(self) -> bool:
         if(self.__file['dataset'] == None):
             return False
@@ -76,13 +77,15 @@ class Validator:
             return False       
         
         return True
-
+        
     # Check that source name matches filename and destination
+    
     def dataset_name_matches(self, name) -> bool:
         dataset = self.__file['dataset']
         return (dataset['name'] == name) and (dataset['name'] == dataset['destination']['name'])
 
     # Check that source has only one source from either url, socrata or script
+    @property
     def has_only_one_source(self):
         dataset = self.__file['dataset']
         source_fields = list(dataset['source'].keys())
@@ -93,8 +96,8 @@ class Validator:
         if ('url' in source_fields) \
         else (('socrata' in source_fields) ^ ('script' in source_fields)) 
 
+    @property
     def file_is_valid(self):
-
         # Check if path ends with a .yml file
         extension = self.path.split('/')[-1].split('.')[-1]
         assert extension in ['yml', 'yaml'], 'Invalid file type'
@@ -104,8 +107,6 @@ class Validator:
         assert self.tree_is_valid, 'Wrong fields'
         assert self.dataset_name_matches(name), 'Dataset name must match file and destination name'
         assert self.has_only_one_source, 'Source can only have one property from either url, socrata or script' 
-                
-        return True   
 
-
+        return True
         
