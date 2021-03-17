@@ -74,7 +74,18 @@ class Validator:
     """
 
     def __init__(self, path):
+
+        # Abort if file path is not valid
+        if not self.__check_extension(path):
+            raise Exception("File path must point to a .yml or .yaml file")
+
         self.path = path
+        self.fname = path.split("/")[-1].split(".")[0]
+
+    def __check_extension(self, path):
+        # Check if path ends with a .yml file
+        extension = path.split("/")[-1].split(".")[-1]
+        return extension in ["yml", "yaml"]
 
     @cached_property
     def __file(self):
@@ -119,9 +130,6 @@ class Validator:
 
     @property
     def file_is_valid(self):
-        # Check if path ends with a .yml file
-        extension = self.path.split("/")[-1].split(".")[-1]
-        assert extension in ["yml", "yaml"], "Invalid file type"
 
         name = self.path.split("/")[-1].split(".")[0]
 
