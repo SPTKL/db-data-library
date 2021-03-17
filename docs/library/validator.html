@@ -136,10 +136,10 @@ class Validator:
         return True
 
     # Check that source name matches filename and destination
-
-    def dataset_name_matches(self, name) -&gt; bool:
+    @property
+    def dataset_name_matches(self) -&gt; bool:
         dataset = self.__file[&#34;dataset&#34;]
-        return (dataset[&#34;name&#34;] == name) and (
+        return (dataset[&#34;name&#34;] == self.fname) and (
             dataset[&#34;name&#34;] == dataset[&#34;destination&#34;][&#34;name&#34;]
         )
 
@@ -162,8 +162,8 @@ class Validator:
         name = self.path.split(&#34;/&#34;)[-1].split(&#34;.&#34;)[0]
 
         assert self.tree_is_valid, &#34;Wrong fields&#34;
-        assert self.dataset_name_matches(
-            name
+        assert (
+            self.dataset_name_matches
         ), &#34;Dataset name must match file and destination name&#34;
         assert (
             self.has_only_one_source
@@ -518,10 +518,10 @@ the library.</p></div>
         return True
 
     # Check that source name matches filename and destination
-
-    def dataset_name_matches(self, name) -&gt; bool:
+    @property
+    def dataset_name_matches(self) -&gt; bool:
         dataset = self.__file[&#34;dataset&#34;]
-        return (dataset[&#34;name&#34;] == name) and (
+        return (dataset[&#34;name&#34;] == self.fname) and (
             dataset[&#34;name&#34;] == dataset[&#34;destination&#34;][&#34;name&#34;]
         )
 
@@ -544,8 +544,8 @@ the library.</p></div>
         name = self.path.split(&#34;/&#34;)[-1].split(&#34;.&#34;)[0]
 
         assert self.tree_is_valid, &#34;Wrong fields&#34;
-        assert self.dataset_name_matches(
-            name
+        assert (
+            self.dataset_name_matches
         ), &#34;Dataset name must match file and destination name&#34;
         assert (
             self.has_only_one_source
@@ -555,6 +555,21 @@ the library.</p></div>
 </details>
 <h3>Instance variables</h3>
 <dl>
+<dt id="library.validator.Validator.dataset_name_matches"><code class="name">var <span class="ident">dataset_name_matches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def dataset_name_matches(self) -&gt; bool:
+    dataset = self.__file[&#34;dataset&#34;]
+    return (dataset[&#34;name&#34;] == self.fname) and (
+        dataset[&#34;name&#34;] == dataset[&#34;destination&#34;][&#34;name&#34;]
+    )</code></pre>
+</details>
+</dd>
 <dt id="library.validator.Validator.file_is_valid"><code class="name">var <span class="ident">file_is_valid</span></code></dt>
 <dd>
 <div class="desc"></div>
@@ -568,8 +583,8 @@ def file_is_valid(self):
     name = self.path.split(&#34;/&#34;)[-1].split(&#34;.&#34;)[0]
 
     assert self.tree_is_valid, &#34;Wrong fields&#34;
-    assert self.dataset_name_matches(
-        name
+    assert (
+        self.dataset_name_matches
     ), &#34;Dataset name must match file and destination name&#34;
     assert (
         self.has_only_one_source
@@ -618,25 +633,6 @@ def tree_is_valid(self) -&gt; bool:
         return False
 
     return True</code></pre>
-</details>
-</dd>
-</dl>
-<h3>Methods</h3>
-<dl>
-<dt id="library.validator.Validator.dataset_name_matches"><code class="name flex">
-<span>def <span class="ident">dataset_name_matches</span></span>(<span>self, name) ‑> bool</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def dataset_name_matches(self, name) -&gt; bool:
-    dataset = self.__file[&#34;dataset&#34;]
-    return (dataset[&#34;name&#34;] == name) and (
-        dataset[&#34;name&#34;] == dataset[&#34;destination&#34;][&#34;name&#34;]
-    )</code></pre>
 </details>
 </dd>
 </dl>
