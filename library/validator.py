@@ -108,10 +108,10 @@ class Validator:
         return True
 
     # Check that source name matches filename and destination
-
-    def dataset_name_matches(self, name) -> bool:
+    @property
+    def dataset_name_matches(self) -> bool:
         dataset = self.__file["dataset"]
-        return (dataset["name"] == name) and (
+        return (dataset["name"] == self.fname) and (
             dataset["name"] == dataset["destination"]["name"]
         )
 
@@ -134,8 +134,8 @@ class Validator:
         name = self.path.split("/")[-1].split(".")[0]
 
         assert self.tree_is_valid, "Wrong fields"
-        assert self.dataset_name_matches(
-            name
+        assert (
+            self.dataset_name_matches
         ), "Dataset name must match file and destination name"
         assert (
             self.has_only_one_source
