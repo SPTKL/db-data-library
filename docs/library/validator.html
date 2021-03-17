@@ -102,7 +102,18 @@ class Validator:
     &#34;&#34;&#34;
 
     def __init__(self, path):
+
+        # Abort if file path is not valid
+        if not self.__check_extension(path):
+            raise Exception(&#34;File path must point to a .yml or .yaml file&#34;)
+
         self.path = path
+        self.fname = path.split(&#34;/&#34;)[-1].split(&#34;.&#34;)[0]
+
+    def __check_extension(self, path):
+        # Check if path ends with a .yml file
+        extension = path.split(&#34;/&#34;)[-1].split(&#34;.&#34;)[-1]
+        return extension in [&#34;yml&#34;, &#34;yaml&#34;]
 
     @cached_property
     def __file(self):
@@ -147,9 +158,6 @@ class Validator:
 
     @property
     def file_is_valid(self):
-        # Check if path ends with a .yml file
-        extension = self.path.split(&#34;/&#34;)[-1].split(&#34;.&#34;)[-1]
-        assert extension in [&#34;yml&#34;, &#34;yaml&#34;], &#34;Invalid file type&#34;
 
         name = self.path.split(&#34;/&#34;)[-1].split(&#34;.&#34;)[0]
 
@@ -476,7 +484,18 @@ the library.</p></div>
     &#34;&#34;&#34;
 
     def __init__(self, path):
+
+        # Abort if file path is not valid
+        if not self.__check_extension(path):
+            raise Exception(&#34;File path must point to a .yml or .yaml file&#34;)
+
         self.path = path
+        self.fname = path.split(&#34;/&#34;)[-1].split(&#34;.&#34;)[0]
+
+    def __check_extension(self, path):
+        # Check if path ends with a .yml file
+        extension = path.split(&#34;/&#34;)[-1].split(&#34;.&#34;)[-1]
+        return extension in [&#34;yml&#34;, &#34;yaml&#34;]
 
     @cached_property
     def __file(self):
@@ -521,9 +540,6 @@ the library.</p></div>
 
     @property
     def file_is_valid(self):
-        # Check if path ends with a .yml file
-        extension = self.path.split(&#34;/&#34;)[-1].split(&#34;.&#34;)[-1]
-        assert extension in [&#34;yml&#34;, &#34;yaml&#34;], &#34;Invalid file type&#34;
 
         name = self.path.split(&#34;/&#34;)[-1].split(&#34;.&#34;)[0]
 
@@ -548,9 +564,6 @@ the library.</p></div>
 </summary>
 <pre><code class="python">@property
 def file_is_valid(self):
-    # Check if path ends with a .yml file
-    extension = self.path.split(&#34;/&#34;)[-1].split(&#34;.&#34;)[-1]
-    assert extension in [&#34;yml&#34;, &#34;yaml&#34;], &#34;Invalid file type&#34;
 
     name = self.path.split(&#34;/&#34;)[-1].split(&#34;.&#34;)[0]
 
