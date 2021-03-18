@@ -20,4 +20,4 @@ def test_has_only_one_source():
 
 
 def test_file_is_valid():
-    assert v.file_is_valid
+    print(v())
