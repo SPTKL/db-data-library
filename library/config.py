@@ -7,6 +7,7 @@ import yaml
 from jinja2 import Template
 
 from .utils import format_url
+from .validator import Validator
 
 
 # Custom dumper created for list indentation
@@ -78,6 +79,10 @@ class Config:
     @property
     def compute(self) -> dict:
         """based on given yml file, compute the configuration"""
+
+        # Validate unparsed, unrendered file
+        Validator(self.parsed_unrendered_template)()
+
         if self.source_type == "script":
             if self.version:
                 version = self.version
