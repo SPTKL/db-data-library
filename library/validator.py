@@ -77,7 +77,7 @@ class Validator:
         self.__unparsed_file = f
 
     def __call__(self):
-        return self.file_is_valid
+        assert self.file_is_valid
 
     # Check that the tree structure fits the specified schema
     @property
