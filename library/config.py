@@ -81,8 +81,7 @@ class Config:
         """based on given yml file, compute the configuration"""
 
         # Validate unparsed, unrendered file
-        v = Validator(self.parsed_unrendered_template)
-        v()
+        Validator(self.parsed_unrendered_template)()
 
         if self.source_type == "script":
             if self.version:
