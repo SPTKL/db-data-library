@@ -77,7 +77,9 @@ class Validator:
         self.__unparsed_file = f
 
     def __call__(self):
-        assert self.file_is_valid
+        assert self.tree_is_valid
+        assert self.dataset_name_matches
+        assert self.has_only_one_source
 
     # Check that the tree structure fits the specified schema
     @property
@@ -92,9 +94,4 @@ class Validator:
     # Check that source has only one source from either url, socrata or script
     @property
     def has_only_one_source(self):
-        return True
-
-    # Assert all the individual checks
-    @property
-    def file_is_valid(self):
         return True
