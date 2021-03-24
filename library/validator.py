@@ -77,21 +77,41 @@ class Validator:
         self.__unparsed_file = f
 
     def __call__(self):
-        assert self.tree_is_valid
-        assert self.dataset_name_matches
-        assert self.has_only_one_source
+        assert self.tree_is_valid, "Some fields are not valid. Please review your file"
+        assert (
+            self.dataset_name_matches
+        ), "Dataset name must match file and destination name"
+        assert (
+            self.has_only_one_source
+        ), "Source can only have one property from either url, socrata or script"
 
     # Check that the tree structure fits the specified schema
     @property
     def tree_is_valid(self) -> bool:
+        if self.__unparsed_file["dataset"] == None:
+            return False
+        try:
+            input_ds = Dataset(**self.__unparsed_file["dataset"])
+        except ValidationError as e:
+            print(e.json())
+            return False
         return True
 
     # Check that the dataset name matches with destination name
     @property
     def dataset_name_matches(self):
-        return True
+        dataset = self.__unparsed_file["dataset"]
+        return dataset["name"] == dataset["destination"]["name"]
 
     # Check that source has only one source from either url, socrata or script
     @property
     def has_only_one_source(self):
-        return True
+        dataset = self.__unparsed_file["dataset"]
+        source_fields = list(dataset["source"].keys())
+        # In other words: if url is in source, socrata or script cannot be.
+        # If url is NOT in source. Only one from socrata or url can be. (XOR operator ^)
+
+        if "url" in source_fields:
+            return ("socrata" not in source_fields) and ("script" not in source_fields)
+        else:
+            return ("socrata" in source_fields) ^ ("script" in source_fields)
