@@ -11,10 +11,6 @@ def test_tree_structure():
     assert v.tree_is_valid
 
 
-def test_dataset_name_matches():
-    assert v.dataset_name_matches
-
-
 def test_has_only_one_source():
     assert v.has_only_one_source
 
