@@ -7,6 +7,7 @@ import yaml
 from jinja2 import Template
 
 from .utils import format_url
+from .validator import Validator
 
 
 # Custom dumper created for list indentation
@@ -78,80 +79,91 @@ class Config:
     @property
     def compute(self) -> dict:
         """based on given yml file, compute the configuration"""
-        if self.source_type == "script":
-            if self.version:
-                version = self.version
-            else:
-                version = self.version_today
-            config = self.parsed_rendered_template(version=version)
-            _config = self.parsed_unrendered_template
 
-            script_name = _config["dataset"]["source"]["script"]
-            module = importlib.import_module(f"library.script.{script_name}")
-            scriptor = module.Scriptor()
-            url = scriptor.runner()
+        # Validate unparsed, unrendered file
+        v = Validator(self.parsed_unrendered_template)
 
-            options = config["dataset"]["source"]["options"]
-            geometry = config["dataset"]["source"]["geometry"]
-            config["dataset"]["source"] = {
-                "url": {"path": url, "subpath": ""},
-                "options": options,
-                "geometry": geometry,
-            }
+        # If validation passes, parse the config file
+        if v():
+            if self.source_type == "script":
+                if self.version:
+                    version = self.version
+                else:
+                    version = self.version_today
+                config = self.parsed_rendered_template(version=version)
+                _config = self.parsed_unrendered_template
 
-        if self.source_type == "url":
-            # Load unrendered template to check for yml-specified
-            # version (_version)
-            _config = self.parsed_unrendered_template
-            _version = _config["dataset"]["version"]
+                script_name = _config["dataset"]["source"]["script"]
+                module = importlib.import_module(f"library.script.{script_name}")
+                scriptor = module.Scriptor()
+                url = scriptor.runner()
 
-            # If a custom version specified from CLI, take custom version
-            if self.version:
-                version = self.version
+                options = config["dataset"]["source"]["options"]
+                geometry = config["dataset"]["source"]["geometry"]
+                config["dataset"]["source"] = {
+                    "url": {"path": url, "subpath": ""},
+                    "options": options,
+                    "geometry": geometry,
+                }
 
-            # If no custom version specified and version in config
-            # is valid, take config version (_version)
-            if not self.version and self.valid_version(_version):
-                version = _version
+            if self.source_type == "url":
+                # Load unrendered template to check for yml-specified
+                # version (_version)
+                _config = self.parsed_unrendered_template
+                _version = _config["dataset"]["version"]
 
-            # If no custom version and no config version,
-            # assign today as version
-            if not self.version and not self.valid_version(_version):
-                version = self.version_today
+                # If a custom version specified from CLI, take custom version
+                if self.version:
+                    version = self.version
 
-            # Render template
-            config = self.parsed_rendered_template(version=version)
+                # If no custom version specified and version in config
+                # is valid, take config version (_version)
+                if not self.version and self.valid_version(_version):
+                    version = _version
 
-            # Force overwrite of yml version with appropriate version
-            config["dataset"]["version"] = version
+                # If no custom version and no config version,
+                # assign today as version
+                if not self.version and not self.valid_version(_version):
+                    version = self.version_today
 
-        if self.source_type == "socrata":
-            # For socrata we are computing the url and add the url object to the config file
-            _uid = self.parsed_unrendered_template["dataset"]["source"]["socrata"][
-                "uid"
-            ]
-            _format = self.parsed_unrendered_template["dataset"]["source"]["socrata"][
-                "format"
-            ]
-            config = self.parsed_rendered_template(version=self.version_socrata(_uid))
+                # Render template
+                config = self.parsed_rendered_template(version=version)
 
-            if _format == "csv":
-                url = f"https://data.cityofnewyork.us/api/views/{_uid}/rows.csv"
-            if _format == "geojson":
-                url = f"https://nycopendata.socrata.com/api/geospatial/{_uid}?method=export&format=GeoJSON"
+                # Force overwrite of yml version with appropriate version
+                config["dataset"]["version"] = version
 
-            options = config["dataset"]["source"]["options"]
-            geometry = config["dataset"]["source"]["geometry"]
-            config["dataset"]["source"] = {
-                "url": {"path": url, "subpath": ""},
-                "options": options,
-                "geometry": geometry,
-            }
+            if self.source_type == "socrata":
+                # For socrata we are computing the url and add the url object to the config file
+                _uid = self.parsed_unrendered_template["dataset"]["source"]["socrata"][
+                    "uid"
+                ]
+                _format = self.parsed_unrendered_template["dataset"]["source"][
+                    "socrata"
+                ]["format"]
+                config = self.parsed_rendered_template(
+                    version=self.version_socrata(_uid)
+                )
 
-        path = config["dataset"]["source"]["url"]["path"]
-        subpath = config["dataset"]["source"]["url"]["subpath"]
-        config["dataset"]["source"]["url"]["gdalpath"] = format_url(path, subpath)
-        return config
+                if _format == "csv":
+                    url = f"https://data.cityofnewyork.us/api/views/{_uid}/rows.csv"
+                if _format == "geojson":
+                    url = f"https://nycopendata.socrata.com/api/geospatial/{_uid}?method=export&format=GeoJSON"
+
+                options = config["dataset"]["source"]["options"]
+                geometry = config["dataset"]["source"]["geometry"]
+                config["dataset"]["source"] = {
+                    "url": {"path": url, "subpath": ""},
+                    "options": options,
+                    "geometry": geometry,
+                }
+
+            path = config["dataset"]["source"]["url"]["path"]
+            subpath = config["dataset"]["source"]["url"]["subpath"]
+            config["dataset"]["source"]["url"]["gdalpath"] = format_url(path, subpath)
+            return config
+
+        # If validation doesn't pass, return nothing
+        return None
 
     @property
     def compute_json(self) -> str:
@@ -170,8 +182,10 @@ class Config:
     @property
     def compute_parsed(self) -> (dict, dict, dict, dict):
         config = self.compute
-        dataset = config["dataset"]
-        source = dataset["source"]
-        destination = dataset["destination"]
-        info = dataset["info"]
-        return dataset, source, destination, info
+        if config:
+            dataset = config["dataset"]
+            source = dataset["source"]
+            destination = dataset["destination"]
+            info = dataset["info"]
+            return dataset, source, destination, info
+        return None

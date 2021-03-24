@@ -73,72 +73,21 @@ class Validator:
     the library.
     """
 
-    def __init__(self, path):
+    def __init__(self, f):
+        self.__unparsed_file = f
 
-        # Abort if file path is not valid
-        if not self.__check_extension(path):
-            raise Exception("File path must point to a .yml or .yaml file")
-
-        self.path = path
-        self.fname = path.split("/")[-1].split(".")[0]
-
-    def __check_extension(self, path):
-        # Check if path ends with a .yml file
-        extension = path.split("/")[-1].split(".")[-1]
-        return extension in ["yml", "yaml"]
-
-    @cached_property
-    def __file(self):
-        with open(self.path, "r") as stream:
-            y = yaml.load(stream, Loader=yaml.FullLoader)
-            return y
+    def __call__(self):
+        return self.file_is_valid
 
     @property
     def tree_is_valid(self) -> bool:
-        if self.__file["dataset"] == None:
-            return False
-
-        try:
-            input_ds = Dataset(**self.__file["dataset"])
-
-        except ValidationError as e:
-            print(e.json())
-            return False
-
         return True
-
-    # Check that source name matches filename and destination
-    @property
-    def dataset_name_matches(self) -> bool:
-        dataset = self.__file["dataset"]
-        return (dataset["name"] == self.fname) and (
-            dataset["name"] == dataset["destination"]["name"]
-        )
 
     # Check that source has only one source from either url, socrata or script
     @property
     def has_only_one_source(self):
-        dataset = self.__file["dataset"]
-        source_fields = list(dataset["source"].keys())
-        # In other words: if url is in source, socrata or script cannot be.
-        # If url is NOT in source. Only one from socrata or url can be. (XOR operator ^)
-        return (
-            (("socrata" not in source_fields) and ("script" not in source_fields))
-            if ("url" in source_fields)
-            else (("socrata" in source_fields) ^ ("script" in source_fields))
-        )
+        return True
 
     @property
     def file_is_valid(self):
-
-        name = self.path.split("/")[-1].split(".")[0]
-
-        assert self.tree_is_valid, "Wrong fields"
-        assert (
-            self.dataset_name_matches
-        ), "Dataset name must match file and destination name"
-        assert (
-            self.has_only_one_source
-        ), "Source can only have one property from either url, socrata or script"
-
         return True
