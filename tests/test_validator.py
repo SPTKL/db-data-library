@@ -4,7 +4,8 @@ import yaml
 
 from library.validator import Validator
 
-v = Validator(f"{Path(__file__).parent}/data/test_none.yml")
+with open(f"{Path(__file__).parent}/data/test_none.yml", "r") as f:
+    v = Validator(yaml.safe_load(f.read()))
 
 
 def test_tree_structure():
