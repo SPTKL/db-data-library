@@ -79,8 +79,14 @@ class Validator:
     def __call__(self):
         return self.file_is_valid
 
+    # Check that the tree structure fits the specified schema
     @property
     def tree_is_valid(self) -> bool:
+        return True
+
+    # Check that the dataset name matches with destination name
+    @property
+    def dataset_name_matches(self):
         return True
 
     # Check that source has only one source from either url, socrata or script
@@ -88,6 +94,7 @@ class Validator:
     def has_only_one_source(self):
         return True
 
+    # Assert all the individual checks
     @property
     def file_is_valid(self):
         return True
