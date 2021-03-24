@@ -6,13 +6,20 @@ from pydantic import BaseModel, ValidationError, validator
 
 VALID_ACL_VALUES = ("public-read", "private")
 VALID_GEOMETRY_TYPES = (
+    "NONE",
+    "GEOMETRY",
     "POINT",
-    "LINE",
+    "LINESTRING",
     "POLYGON",
+    "GEOMETRYCOLLECTION",
+    "MULTIPOINT",
     "MULTIPOLYGON",
     "MULTILINESTRING",
-    "LINESTRING",
-    "NONE",
+    "CIRCULARSTRING",
+    "COMPOUNDCURVE",
+    "CURVEPOLYGON",
+    "MULTICURVE",
+    "MULTISURFACE",
 )
 VALID_SOCRATA_FORMATS = ("csv", "geojson")
 
