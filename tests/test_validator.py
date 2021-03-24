@@ -17,7 +17,3 @@ def test_dataset_name_matches():
 
 def test_has_only_one_source():
     assert v.has_only_one_source
-
-
-def test_file_is_valid():
-    assert v.file_is_valid
