@@ -25,13 +25,13 @@ VALID_SOCRATA_FORMATS = ("csv", "geojson")
 
 # Create schema
 class GeometryType(BaseModel):
-    SRS: str
+    SRS: str = None
     type: Literal[VALID_GEOMETRY_TYPES]
 
 
 class Url(BaseModel):
     path: str  # Specify field name and data type
-    subpath: str = ""  # Set default value
+    subpath: str = None  # Set default value
 
 
 class Socrata(BaseModel):
