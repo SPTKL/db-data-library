@@ -1,5 +1,5 @@
 dataset:
-  name: &name dcp_schooldistricts
+  name: &name dcp_school_districts
   version: "{{ version }}"
   acl: public-read
 
