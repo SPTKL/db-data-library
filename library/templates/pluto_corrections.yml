@@ -1,5 +1,5 @@
 dataset:
-  name: &name dcp_plutocorrections
+  name: &name pluto_corrections
   version: "{{ version }}"
   acl: public-read
 
