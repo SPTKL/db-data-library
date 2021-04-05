@@ -21,6 +21,8 @@ dataset:
     options:
       - "OVERWRITE=YES"
       - "PRECISION=NO"
+      - "X_POSSIBLE_NAMES=longitude,Longitude,Lon,lon,x"
+      - "Y_POSSIBLE_NAMES=latitude,Latitude,Lat,lat,y"
     fields: []
     sql: null
 
