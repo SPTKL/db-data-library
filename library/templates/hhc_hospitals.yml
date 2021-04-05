@@ -19,10 +19,11 @@ dataset:
     name: *name
     geometry:
       SRS: EPSG:4326
-      type: NONE
+      type: POINT
     options:
       - "OVERWRITE=YES"
       - "PRECISION=NO"
+      - "GEOMETRY=AS_WKT"
     fields: []
     sql: null
 
