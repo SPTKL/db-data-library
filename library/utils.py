@@ -30,6 +30,8 @@ def format_url(path: str, subpath: str) -> str:
     - https://rawgithubcontent.come/somerepo/somefile.csv
     """
     if os.path.isfile(path):
+        if ".zip" in path:
+            return "/vsizip/" + path
         return path
 
     if len(subpath) > 0:
