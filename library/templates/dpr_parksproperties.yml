@@ -20,6 +20,7 @@ dataset:
       type: MULTIPOLYGON
     options:
       - "OVERWRITE=YES"
+      - "GEOMETRY=AS_WKT"
     fields: []
 
   info:

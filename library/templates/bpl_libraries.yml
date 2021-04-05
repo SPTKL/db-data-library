@@ -21,6 +21,7 @@ dataset:
       type: POINT
     options:
       - "OVERWRITE=YES"
+      - "GEOMETRY=AS_WKT"
     fields: []
     sql: null
 

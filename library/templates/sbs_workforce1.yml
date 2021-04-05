@@ -1,18 +1,19 @@
 dataset:
-  name: &name dpr_capitalprojects
+  name: &name sbs_workforce1
   version: "{{ version }}"
   acl: public-read
   source:
-    script: *name
+    socrata:
+      uid: 6smc-7mk6
+      format: csv
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
-      - "GEOM_POSSIBLE_NAMES=the_geom"
       - "X_POSSIBLE_NAMES=longitude,Longitude,Lon,lon,x"
       - "Y_POSSIBLE_NAMES=latitude,Latitude,Lat,lat,y"
     geometry:
       SRS: EPSG:4326
-      type: POINT
+      type: NONE
 
   destination:
     name: *name
@@ -21,13 +22,14 @@ dataset:
       type: POINT
     options:
       - "OVERWRITE=YES"
+      - "PRECISION=NO"
       - "GEOMETRY=AS_WKT"
     fields: []
     sql: null
 
   info:
     description: |
-      ### DPR Capital Projects
-      check [here] for metadata
-    url: "https://www.nycgovparks.org/bigapps"
+      ### Center & Service Locations
+      Find a NYC Department of Small Business Services NYC Business Solutions Center, Workforce1 Career Center, or Employment Works Center. Click here to view a map- https://maps.nyc.gov/sbs/
+    url: "https://data.cityofnewyork.us/dataset/Center-Service-Locations/6smc-7mk6"
     dependents: []
