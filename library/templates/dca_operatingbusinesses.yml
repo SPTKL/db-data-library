@@ -13,16 +13,17 @@ dataset:
       - "Y_POSSIBLE_NAMES=latitude,Latitude,Lat,lat,y"
     geometry:
       SRS: EPSG:4326
-      type: NONE
+      type: POINT
 
   destination:
     name: *name
     geometry:
       SRS: EPSG:4326
-      type: NONE
+      type: POINT
     options:
       - "OVERWRITE=YES"
       - "PRECISION=NO"
+      - "GEOMETRY=AS_WKT"
     fields: []
     sql: null
 

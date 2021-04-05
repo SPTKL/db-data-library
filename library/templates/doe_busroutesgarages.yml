@@ -9,20 +9,21 @@ dataset:
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
-      - "X_POSSIBLE_NAMES=longitude,Longitude,Lon,lon,x"
-      - "Y_POSSIBLE_NAMES=latitude,Latitude,Lat,lat,y"
+      - "X_POSSIBLE_NAMES=XCoordinates,xcoordinates"
+      - "Y_POSSIBLE_NAMES=YCoordinates,ycoordinates"
     geometry:
-      SRS: EPSG:4326
-      type: NONE
+      SRS: EPSG:2263
+      type: POINT
 
   destination:
     name: *name
     geometry:
       SRS: EPSG:4326
-      type: NONE
+      type: POINT
     options:
       - "OVERWRITE=YES"
       - "PRECISION=NO"
+      - "GEOMETRY=AS_WKT"
     fields: []
     sql: null
 
