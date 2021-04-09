@@ -1,0 +1,32 @@
+dataset:
+  name: &name dcp_pops
+  version: "{{ version }}"
+  acl: public-read
+  source:
+    url:
+      path: https://edm-recipes.nyc3.digitaloceanspaces.com/tmp/POPS_Open_Data.CSV
+      subpath: ""
+    options:
+      - "AUTODETECT_TYPE=NO"
+      - "EMPTY_STRING_AS_NULL=YES"
+    geometry:
+      SRS: null
+      type: NONE
+
+  destination:
+    name: *name
+    geometry:
+      SRS: null
+      type: NONE
+    options:
+      - "OVERWRITE=YES"
+      - "PRECISION=NO"
+    fields: []
+    sql: null
+
+  info:
+    description: |
+      ## Privately Owned Public Spaces (Open Data Version)
+      Privately owned public spaces ("POPS") are public spaces located on private property in high density commercial and residential districts in NYC. POPS provide light, air, and green space in the public realm and typically contain various amenities and seating that invite use. Private developers provide them in exchange for additional building floor area or other considerations. POPS have acted as an incentive zoning tool since inaugurated in the 1961 Zoning Resolution.
+    url: null
+    dependents: []
