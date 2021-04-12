@@ -3,7 +3,9 @@ dataset:
   version: "{{ version }}"
   acl: public-read
   source:
-    script: *name
+    url:
+      path: library/tmp/nysdoccs_corrections_20200323.csv
+      subpath: ""
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
