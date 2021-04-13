@@ -26,6 +26,6 @@ dataset:
   info:
     description: |
       ###  Correction Facilities Locations
-      Addresses scraped from the facility location page of NYSDOCCS website
-    url: "https://www1.nyc.gov/site/doc/about/facilities-locations.page"
+      Addresses previously scraped from the facility location page of NYSDOCCS website. Now check for updates against map.
+    url: "https://doccs.ny.gov/system/files/documents/2021/04/facility-map-040821.pdf"
     dependents: []
