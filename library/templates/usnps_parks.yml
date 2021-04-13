@@ -1,0 +1,33 @@
+dataset:
+  name: &name usnps_parks
+  version: "{{ version }}"
+  acl: public-read
+  source:
+    url:
+      path: https://irma.nps.gov/DataStore/DownloadFile/658912
+      subpath: nps_boundary.shp
+    options:
+      - "AUTODETECT_TYPE=NO"
+      - "EMPTY_STRING_AS_NULL=YES"
+    geometry:
+      SRS: EPSG:4269
+      type: MULTIPOLYGON
+
+  destination:
+    name: *name
+    geometry:
+      SRS: EPSG:4326
+      type: MULTIPOLYGON
+    options:
+      - "OVERWRITE=YES"
+      - "PRECISION=NO"
+      - "GEOMETRY=AS_WKT"
+    fields: []
+    sql: null
+
+  info:
+    description: |
+      ## Administrative Boundaries of National Park System Units
+      National Geospatial Data Asset (NGDA) NPS National Parks Dataset. NPS - Land Resources Division
+    url: https://irma.nps.gov/DataStore/Reference/Profile/2225713
+    dependents: []
