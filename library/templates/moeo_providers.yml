@@ -1,0 +1,32 @@
+dataset:
+  name: &name moeo_providers
+  version: "{{ version }}"
+  acl: public-read
+  source:
+    socrata:
+      uid: x882-mwt5
+      format: csv
+    options:
+      - "AUTODETECT_TYPE=NO"
+      - "EMPTY_STRING_AS_NULL=YES"
+    geometry:
+      SRS: null
+      type: NONE
+
+  destination:
+    name: *name
+    geometry:
+      SRS: null
+      type: NONE
+    options:
+      - "OVERWRITE=YES"
+      - "PRECISION=NO"
+    fields: []
+    sql: null
+
+  info:
+    description: |
+      ### Verified Locations for NYC City-Funded Social Service Contracts - Providers
+      Providers that have contracts with the City to deliver social services.
+    url: "https://data.cityofnewyork.us/City-Government/Verified-Locations-for-NYC-City-Funded-Social-Serv/x882-mwt5"
+    dependents: []
