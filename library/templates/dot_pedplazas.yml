@@ -11,13 +11,13 @@ dataset:
       - "EMPTY_STRING_AS_NULL=YES"
     geometry:
       SRS: EPSG:2263
-      type: POINT
+      type: POLYGON
 
   destination:
     name: *name
     geometry:
       SRS: EPSG:4326
-      type: POINT
+      type: POLYGON
     options:
       - "OVERWRITE=YES"
       - "PRECISION=NO"
