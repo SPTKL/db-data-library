@@ -180,3 +180,37 @@ def test_archive_5():
     for f in s3_not_exist:
         assert not a.s3.exists(f)
     start_clean(local_exist + local_not_exist, s3_exist + s3_not_exist)
+
+
+def test_archive_6():
+    s3_not_exist = [
+        "datasets/nypl_libraries/20210122/nypl_libraries.shp",
+        "datasets/nypl_libraries/latest/nypl_libraries.shp",
+    ]
+    local_not_exist = [".library/datasets/nypl_libraries/20210122/nypl_libraries.shp"]
+    s3_exist = [
+        "datasets/nypl_libraries/20210122/nypl_libraries.shp.zip",
+        "datasets/nypl_libraries/latest/nypl_libraries.shp.zip",
+        "datasets/nypl_libraries/20210122/config.yml",
+        "datasets/nypl_libraries/20210122/config.json",
+        "datasets/nypl_libraries/latest/config.yml",
+        "datasets/nypl_libraries/latest/config.json",
+    ]
+    local_exist = [".library/datasets/nypl_libraries/20210122/nypl_libraries.shp.zip"]
+    start_clean(local_exist + local_not_exist, s3_exist + s3_not_exist)
+    a(
+        f"{test_root_path}/data/nypl_libraries.yml",
+        output_format="shapefile",
+        push=True,
+        clean=False,
+        latest=True,
+    )
+    for f in local_exist:
+        assert os.path.isfile(f)
+    for f in local_not_exist:
+        assert not os.path.isfile(f)
+    for f in s3_exist:
+        assert a.s3.exists(f)
+    for f in s3_not_exist:
+        assert not a.s3.exists(f)
+    start_clean(local_exist + local_not_exist, s3_exist + s3_not_exist)
