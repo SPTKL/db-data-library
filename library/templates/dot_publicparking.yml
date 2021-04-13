@@ -1,0 +1,33 @@
+dataset:
+  name: &name dot_publicparking
+  version: "{{ version }}"
+  acl: public-read
+  source:
+    url:
+      path: library/tmp/Municipal_Parking.zip
+      subpath: Municipal_Parking/Municipal_Parking.shp
+    options:
+      - "AUTODETECT_TYPE=NO"
+      - "EMPTY_STRING_AS_NULL=YES"
+    geometry:
+      SRS: EPSG:2263
+      type: POINT
+
+  destination:
+    name: *name
+    geometry:
+      SRS: EPSG:4326
+      type: POINT
+    options:
+      - "OVERWRITE=YES"
+      - "PRECISION=NO"
+      - "GEOMETRY=AS_WKT"
+    fields: []
+    sql: null
+
+  info:
+    description: |
+      ###  DOT Municipal Parking
+      Recieved from DOT via email update
+    url:
+    dependents: []
