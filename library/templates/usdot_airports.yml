@@ -1,0 +1,32 @@
+dataset:
+  name: &name usdot_airports
+  version: "{{ version }}"
+  acl: public-read
+  source:
+    url:
+      path: https://opendata.arcgis.com/datasets/831853ab8b714a81b6a3e21d0b164a4e_0.geojson
+      subpath: ""
+    options:
+      - "AUTODETECT_TYPE=NO"
+      - "EMPTY_STRING_AS_NULL=YES"
+    geometry:
+      SRS: EPSG:4326
+      type: POINT
+
+  destination:
+    name: *name
+    geometry:
+      SRS: EPSG:4326
+      type: POINT
+    options:
+      - "OVERWRITE=YES"
+      - "PRECISION=NO"
+    fields: []
+    sql: null
+
+  info:
+    description: |
+      ## Airports
+      The Airports dataset includes all official and operational aerodromes as of July 16, 2020 and is part of the U.S. Department of Transportation (USDOT)/Bureau of Transportation Statistics (BTS) National Transportation Atlas Database (NTAD). The Airports database is a geographic point database of official operational aerodromes in the United States and U.S. Territories. Attribute data is provided on the physical and operational characteristics of the aerodrome, current usage including enplanements and aircraft operations, congestion levels and usage categories. This geospatial data is derived from the FAA's National Airspace System Resource Aeronautical Data Product.
+    url: https://hub.arcgis.com/datasets/usdot::airports
+    dependents: []
