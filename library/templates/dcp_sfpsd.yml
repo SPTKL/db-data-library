@@ -7,24 +7,25 @@ dataset:
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
-      - "X_POSSIBLE_NAMES=lon"
-      - "Y_POSSIBLE_NAMES=lat"
+      - "GEOM_POSSIBLE_NAMES=the_geom"
     geometry:
-      SRS: null
-      type: NONE
+      SRS: EPSG:4326
+      type: POINT
 
   destination:
     name: *name
     geometry:
-      SRS: null
-      type: NONE
+      SRS: EPSG:4326
+      type: POINT
     options:
       - "OVERWRITE=YES"
+      - "GEOMETRY=AS_WKT"
     fields: []
     sql: null
 
   info:
     description: |
-      ###
+      ### Static Facilities
+      These records will never change, no updates needed
     url: ""
     dependents: []
