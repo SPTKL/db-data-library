@@ -3,7 +3,9 @@ dataset:
   version: "{{ version }}"
   acl: public-read
   source:
-    script: *name
+    url:
+      path: https://maps.nyc.gov/prek/data/pka/pka.csv
+      subpath: ""
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
