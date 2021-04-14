@@ -1,0 +1,36 @@
+dataset:
+  name: &name foodbankny_foodbanks
+  version: "{{ version }}"
+  acl: public-read
+  source:
+    url:
+      path: "Food Bank For NYC Open Members as of 4921.kml"
+      subpath: ""
+    options:
+      - "AUTODETECT_TYPE=NO"
+      - "EMPTY_STRING_AS_NULL=YES"
+    geometry:
+      SRS: null
+      type: NONE
+
+  destination:
+    name: *name
+    geometry:
+      SRS: null
+      type: NONE
+    options:
+      - "OVERWRITE=YES"
+      - "GEOMETRY=AS_WKT"
+    fields: []
+    sql: null
+
+  info:
+    description: |
+      > Map results of soup kitchen, food pantry, senior center, or SNAP enrollment site locactions
+      ## Update Instructions
+      1. head to http://www.foodbanknyc.org/get-help/
+      2. navigate to the map and download it as kml
+      3. place it at a local directory, edit foodbankny_foodbanks.yml to reflect the local path
+      4. then run library archive --name foodbankny_foodbanks ...
+    url: "http://www.foodbanknyc.org/get-help/"
+    dependents: []
