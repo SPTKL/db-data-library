@@ -1,23 +1,24 @@
 dataset:
-  name: &name doitt_buildingfootprints
+  name: &name doitt_buildingcentroids
   version: "{{ version }}"
   acl: public-read
   source:
     socrata:
-      uid: viz9-mrjz
-      format: geojson   
+      uid: 376k-kxnx
+      format: csv
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"  
+      - "GEOM_POSSIBLE_NAMES=the_geom"
     geometry:
       SRS: EPSG:4326
-      type: MULTIPOLYGON
+      type: POINT
 
   destination:
     name: *name
     geometry:
       SRS: EPSG:4326
-      type: MULTIPOLYGON
+      type: POINT
     options:
       - "OVERWRITE=YES"
       - "PRECISION=NO"
@@ -26,7 +27,7 @@ dataset:
   
   info:
     description: |
-      ### Building Footprints
+      ### Building Footprints (centroids)
       Shapefile of footprint outlines of buildings in New York City. 
       Please see the following link for additional documentation-
       https://github.com/CityOfNewYork/nyc-geo-metadata/blob/master/Metadata/Metadata_BuildingFootprints.md
