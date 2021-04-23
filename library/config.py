@@ -93,7 +93,7 @@ class Config:
 
             script_name = _config["dataset"]["source"]["script"]
             module = importlib.import_module(f"library.script.{script_name}")
-            scriptor = module.Scriptor()
+            scriptor = module.Scriptor(config=config)
             url = scriptor.runner()
 
             options = config["dataset"]["source"]["options"]
