@@ -4,11 +4,12 @@ dataset:
   acl: public-read
   source:
     socrata:
-      uid: viz9-mrjz
-      format: geojson   
+      uid: wzyk-df9m
+      format: csv
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"  
+      - "GEOM_POSSIBLE_NAME=the_geom"
     geometry:
       SRS: EPSG:4326
       type: MULTIPOLYGON
