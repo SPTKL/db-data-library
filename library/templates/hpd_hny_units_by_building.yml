@@ -34,5 +34,5 @@ dataset:
       The unit counts are provided for each project, rather than by building. 
       For additional documentation, including a data dictionary, review the attachments in the 
       “About this Dataset” section of the Primer landing page.
-    url: "https://data.cityofnewyork.us/Health/NYC-Health-Hospitals-patient-care-locations-2011/f7b6-v6v3"
+    url: "https://data.cityofnewyork.us/Housing-Development/Housing-New-York-Units-by-Building/hg8x-zxpr"
     dependents: []
