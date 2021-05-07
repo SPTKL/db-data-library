@@ -9,7 +9,7 @@ dataset:
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
-      - "GEOM_POSSIBLE_NAME=geom"
+      - "GEOM_POSSIBLE_NAMES=geom"
     geometry:
       SRS: EPSG:4326
       type: MULTIPOLYGON
