@@ -18,6 +18,8 @@ class Scriptor:
         for i in content["locations"]:
             data.append(i["data"])
         df = pd.DataFrame.from_dict(data, orient="columns")
+        df['latitude'] = df.position.apply(lambda x: x.split(',')[0].strip())
+        df['longitude'] = df.position.apply(lambda x: x.split(',')[1].strip())
         return df
 
     def runner(self) -> str:

@@ -7,9 +7,8 @@ dataset:
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
-      - "GEOM_POSSIBLE_NAMES=the_geom"
-      - "X_POSSIBLE_NAMES=longitude,Longitude,Lon,lon,x"
-      - "Y_POSSIBLE_NAMES=latitude,Latitude,Lat,lat,y"
+      - "X_POSSIBLE_NAMES=longitude"
+      - "Y_POSSIBLE_NAMES=latitude"
     geometry:
       SRS: EPSG:4326
       type: POINT
