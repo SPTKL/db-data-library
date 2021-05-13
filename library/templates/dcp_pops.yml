@@ -4,11 +4,13 @@ dataset:
   acl: public-read
   source:
     url:
-      path: library/tmp/POPS_Open_Data.GeoJSON
+      path: POPS_Open_Data(2021-5-13_12.25).CSV
       subpath: ""
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
+      - "X_POSSIBLE_NAMES=longitude"
+      - "Y_POSSIBLE_NAMES=latitude"
     geometry:
       SRS: EPSG:4326
       type: POINT
@@ -29,5 +31,6 @@ dataset:
     description: |
       ## Privately Owned Public Spaces (Open Data Version)
       Privately owned public spaces ("POPS") are public spaces located on private property in high density commercial and residential districts in NYC. POPS provide light, air, and green space in the public realm and typically contain various amenities and seating that invite use. Private developers provide them in exchange for additional building floor area or other considerations. POPS have acted as an incentive zoning tool since inaugurated in the 1961 Zoning Resolution.
+      > Note: to get the raw data, head to dcp commons > the pops app > export data > and select "for open data" and download the csv
     url: null
     dependents: []
