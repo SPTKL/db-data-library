@@ -4,7 +4,7 @@ dataset:
   acl: private
   source:
     url:
-      path: AICP_OREQ_CAPPLN_PJCP.zip
+      path: AICP_OREQ_CAPPLN_PJCP.csv
       subpath: ""
     options:
       - "AUTODETECT_TYPE=NO"
@@ -28,5 +28,11 @@ dataset:
     description: |
       ### FISA Capital Commitments
       received from OMB/Capital Planning
+
+      ```
+      import pandas
+      df = df.read_csv('AICP_OREQ_CAPPLN_PJCP.zip', encoding='iso-8859-1', header=None, index_col=False)
+      df.to_csv('AICP_OREQ_CAPPLN_PJCP.csv', index=False, header=False)
+      ```
     url:
     dependents: []
