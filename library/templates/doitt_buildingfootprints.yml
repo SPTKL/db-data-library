@@ -3,13 +3,10 @@ dataset:
   version: "{{ version }}"
   acl: public-read
   source:
-    socrata:
-      uid: wzyk-df9m
-      format: csv
+    script: *name
     options:
       - "AUTODETECT_TYPE=NO"
-      - "EMPTY_STRING_AS_NULL=YES"  
-      - "GEOM_POSSIBLE_NAME=the_geom"
+      - "EMPTY_STRING_AS_NULL=YES"
     geometry:
       SRS: EPSG:4326
       type: MULTIPOLYGON
@@ -24,11 +21,11 @@ dataset:
       - "PRECISION=NO"
     fields: []
     sql: null
-  
+
   info:
     description: |
       ### Building Footprints
-      Shapefile of footprint outlines of buildings in New York City. 
+      Shapefile of footprint outlines of buildings in New York City.
       Please see the following link for additional documentation-
       https://github.com/CityOfNewYork/nyc-geo-metadata/blob/master/Metadata/Metadata_BuildingFootprints.md
       Previously posted versions of the data are retained to comply with Local Law 106 of 2015 and can be provided upon request made to Open Data.
