@@ -5,6 +5,7 @@ on:
     paths:
       - "**.py"
       - "**.toml"
+      - "**.yml"
 
 jobs:
   test:
