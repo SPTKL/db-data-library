@@ -4,8 +4,8 @@ dataset:
   acl: public-read
   source:
     url:
-      path: https://edm-publishing.nyc3.digitaloceanspaces.com/datasets/address_points/staging/gis_address_points.zip
-      subpath: gis_address_points.shp
+      path: s3://edm-publishing/datasets/dcp_address_points/staging/dcp_address_points.zip
+      subpath: ""
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
@@ -28,7 +28,7 @@ dataset:
     description: |
       ### ESRI Shapefile
       Address points created from data in the Department of City Planning Property Address Directory (PAD) file.
-      Address points were developed to supplement the address information supplied by the CSCL centerline. 
+      Address points were developed to supplement the address information supplied by the CSCL centerline.
       Some computer aided dispatch systems use address points as the primary source for locating an address
     url: ""
     dependents: []
