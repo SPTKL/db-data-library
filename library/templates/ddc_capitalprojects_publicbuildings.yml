@@ -11,13 +11,13 @@ dataset:
       - "EMPTY_STRING_AS_NULL=YES"
     geometry:
       SRS: EPSG:2263
-      type: MULTILINESTRING
+      type: MULTIPOLYGON
 
   destination:
     name: *name
     geometry:
       SRS: EPSG:4326
-      type: MULTILINESTRING
+      type: MULTIPOLYGON
     options:
       - "OVERWRITE=YES"
       - "PRECISION=NO"
