@@ -25,6 +25,7 @@ dataset:
     options: #layerCreationOptions
       - "OVERWRITE=YES"
       - "PRECISION=NO"
+      - "GEOMETRY=AS_WKT"
     fields: []
 
     # If there's a SQL statement we would like to perform
