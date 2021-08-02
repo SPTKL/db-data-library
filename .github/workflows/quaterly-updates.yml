@@ -1,0 +1,50 @@
+name: 📁 Bytes Quaterly Updates
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The quarterly version name (e.g. 21b, has to be all lower case)'
+        required: true
+        default: 21b
+
+
+jobs:
+  dataloading:
+    runs-on: ubuntu-20.04
+    env:
+      AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SECRET_ACCESS_KEY }}
+      AWS_S3_BUCKET: edm-recipes
+    strategy:
+      matrix:
+        dataset:
+          - dcp_atomicpolygons
+          - dcp_boroboundaries
+          - dcp_boroboundaries_wi
+          - dcp_cdboundaries
+          - dcp_cdboundaries_wi
+          - dcp_censustracts
+          - dcp_censustracts_wi
+          - dcp_censusblocks
+          - dcp_censusblocks_wi
+          - dcp_electiondistricts
+          - dcp_electiondistricts_wi
+          - dcp_councildistricts
+          - dcp_councildistricts_wi
+          - dcp_firecompanies
+          - dcp_policeprecinctss
+          - dcp_healthareas
+          - dcp_healthcenters
+          - dcp_school_districts
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: NYCPlanning/action-library-archive@v1.1
+        with:
+          name: ${{ matrix.dataset }}
+          version: ${{ github.event.inputs.version }}
+          latest: true
+          s3: true
+          compress: true
+          output_format: pgdump shapefile csv
