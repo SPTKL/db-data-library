@@ -22,6 +22,7 @@ jobs:
           - lpc_landmarks
           - dpr_greenthumb
           - dpr_parksproperties
+          - dsny_frequencies
     steps:
       - uses: actions/checkout@v2.3.4
       - uses: NYCPlanning/action-library-archive@v1.1
