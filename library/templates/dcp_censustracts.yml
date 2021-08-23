@@ -5,8 +5,8 @@ dataset:
 
   source:
     url: 
-      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nyct2010_{{ version }}.zip
-      subpath: nyct2010_{{ version }}/nyct2010.shp
+      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nyct2020_{{ version }}.zip
+      subpath: nyct2020_{{ version }}/nyct2020.shp
     geometry:
       SRS: EPSG:2263
       type: MULTIPOLYGON
@@ -27,8 +27,6 @@ dataset:
 
   info:
     description: |
-      ### ESRI Shapefile
-      The Census Tracts for the 2010 US Census (Clipped to shoreline).
-      Source will be updated once the 2020 Census data is available.
+      ### 2020 Census Tracts (Clipped to shoreline).
     url: https://www1.nyc.gov/site/planning/data-maps/open-data/districts-download-metadata.page
     dependents: []

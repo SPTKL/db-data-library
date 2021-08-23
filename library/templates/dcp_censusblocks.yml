@@ -5,10 +5,10 @@ dataset:
 
   source:
     url:
-      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nycb2010_{{ version }}.zip
-      subpath: nycb2010_{{ version }}/nycb2010.shp
+      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nycb2020_{{ version }}.zip
+      subpath: nycb2020_{{ version }}/nycb2020.shp
     geometry:
-      SRS: EPSG:4326
+      SRS: EPSG:2263
       type: MULTIPOLYGON
     options:
       - "AUTODETECT_TYPE=NO"
@@ -26,8 +26,6 @@ dataset:
     sql: null
   info:
     description: |
-      ### ESRI Shapefile
-      The Census Blocks for the 2010 US Census (Clipped to shoreline).
-      Source will be updated once the 2020 census data is available
+      ### 2020 Census Blocks (Clipped to shoreline).
     url: https://www1.nyc.gov/site/planning/data-maps/open-data/districts-download-metadata.page
     dependents: []
