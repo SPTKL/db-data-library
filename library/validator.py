@@ -2,7 +2,7 @@ from functools import cached_property
 from typing import List, Literal
 
 import yaml
-from pydantic import BaseModel, ValidationError, validator
+from pydantic import BaseModel, ValidationError, validator, Extra
 
 VALID_ACL_VALUES = ("public-read", "private")
 VALID_GEOMETRY_TYPES = (
@@ -61,6 +61,8 @@ class InfoSection(BaseModel):
     info: str = None
     url: str = None
     dependents: List[str] = None
+    class Config:
+        extra = Extra.allow
 
 
 class Dataset(BaseModel):
