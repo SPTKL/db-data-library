@@ -1,12 +1,11 @@
 dataset:
-  name: dcp_nta2020
-  version: &name
+  name:  &name dcp_nta2020
+  version: "{{ version }}"
   acl: public-read
   source:
     url:
       path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nynta2020_{{ version }}.zip
       subpath: nynta2020_{{ version }}/nynta2020.shp
-      gdalpath: /vsizip/vsicurl/https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nynta2020_{{ version }}.zip/nynta2020_{{ version }}/nynta2020.shp
     geometry:
       SRS: EPSG:2263
       type: MULTIPOLYGON
