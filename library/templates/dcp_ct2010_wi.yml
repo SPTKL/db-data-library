@@ -1,5 +1,5 @@
 dataset:
-  name: &name dcp_censustracts_wi
+  name: &name dcp_ct2010_wi
   version: "{{ version }}"
   acl: public-read
 
@@ -27,8 +27,6 @@ dataset:
 
   info:
     description: |
-      ### ESRI Shapefile
-      The Census Tracts for the 2010 US Census (Water areas included).
-      Source will be updated once the 2020 Census data is available.
+      ### The Census Tracts for the 2010 US Census (Water areas included).
     url: https://www1.nyc.gov/site/planning/data-maps/open-data/districts-download-metadata.page
     dependents: []
