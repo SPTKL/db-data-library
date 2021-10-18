@@ -5,10 +5,10 @@ dataset:
 
   source:
     url:
-      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/plutochangefile{{ version }}.zip
+      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/PLUTOChangeFile{{ version }}.zip
       subpath: pluto_corrections.csv
     geometry:
-      SRS: EPSG:2263
+      SRS: null
       type: NONE
     options:
       - "AUTODETECT_TYPE=NO"
@@ -17,7 +17,7 @@ dataset:
   destination:
     name: *name
     geometry:
-      SRS: EPSG:4326
+      SRS: null
       type: NONE
     options:
       - "OVERWRITE=YES"
@@ -27,7 +27,10 @@ dataset:
 
   info:
     description: |
-      ###
-      Corrections file applied to current release of PLUTO
+      # PLUTO Corrections (PLUTO Change file)
+      PLUTO is created using the best available data from a number of city agencies.
+      To further improve data quality and consistency, the Department of City Planning (DCP) applies changes to selected field values.
+      The field DCPEdited is set to “1” in PLUTO if the record contains any changed values.
+      Those applied changes are listed in the PLUTO Change File.
     url: https://www1.nyc.gov/assets/planning/download/pdf/data-maps/open-data/pluto-readme.pdf
     dependents: []
