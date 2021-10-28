@@ -6,6 +6,8 @@ on:
       - "**.py"
       - "**.toml"
       - "**.yml"
+    paths-ignore:
+      - "dashboard/**"
 
 jobs:
   test:
