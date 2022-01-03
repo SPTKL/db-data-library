@@ -1,5 +1,5 @@
 dataset:
-  name: &name evictions
+  name: &name doi_evictions
   version: "{{ version }}"
   acl: public-read
   source:
