@@ -4,7 +4,7 @@ dataset:
   acl: public-read
   source:
     socrata:
-      uid: qgyt-j5ak
+      uid: s5zg-yzea
       format: geojson   
     options:
       - "AUTODETECT_TYPE=NO"
