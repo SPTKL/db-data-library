@@ -1,5 +1,5 @@
 dataset:
-  name: &name dcp_access_subway_SBS
+  name: &name dcp_access_subway_sbs
   version: "{{ version }}"
   acl: public-read
   source:
