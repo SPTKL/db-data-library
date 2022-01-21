@@ -4,7 +4,7 @@ dataset:
   acl: public-read
   source:
     socrata:
-      uid: s5zg-yzea
+      uid: ipkp-snf6
       format: geojson   
     options:
       - "AUTODETECT_TYPE=NO"
@@ -33,6 +33,9 @@ dataset:
       https://github.com/CityOfNewYork/nyc-planimetrics/blob/master/Capture_Rules.md.
       Previously posted versions of the data are retained to comply with Local Law 106 of 2015 and 
       can be provided upon request made to Open Data.
+      NOTE: The Socrata UID is not the same as the url (below). We want UID: ipkp-snf6 which is 
+      the multipolygon geojson layer. There are two layers of data on the opendata portal:
+      one contains the multipolygon (building_historic) and the other contains points only (building_historic_p).
     url: "https://data.cityofnewyork.us/Housing-Development/Building-Footprints-Historical-Shape/s5zg-yzea"
     dependents: []
   
