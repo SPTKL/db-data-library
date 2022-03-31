@@ -8,7 +8,7 @@ class Scriptor:
         self.__dict__.update(kwargs)
 
     def ingest(self) -> pd.DataFrame:
-        df = pd.read_csv("dob_now_applications.csv", encoding="Windows-1252")
+        df = pd.read_csv("s3://edm-private/dob_now/DOB_Now_Job_Filing_Data_for_DCP_{{ version }}.csv", encoding="Windows-1252")
         return df
 
     def runner(self) -> str:
