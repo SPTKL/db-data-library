@@ -3,6 +3,7 @@ dataset:
   version: "{{ version }}"
   acl: public-read
   source:
+    script: *name
     url:
       path: s3://edm-private/dob_now/DOB_Now_Job_Filing_Data_for_DCP_{{ version }}.csv
       subpath: ""
