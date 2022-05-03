@@ -3,9 +3,7 @@ dataset:
   version: "{{ version }}"
   acl: public-read
   source:
-    url:
-      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/facilities_{{ version }}csv.zip
-      subpath: "FacDB_20210811.csv"
+    script: *name
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
