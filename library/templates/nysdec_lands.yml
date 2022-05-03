@@ -4,13 +4,13 @@ dataset:
   acl: public-read
   source:
     url:
-      path: https://gisservices.its.ny.gov/arcgis/rest/services/dec_lands/MapServer/0/query?where=1=1&outfields=*&f=geojson
+      path: http://gis.ny.gov/gisdata/data/ds_1114/DEC_lands.zip
       subpath: ""
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
     geometry:
-      SRS: EPSG:4326
+      SRS: EPSG:26918
       type: MULTIPOLYGON
 
   destination:
