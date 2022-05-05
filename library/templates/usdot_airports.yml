@@ -3,9 +3,7 @@ dataset:
   version: "{{ version }}"
   acl: public-read
   source:
-    url:
-      path: library/tmp/allairportdata.csv
-      subpath: ""
+    script: *name
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
