@@ -23,8 +23,8 @@ class Scriptor:
             "sec-fetch-user": "?1",
             "upgrade-insecure-requests": "1",
         }
-        body = "__EVENTTARGET=ctl00%24ContentPlaceHolder1%24LCGMSDataDownload%24Button1&__EVENTARGUMENT=&__VIEWSTATE=yIvVD8BwSY%2BlLHK0a2H5FrWQ9EfrSSDQJ8KOXQ35bVNi6lXZhoDmaN6E4NXNaP9uW8bnlP2kKxjdtLXh9vahuHowOFTad2L9Tn%2BtU8OtYlaUTy%2Fw&__VIEWSTATEGENERATOR=B9B96176&__EVENTVALIDATION=dVILHCjooNWW9mk0eGjjhFOG%2FUkgtEIoyjMwfnL7Uj3wvskyvfvrwtBduMszJp8aDcpQWtz%2B5MppvkLrbhcgapkIvidO1ncvM2Q6iDGB8hPJ7PF5"
-
+        body = "__EVENTTARGET=ctl00%24ContentPlaceHolder1%24LCGMSDataDownload%24Button1&__EVENTARGUMENT=&__VIEWSTATE=C7eAfHR%2FgZPxj29X50UYi6HVZO%2BJktQaDNCB5tjukvT5hzkKtTXlfz67jqxji6Bre9zcC4yyYkWeLd5aJSz6l%2B1mEfpoP6TGaZ6naJZ8%2BxNR8sNWVr7F26%2FlMfbhdZee&__VIEWSTATEGENERATOR=B9B96176&__EVENTVALIDATION=BEdLs1b7UJRDrD1O1phZV7VXmY%2ByE4%2F1LJ%2BXczt3sVncgOKsPke3fvII6oby1u7P%2Fwys0qcI5DZrWBQdivZ4ylrKkOUlNDwKfulKTQ%2FpIGLwNK%2BaUPJjH4x1bn11pVOD"
+        
         r = requests.post(
             "https://www.nycenet.edu/PublicApps/LCGMS.aspx", #data=body, headers=headers
         )
