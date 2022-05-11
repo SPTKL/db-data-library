@@ -8,7 +8,7 @@ dataset:
       path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nycb2020_{{ version }}.zip
       subpath: nycb2020_{{ version }}/nycb2020.shp
     geometry:
-      SRS: EPSG:4326
+      SRS: EPSG:2263
       type: MULTIPOLYGON
     options:
       - "AUTODETECT_TYPE=NO"
