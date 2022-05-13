@@ -34,9 +34,8 @@ class Scriptor:
         body = "__EVENTTARGET=ctl00%24ContentPlaceHolder1%24LCGMSDataDownload%24Button1&__EVENTARGUMENT=&__VIEWSTATE=C7eAfHR%2FgZPxj29X50UYi6HVZO%2BJktQaDNCB5tjukvT5hzkKtTXlfz67jqxji6Bre9zcC4yyYkWeLd5aJSz6l%2B1mEfpoP6TGaZ6naJZ8%2BxNR8sNWVr7F26%2FlMfbhdZee&__VIEWSTATEGENERATOR=B9B96176&__EVENTVALIDATION=BEdLs1b7UJRDrD1O1phZV7VXmY%2ByE4%2F1LJ%2BXczt3sVncgOKsPke3fvII6oby1u7P%2Fwys0qcI5DZrWBQdivZ4ylrKkOUlNDwKfulKTQ%2FpIGLwNK%2BaUPJjH4x1bn11pVOD"
 
         r = requests.post(
-            "https://www.nycenet.edu/PublicApps/LCGMS.aspx", #data=body, headers=headers
+            "https://www.nycenet.edu/PublicApps/LCGMS.aspx", data=body, headers=headers
         )
-        print(r.text)
         df = pd.read_html(r.text)
         df = df[0]  # first page of worksheet
         df.columns = df.iloc[0].str.replace("\t", " ")  # First row as column names
