@@ -27,6 +27,6 @@ dataset:
     description: |
       ## Airports
       the published 5010 Excel sheet from includes all airports and heliports registered with FAA(Federal Avfiation Administration) which is under USDOT last update in Apr 22 2022
-      the csv used in the process required saving the first sheet "Airports" as a csv since data library does not handle multipage excel well by default
+      a script process is used to ingest the excel spreadsheet and get the appropriate tab as a csv to complete the process uploading to our s3 space
     url: https://adip.faa.gov/agis/public/#/airportSearch/advanced
     dependents: []
