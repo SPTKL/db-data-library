@@ -1,4 +1,5 @@
 import pandas as pd
+import requests
 
 from . import df_to_tempfile
 
@@ -8,7 +9,7 @@ class Scriptor:
         self.__dict__.update(kwargs)
 
     def ingest(self) -> pd.DataFrame:
-        df = pd.read_excel('library/tmp/all-airport-data.xlsx', sheet_name='Airports')
+        df = pd.read_excel("https://adip.faa.gov/publishedAirports/all-airport-data.xlsx", sheet_name="Airports")
         return df
 
     def runner(self) -> str:
