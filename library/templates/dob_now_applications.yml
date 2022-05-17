@@ -4,9 +4,6 @@ dataset:
   acl: public-read
   source:
     script: *name
-    url:
-      path: s3://edm-private/dob_now/DOB_Now_Job_Filing_Data_for_DCP_{{ version }}.csv
-      subpath: ""
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
@@ -28,5 +25,7 @@ dataset:
   info:
     description: |
       DOB NOW job applications received from DOB via FTP
+      the python handles the encoding of the source file which is not standard utf-8.
+      Also the versioning of this file is based on the date received from DOB
     url: ""
     dependents: []
