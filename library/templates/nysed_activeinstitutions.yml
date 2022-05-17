@@ -4,7 +4,7 @@ dataset:
   acl: public-read
   source:
     url:
-      path: library/tmp/All Institutions_ Active Institutions with GIS coordinates and OITS Accuracy Code - Select by County.csv
+      path: library/tmp/All_Institutions_by_County.csv
       subpath: ""
     options:
       - "AUTODETECT_TYPE=NO"
