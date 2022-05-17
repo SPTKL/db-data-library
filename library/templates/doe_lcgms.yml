@@ -36,5 +36,8 @@ dataset:
       Updates for the next school year are integrated into the report by July 15 of each year.
       #### Questions?
       For additional information, contact OOD@schools.nyc.gov.
+      ### How to run
+      Follow directions in associated python script
+      If that doesn't work, convert the downloaded file to a .csv manually and update process to ingest from the csv
     url: "https://infohub.nyced.org/in-our-schools/operations/lcgms"
     dependents: []
