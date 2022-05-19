@@ -3,9 +3,7 @@ dataset:
   version: "{{ version }}"
   acl: public-read
   source:
-    url:
-      path: s3://edm-private/dob_now/DOB_Now_Job_Filing_Data_for_DCP_{{ version }}.csv
-      subpath: ""
+    script: *name
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
@@ -27,5 +25,11 @@ dataset:
   info:
     description: |
       DOB NOW job applications received from DOB via FTP
+      the python handles the encoding of the source file which is not standard utf-8 and also ingesting
+      from the edm-private s3 bucket.
+      INSTRUCTION FOR DATA UPDATE:
+      Must be run with -v flag e.g. library archive -n dob_now_applications -v 20220118
+      Since the versioning of this file is based on the date received from DOB so the default version
+      given by runtime date won't work. 
     url: ""
     dependents: []
