@@ -134,3 +134,5 @@ dmypy.json
 # library output folder
 .library
 .config
+
+library/tmp/
