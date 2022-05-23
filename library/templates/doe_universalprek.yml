@@ -4,7 +4,7 @@ dataset:
   acl: public-read
   source:
     url:
-      path: https://maps.nyc.gov/prek/data/pka/pka.csv
+      path: library/tmp/DOE_Buildings_Locations_DECE.csv
       subpath: ""
     options:
       - "AUTODETECT_TYPE=NO"
