@@ -11,19 +11,19 @@ dataset:
       path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nycg_{{ version }}.zip
       subpath: nycg_{{ version }}/nycg.shp
     geometry:
-      SRS: EPSG:4326
+      SRS: EPSG:2263
       type: MULTIPOLYGON
     options:
-      - "AUTODETECT_TYPE=NO"
-      - "EMPTY_STRING_AS_NULL=YES"
+      - AUTODETECT_TYPE=NO
+      - EMPTY_STRING_AS_NULL=YES
   destination:
     name: *name
     geometry:
       SRS: EPSG:4326
       type: MULTIPOLYGON
     options:
-      - "OVERWRITE=YES"
-      - "PRECISION=NO"
+      - OVERWRITE=YES
+      - PRECISION=NO
     fields: []
     sql: null
   info:
