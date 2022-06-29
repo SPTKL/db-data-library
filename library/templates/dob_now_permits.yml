@@ -1,0 +1,35 @@
+dataset:
+  name: &name dob_now_permits
+  version: "{{ version }}"
+  acl: public-read
+  source:
+    script: *name
+    options:
+      - "AUTODETECT_TYPE=NO"
+      - "EMPTY_STRING_AS_NULL=YES"
+    geometry:
+      SRS: null
+      type: NONE
+
+  destination:
+    name: *name
+    geometry:
+      SRS: null
+      type: NONE
+    options:
+      - "OVERWRITE=YES"
+      - "PRECISION=NO"
+    fields: []
+    sql: null
+
+  info:
+    description: |
+      DOB NOW job applications received from DOB via FTP
+      the python handles the encoding of the source file which is not standard utf-8 and also ingesting
+      from the edm-private s3 bucket.
+      INSTRUCTION FOR DATA UPDATE:
+      Must be run with -v flag e.g. library archive -n dob_now_permits -v 202200627
+      Since the versioning of this file is based on the date received from DOB so the default version
+      given by runtime date won't work. 
+    url: ""
+    dependents: []
