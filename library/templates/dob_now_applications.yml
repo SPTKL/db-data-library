@@ -24,7 +24,7 @@ dataset:
 
   info:
     description: |
-      DOB NOW job applications received from DOB via FTP
+      DOB NOW job applications received from DOB via FTP which is hosted by Matt and manually moved to sharepoint
       the python handles the encoding of the source file which is not standard utf-8 and also ingesting
       from the edm-private s3 bucket.
 

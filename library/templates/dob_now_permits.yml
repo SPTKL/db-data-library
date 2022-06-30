@@ -24,7 +24,7 @@ dataset:
 
   info:
     description: |
-      DOB NOW Permits received from DOB via FTP
+      DOB NOW Permits received from DOB via FTP which is hosted by Matt and manually moved to sharepoint
       this is customed file received from DOB for additional fields requied to get the earliest permit data for the DOB NOW applications
       this would eventually be used to fill out the status q in the development database
 
