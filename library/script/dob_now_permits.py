@@ -5,6 +5,7 @@ from . import df_to_tempfile
 from dotenv import load_dotenv
 import boto3
 import os
+import io
 
 from io import StringIO
 
@@ -28,13 +29,10 @@ class Scriptor:
         )
         obj = client.get_object(
             Bucket="edm-private",
-            Key=f"dob_now/dob_now_job_applications/DOB_Now_Job_Filing_Data_for_DCP_{self.version}.csv",
+            Key=f"dob_now/dob_now_permits/DOB_Now_Permit_Filing_File_{self.version}.csv",
         )
-        #convert to a literal string of bytes with correct encoding
-        s = str(obj["Body"].read(), "Windows-1252")
-        # use StringIO to convert consumable format for pd.read_csv
-        data = StringIO(s)
-        df = pd.read_csv(data, encoding="Windows-1252")
+        data = obj["Body"].read()
+        df = pd.read_csv(io.BytesIO(data))
         return df
 
     def runner(self) -> str:
