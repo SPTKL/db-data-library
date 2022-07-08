@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 import pandas as pd
 
 from . import df_to_tempfile
@@ -18,6 +19,13 @@ class Scriptor:
     def ingest(self) -> pd.DataFrame:
         df = pd.read_csv("dob_cofos.csv", dtype=str)
         df.insert(0, "v", self.version)
+        df.insert(-1, "docstatus", None)
+        df["CofilingtypeLabel"] = df["CofilingtypeLabel"].map(
+                                        {"Initial": "T- TCO", 
+                                        "": "T- TCO", 
+                                        "": "T- TCO", 
+                                        "Final":"C- CO"}
+                                    )
         return df
 
     def previous(self) -> pd.DataFrame:
