@@ -19,7 +19,12 @@ class Scriptor:
     def ingest(self) -> pd.DataFrame:
         df = pd.read_csv("dob_cofos.csv", dtype=str)
         df.insert(0, "v", self.version)
+        # add the extra column and assign the missing columns to None
         df.insert(df.shape[1], "docstatus", None)
+        df["CofO Status"] = None
+        # clean the job number by removing the -1 flag
+        df["Job number"] = df["Job number"].apply(lambda x: x.split("-")[0])
+        # mapping the four values to the T-TCO and C-CO logics 
         df["CofilingtypeLabel"] = df["CofilingtypeLabel"].map(
                                         {
                                             "Initial": "T- TCO", 
