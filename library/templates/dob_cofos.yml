@@ -31,4 +31,4 @@ dataset:
       run successfully.
     url: "https://www.nypl.org/locations"
     dependents: []
-    previous_version: 20220118
+    previous_version: 20220101
