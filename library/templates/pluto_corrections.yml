@@ -9,8 +9,8 @@ dataset:
     options:
       - AUTODETECT_TYPE=NO
       - EMPTY_STRING_AS_NULL=YES
-      - X_POSSIBLE_NAMES=longitude,Longitude
-      - Y_POSSIBLE_NAMES=latitude,Latitude
+      - X_POSSIBLE_NAMES=longitude,Longitude,Lon,lon,x
+      - Y_POSSIBLE_NAMES=latitude,Latitude,Lat,lat,y
     geometry:
       SRS: null
       type: None
