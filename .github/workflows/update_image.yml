@@ -11,13 +11,16 @@ jobs:
   update_image:
     runs-on: ubuntu-22.04
     env:
+      AW_DOCKER_USERNAME: ${{ secrets.AW_Docker_Username }}
+      AW_DOCKER_PASSWORD: ${{ secrets.AW_Docker_Password }}
       image_tag: nycplanning/library:ubutun-${{ github.event.inputs.image_tag}}
 
     steps:
       - uses: actions/checkout@v2
 
       - uses: docker-practice/actions-setup-docker@1.0.11
-
+      - name: Log in to docker
+        run: docker login -u {{}}
       - name: Build Image
         run: docker build -t $image_tag .
       - name: Publish Tag
