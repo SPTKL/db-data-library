@@ -1,0 +1,26 @@
+name: Update Docker Hub Image
+
+on: 
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Name of release
+        required: true
+
+jobs:
+  update_image:
+    runs-on: ubuntu-22.04
+    env:
+      image_tag: nycplanning/library:ubutun-${{ github.event.inputs.image_tag}}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: docker-practice/actions-setup-docker@1.0.11
+
+      - name: Build Image
+        run: docker build . $image_tag
+      - name: Publish Tag
+        run: docker push $image_tag
+
+    
