@@ -19,7 +19,7 @@ jobs:
       - uses: docker-practice/actions-setup-docker@1.0.11
 
       - name: Build Image
-        run: docker build . $image_tag
+        run: docker build -t $image_tag .
       - name: Publish Tag
         run: docker push $image_tag
 
