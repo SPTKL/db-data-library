@@ -12,7 +12,7 @@ dataset:
       type: MULTIPOLYGON
     options:
       - "AUTODETECT_TYPE=NO"
-      - "STRING_EMPTY_AS_NULL=YES"
+      - "EMPTY_STRING_AS_NULL=YES"
 
   destination:
     name: *name

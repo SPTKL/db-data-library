@@ -136,3 +136,5 @@ dmypy.json
 .config
 
 library/tmp/
+
+*.DS_Store
