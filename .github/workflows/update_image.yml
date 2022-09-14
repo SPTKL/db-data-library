@@ -1,7 +1,6 @@
 name: Update Docker Hub Image
 
 on: 
-  push:
   workflow_dispatch:
     inputs:
       image_tag:
