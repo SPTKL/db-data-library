@@ -1,5 +1,5 @@
 dataset:
-  name: &name dcp_mappluto
+  name: &name dcp_mappluto_wi
   version: "{{ version }}"
   acl: public-read
   source:
@@ -27,11 +27,8 @@ dataset:
 
   info:
     description: |
-      # MapPLUTO - shoreline clippped
-      `dcp_mappluto` is supposed to be shoreline clipped, but for now
-      it will be water included instead because we are still in the process
-      of switching over from `dcp_mappluto` to `dcp_mappluto_wi` in our codebase. 
-      Once the transition is complete, we will switch over the source url.
+      # MapPLUTO - Water Included
+      `dcp_mappluto_wi` is **Water Included**
     url: https://www1.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page
     dependents:
       - pluto_corrections
