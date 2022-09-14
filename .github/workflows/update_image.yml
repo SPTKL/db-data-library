@@ -20,7 +20,7 @@ jobs:
 
       - uses: docker-practice/actions-setup-docker@1.0.11
       - name: Log in to docker
-        run: docker login -u $AW_DOCKER_USERNAME -p AW_DOCKER_PASSWORD
+        run: docker login -u $AW_DOCKER_USERNAME -p $AW_DOCKER_PASSWORD
       - name: Build Image
         run: docker build -t $image_tag .
       - name: Publish Tag
