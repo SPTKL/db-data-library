@@ -4,8 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       image_tag:
+        type: choice
         description: Name of release
         required: true
+        options:
+        - ubuntu-latest
+        - ubuntu-staging
 
 jobs:
   update_image:
