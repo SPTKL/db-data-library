@@ -8,8 +8,8 @@ on:
         description: Name of release
         required: true
         options:
-          - ubuntu-latest
           - ubuntu-staging
+          - ubuntu-latest
 
 jobs:
   update_image:
