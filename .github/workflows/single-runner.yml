@@ -4,17 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       dataset:
-        description: 'Name of the dataset'
+        description: "Name of the dataset"
         required: true
         default: dcp_mappluto
       latest:
-        description: 'Tag this version as latest'
+        description: "Tag this version as latest"
         required: false
-        default: 'true'
+        default: "true"
       version:
         description: "Version of the dataset (i.e. 22v2, 20221121)"
         required: true
-        
+
 
 
 jobs:
@@ -32,6 +32,7 @@ jobs:
         with:
           name: ${{ github.event.inputs.dataset }}
           latest: ${{ github.event.inputs.latest }}
+          version: ${{ github.event.inputs.version }}
           s3: true
           compress: true
           output_format: pgdump shapefile csv
