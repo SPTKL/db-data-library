@@ -11,6 +11,10 @@ on:
         description: 'Tag this version as latest'
         required: false
         default: 'true'
+      version:
+        description: "Version of the dataset (i.e. 22v2, 20221121)"
+        required: true
+        
 
 
 jobs:
