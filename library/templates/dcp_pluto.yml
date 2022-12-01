@@ -3,7 +3,7 @@ dataset:
   version: "{{ version }}"
   acl: public-read
   source:
-    url: 
+    url:
       path: https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nyc_pluto_{{ version }}_csv.zip
       subpath: pluto_{{ version }}.csv
     options:
