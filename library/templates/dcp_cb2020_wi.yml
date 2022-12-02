@@ -5,7 +5,7 @@ dataset:
 
   source:
     url:
-      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nycb2020wi_{{ version }}.zip
+      path: https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nycb2020wi_{{ version }}.zip
       subpath: nycb2020wi_{{ version }}/nycb2020wi.shp
     geometry:
       SRS: EPSG:2263
@@ -27,5 +27,6 @@ dataset:
   info:
     description: |
       ### The Census Blocks for the 2020 US Census (**Water included**). 
-    url:
-    dependents: []
+    url: 
+    dependents:
+      - db-pluto
