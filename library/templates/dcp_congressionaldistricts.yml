@@ -5,10 +5,7 @@ dataset:
 
   source:
     url:
-      # path: nycg_21b/nycg.shp
-      # subpath: ""
-      # For some reason the zip file for 21b is not working right, so we are doing a local archive this time
-      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nycg_{{ version }}.zip
+      path: https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nycg_{{ version }}.zip
       subpath: nycg_{{ version }}/nycg.shp
     geometry:
       SRS: EPSG:2263
