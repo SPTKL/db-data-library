@@ -30,7 +30,7 @@ dataset:
       ### City Owned and Leased Properties
       A downloadable spreadsheet and geodatabase that list city properties with types of uses, location and other information
       This dataset identifies City property under the jurisdiction of NYC Parks, which may be managed partially or solely by the Agency.
-      More information: https://www1.nyc.gov/site/planning/about/publications/colp.page
+      More information: https://www.nyc.gov/site/planning/data-maps/open-data.page#city_facilities
     url: "https://www1.nyc.gov/site/planning/about/publications/colp.page"
     dependents:
       - dcp_pluto
