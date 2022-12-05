@@ -5,7 +5,7 @@ dataset:
 
   source:
     url: 
-      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nyed_{{ version }}.zip
+      path: https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nyed_{{ version }}.zip
       subpath: nyed_{{ version }}/nyed.shp
     geometry:
       SRS: EPSG:2263
