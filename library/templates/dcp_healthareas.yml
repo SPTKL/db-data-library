@@ -5,7 +5,7 @@ dataset:
 
   source:
     url:
-      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nyha_{{ version }}.zip
+      path: https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nyha_{{ version }}.zip
       subpath: nyha_{{ version }}/nyha.shp
     geometry:
       SRS: EPSG:2263
