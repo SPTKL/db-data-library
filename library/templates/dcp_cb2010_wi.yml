@@ -5,7 +5,7 @@ dataset:
 
   source:
     url:
-      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nycb2010wi_{{ version }}.zip
+      path: https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nycb2010wi_{{ version }}.zip
       subpath: nycb2010wi_{{ version }}/nycb2010wi.shp
     geometry:
       SRS: EPSG:2263
@@ -28,4 +28,5 @@ dataset:
     description: |
       ### The Census Blocks for the 2010 US Census (**Water included**). 
     url:
-    dependents: []
+    dependents:
+      - db-pluto

@@ -5,7 +5,7 @@ dataset:
 
   source:
     url:
-      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nycb2010_{{ version }}.zip
+      path: https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nycb2010_{{ version }}.zip
       subpath: nycb2010_{{ version }}/nycb2010.shp
     geometry:
       SRS: EPSG:2263
@@ -28,4 +28,6 @@ dataset:
     description: |
       ### The Census Blocks for the 2010 US Census (Clipped to shoreline).
     url: https://www1.nyc.gov/site/planning/data-maps/open-data/districts-download-metadata.page
-    dependents: []
+    dependents: 
+      - db-pluto
+      - db-developments
