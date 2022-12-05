@@ -5,8 +5,8 @@ dataset:
 
   source:
     url:
-      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nynta_{{ version }}.zip
-      subpath: nynta_{{ version }}/nynta.shp
+      path: https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nynta2020_{{ version }}.zip
+      subpath: nynta2020_{{ version }}/nynta2020.shp
     geometry:
       SRS: EPSG:2263
       type: MULTIPOLYGON

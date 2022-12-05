@@ -4,7 +4,7 @@ dataset:
   acl: public-read
   source:
     url:
-      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nynta2010_{{ version }}.zip
+      path: https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nynta2010_{{ version }}.zip
       subpath: nynta2010_{{ version }}/nynta2010.shp
     geometry:
       SRS: EPSG:2263
