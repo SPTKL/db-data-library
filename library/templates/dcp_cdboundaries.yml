@@ -5,7 +5,7 @@ dataset:
 
   source:
     url:
-      path: https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nycd_22c.zip
+      path: https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nycd_{{ version }}.zip
       subpath: nycd_{{ version }}/nycd.shp
     options:
       - "AUTODETECT_TYPE=NO"
