@@ -5,7 +5,7 @@ dataset:
 
   source:
     url:
-      path: https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/nyccwi_{{ version }}.zip
+      path: https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/nyccwi_{{ version }}.zip
       subpath: nyccwi_{{ version }}/nyccwi.shp
     geometry:
       SRS: EPSG:2263
