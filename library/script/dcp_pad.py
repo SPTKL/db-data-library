@@ -17,7 +17,7 @@ class Scriptor:
 
     def ingest(self) -> pd.DataFrame:
 
-        url = f"https://www1.nyc.gov/assets/planning/download/zip/data-maps/open-data/pad{self.version}.zip"
+        url = f"https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/pad{self.version}.zip"
         r = requests.get(url, stream=True)
         with open(f"pad{self.version}.zip", "wb") as fd:
             for chunk in r.iter_content(chunk_size=128):
