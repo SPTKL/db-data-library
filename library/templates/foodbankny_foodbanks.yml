@@ -34,6 +34,6 @@ dataset:
       and click "Export Data" and export as a csv 
       4. Rename the file (still as a csv) to match Food_Bank_For_NYC_Open_Members_as_of_DATE(dmmyy)
       5. place it at the library/tmp folder 
-      4. then run library archive --name foodbankny_foodbanks with the -version flag set to the DATE in the file path
+      6. then run library archive --name foodbankny_foodbanks with the -version flag set to the DATE in the file path
     url: "http://www.foodbanknyc.org/get-help/"
     dependents: []
