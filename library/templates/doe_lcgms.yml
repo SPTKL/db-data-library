@@ -27,10 +27,12 @@ dataset:
   info:
     description: |
       ### LCGMS - New York City district and charter school information
-      ### file format
+      ### file format & naming
       the downloadable is xls workbook which Data Library does not work with
       needs to manually open it in Excel then save as a csv in library/tmp folder 
       before uploading
+      the default naming of the file includes hour and minute timestamp which needs
+      to be removed to keep better consistency with our other datasets
       #### The spreadsheet includes:
       - school names
       - addresses
