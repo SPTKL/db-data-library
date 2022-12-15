@@ -3,7 +3,9 @@ dataset:
   version: "{{ version }}"
   acl: public-read
   source:
-    script: *name
+    url:
+      path: library/tmp/LCGMS_SchoolData_{{ version }}.csv
+      subpath: ""
     options:
       - "AUTODETECT_TYPE=NO"
       - "EMPTY_STRING_AS_NULL=YES"
@@ -25,6 +27,10 @@ dataset:
   info:
     description: |
       ### LCGMS - New York City district and charter school information
+      ### file format
+      the downloadable is xls workbook which Data Library does not work with
+      needs to manually open it in Excel then save as a csv in library/tmp folder 
+      before uploading
       #### The spreadsheet includes:
       - school names
       - addresses
