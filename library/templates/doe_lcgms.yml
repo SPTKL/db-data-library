@@ -47,5 +47,5 @@ dataset:
       ### How to run
       Follow directions in associated python script
       If that doesn't work, convert the downloaded file to a .csv manually and update process to ingest from the csv
-    url: "https://infohub.nyced.org/in-our-schools/operations/lcgms"
+    url: "https://www.nycenet.edu/PublicApps/LCGMS.aspx"
     dependents: []
