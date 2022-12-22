@@ -27,17 +27,20 @@ jobs:
         pip install --user pipx
 
     - name: Reload Path
+      shell: bash
       run: |
         python3 -m pipx ensurepath
         source ~/.bashrc
 
     - name: Poetry Install
+      shell: bash
       run: |
         pipx install poetry==1.1.6 --include-deps
         poetry config virtualenvs.create false --local
         poetry install
 
     - name: Pytest
+      shell: bash
       run: |
         poetry run pytest -s
 
