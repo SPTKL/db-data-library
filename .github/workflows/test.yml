@@ -29,13 +29,13 @@ jobs:
 
     - name: Poetry Install
       run: |
-        pipx install poetry==1.1.6 --include-deps
-        poetry config virtualenvs.create false --local
-        poetry install
+        python3 -m pipx install poetry==1.1.6 --include-deps
+        python3 -m poetry config virtualenvs.create false --local
+        python3 -m poetry install
 
     - name: Pytest
       run: |
-        poetry run pytest -s
+        python3 -m poetry run pytest -s
 
   docker:
     runs-on: ubuntu-20.04
