@@ -28,13 +28,11 @@ jobs:
 
     - name: Poetry Install
       run: |
-        . $HOME/.poetry/env
         poetry config virtualenvs.create false --local
         poetry install
 
     - name: Pytest
       run: |
-        . $HOME/.poetry/env
         poetry run pytest -s
 
   docker:
