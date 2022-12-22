@@ -24,18 +24,22 @@ jobs:
       run: |
         apt update
         apt install -y python3-pip python3-distutils python3-venv
-        python3 -m pip install --user pipx
-        python3 -m pipx ensurepath
+        pip install --user pipx
+        pipx ensurepath
+
+    - name: Reload Path
+      run: |
+        source ~/.bashrc
 
     - name: Poetry Install
       run: |
-        python3 -m pipx install poetry==1.1.6 --include-deps
-        python3 -m poetry config virtualenvs.create false --local
-        python3 -m poetry install
+        pipx install poetry==1.1.6 --include-deps
+        poetry config virtualenvs.create false --local
+        poetry install
 
     - name: Pytest
       run: |
-        python3 -m poetry run pytest -s
+        poetry run pytest -s
 
   docker:
     runs-on: ubuntu-20.04
