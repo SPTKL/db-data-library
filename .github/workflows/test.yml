@@ -30,11 +30,11 @@ jobs:
       shell: bash
       run: |
         python3 -m pipx ensurepath
-        source ~/.bashrc
 
     - name: Poetry Install
       shell: bash
       run: |
+        source ~/.bashrc
         pipx install poetry==1.1.6 --include-deps
         poetry config virtualenvs.create false --local
         poetry install
@@ -42,6 +42,7 @@ jobs:
     - name: Pytest
       shell: bash
       run: |
+        source ~/.bashrc
         poetry run pytest -s
 
   docker:
