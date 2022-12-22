@@ -25,10 +25,10 @@ jobs:
         apt update
         apt install -y python3-pip python3-distutils python3-venv
         pip install --user pipx
-        pipx ensurepath
 
     - name: Reload Path
       run: |
+        python3 -m pipx ensurepath
         source ~/.bashrc
 
     - name: Poetry Install
