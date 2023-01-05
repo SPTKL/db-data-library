@@ -41,9 +41,10 @@ jobs:
           - dcp_councildistricts
           - dcp_councildistricts_wi
           - dcp_firecompanies
-          - dcp_policeprecincts
           - dcp_healthareas
           - dcp_healthcenters
+          - dcp_pad
+          - dcp_policeprecincts
           - dcp_school_districts
     steps:
       - uses: actions/checkout@v2.3.4
