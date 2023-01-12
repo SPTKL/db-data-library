@@ -1,6 +1,8 @@
 # db-data-library
 ![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/nycplanning/library)
-## Usage:
+
+## Usage
+
 > Because gdal dependencies are difficult to install, we recommend using this cli with our docker image `nycplanning/library:ubuntu-latest`
 1. docker run with `.env` file
 > if you have the environmental variables stored in a `.env` file
@@ -20,7 +22,8 @@ docker run --rm\
     nycplanning/library:latest < library ... >
 ```
 
-## Dev Instructions:
+## Dev Instructions
+
 1. Make sure you have GDAL installed (we are using version `3.2.1+dfsg-1+b1`)
 ```bash
 sudo apt install -y gdal-bin libgdal-dev python3-gdal
@@ -34,7 +37,7 @@ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poet
 5. Check out what's available via the cli `poetry run library --help`
 6. To add/update documentation, run `poetry run pdoc -o docs --html library`
 
-## Testing:
+## Testing
 
 To test all functions within a script:
 `poetry run pytest tests/{test script}.py -s`
