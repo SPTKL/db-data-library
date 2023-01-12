@@ -1,7 +1,7 @@
 # db-data-library
 ![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/nycplanning/library)
 
-## Usage
+## Usage:
 
 > Because gdal dependencies are difficult to install, we recommend using this cli with our docker image `nycplanning/library:ubuntu-latest`
 1. docker run with `.env` file
