@@ -32,7 +32,7 @@ docker run --rm\
     nycplanning/library:ubuntu-latest < library ... >
 ```
 
-Where the `library ...` command can be any of the `library` commands (e.g.
+> Where the `library ...` command can be any of the `library` commands (e.g.
 `library archive --name dcp_commercialoverlay -s -c`)
 
 ### Method B: Use a dev container in VS Code
@@ -46,7 +46,7 @@ Where the `library ...` command can be any of the `library` commands (e.g.
 4. Run `library` commands
 
 ### Method C: Use github actions
-NOTE: This method will always push to S3
+>💡 Note: This method will always push to S3
 
 1. Navigate to the `Actions` section of the repo
 
