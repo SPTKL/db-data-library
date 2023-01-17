@@ -8,7 +8,7 @@
 > if you have the environmental variables stored in a `.env` file
 ```bash
 docker run --rm --env-file .env \
-    nycplanning/library:latest < library ... >
+    nycplanning/library:ubuntu-latest < library ... >
 ```
 > the command can be any of the library commands, e.g.
 `library archive --name dcp_commercialoverlay -s -c` & etc
@@ -19,7 +19,7 @@ docker run --rm\
     -e AWS_SECRET_ACCESS_KEY=< access secret ket >
     -e AWS_ACCESS_KEY_ID=< access key id >
     -e AWS_S3_BUCKET=< bucket name >
-    nycplanning/library:latest < library ... >
+    nycplanning/library:ubuntu-latest < library ... >
 ```
 
 ## Dev Instructions
