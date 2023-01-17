@@ -5,7 +5,7 @@ Archive datasets to S3 via CLI
 
 `library archive --help`
 
-`library archive --name dcp_boroboundaries --version 22c`
+`library archive --name dcp_boroboundaries --version 22c --output-format csv`
 
 `library archive --name dcp_commercialoverlay --s3 --clean`
 
