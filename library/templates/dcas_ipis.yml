@@ -26,6 +26,9 @@ dataset:
   info:
     description: |
       ###  DCAS IPIS
-      Primary input for COLP. Recieved from DCAS via email update.
+      Primary input for COLP. Recieved from DCAS via email update. 
+      *WARNING* Do not open this data in Excel at any point before the ingestion process is complete, 
+      addresses in Queens and other hyphenated addresses will be converted to date if opened in excel.
+      (e.g. "11-27 27th Blvd -> Nov 27 27th Blvd")
     url:
     dependents: []
