@@ -23,12 +23,12 @@ dataset:
 
   info:
     description: |
-      # DOB Certificate of Ocupancies
+      # DOB Certificate of Occupancies
       We get this file from DOB via email, records are 
       appended to previous `latest` file. Make sure you 
-      place the new file at the root directory of the db-data-library
+      place the new file in the library/tmp folder of the db-data-library
       repo named `dob_cofos.csv` so that the script runner can 
       run successfully.
-    url: "https://www.nypl.org/locations"
+    url: ""
     dependents: []
-    previous_version: 20220101
+    previous_version: 20220819

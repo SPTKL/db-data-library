@@ -1,4 +1,4 @@
-#from asyncio.windows_events import NULL
+# from asyncio.windows_events import NULL
 import pandas as pd
 
 from . import df_to_tempfile
@@ -17,22 +17,22 @@ class Scriptor:
         return self.config["dataset"]["info"]["previous_version"]
 
     def ingest(self) -> pd.DataFrame:
-        df = pd.read_csv("dob_cofos.csv", dtype=str)
+        df = pd.read_csv("library/tmp/dob_cofos.csv", dtype=str)
         df.insert(0, "v", self.version)
         # add the extra column and assign the missing columns to None
         df.insert(df.shape[1], "docstatus", None)
         df["CofO Status"] = None
         # clean the job number by removing the -1 flag
         df["Job number"] = df["Job number"].apply(lambda x: x.split("-")[0])
-        # mapping the four values to the T-TCO and C-CO logics 
+        # mapping the four values to the T-TCO and C-CO logics
         df["CofilingtypeLabel"] = df["CofilingtypeLabel"].map(
-                                        {
-                                            "Initial": "T- TCO", 
-                                            "Renewal With Change": "T- TCO", 
-                                            "Renewal Without Change": "T- TCO", 
-                                            "Final":"C- CO"
-                                        }
-                                    )
+            {
+                "Initial": "T- TCO",
+                "Renewal With Change": "T- TCO",
+                "Renewal Without Change": "T- TCO",
+                "Final": "C- CO",
+            }
+        )
         return df
 
     def previous(self) -> pd.DataFrame:
