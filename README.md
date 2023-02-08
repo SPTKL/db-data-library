@@ -1,26 +1,62 @@
 # db-data-library
 ![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/nycplanning/library)
-## Usage:
-> Because gdal dependencies are difficult to install, we recommend using this cli with our docker image `nycplanning/library:ubuntu-latest`
-1. docker run with `.env` file
-> if you have the environmental variables stored in a `.env` file
+
+Archive datasets to S3 via CLI
+
+`library archive --help`
+
+`library archive --name dcp_boroboundaries --version 22c --output-format csv`
+
+`library archive --name dcp_commercialoverlay --s3 --clean`
+
+
+## Usage
+
+Because gdal dependencies are difficult to install, we recommend using the `library` CLI commands via our docker image `nycplanning/library:ubuntu-latest`
+
+### Method A: Run a single command
+
+If you have environmental variables stored in a `.env` file:
 ```bash
 docker run --rm --env-file .env \
-    nycplanning/library:latest < library ... >
+    nycplanning/library:ubuntu-latest < library ... >
 ```
-> the command can be any of the library commands, e.g.
-`library archive --name dcp_commercialoverlay -s -c` & etc
-2. docker run with explicit environmental variables
+
+Otherwise, use `docker run` with explicit environmental variables:
 ```bash
 docker run --rm\
     -e AWS_S3_ENDPOINT=< endpoint >
     -e AWS_SECRET_ACCESS_KEY=< access secret ket >
     -e AWS_ACCESS_KEY_ID=< access key id >
     -e AWS_S3_BUCKET=< bucket name >
-    nycplanning/library:latest < library ... >
+    nycplanning/library:ubuntu-latest < library ... >
 ```
 
-## Dev Instructions:
+> Where the `library ...` command can be any of the `library` commands (e.g.
+`library archive --name dcp_commercialoverlay -s -c`)
+
+### Method B: Use a dev container in VS Code
+
+1. Open the repo in a `Remote Window` in VS Code (either when prompted or via the green icon at the bottom left)
+
+2. Start a poetry shell via `poetry shell`
+
+3. Install python packages via `poetry install`
+
+4. Run `library` commands
+
+### Method C: Use github actions
+>💡 Note: This method will always push to S3
+
+1. Navigate to the `Actions` section of the repo
+
+2. Select `Update a Single Dataset`
+
+3. Within `Run workflow`, enter the relevant inputs and click `Run workflow`
+
+
+## Dev Instructions
+
 1. Make sure you have GDAL installed (we are using version `3.2.1+dfsg-1+b1`)
 ```bash
 sudo apt install -y gdal-bin libgdal-dev python3-gdal
@@ -34,7 +70,7 @@ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poet
 5. Check out what's available via the cli `poetry run library --help`
 6. To add/update documentation, run `poetry run pdoc -o docs --html library`
 
-## Testing:
+## Testing
 
 To test all functions within a script:
 `poetry run pytest tests/{test script}.py -s`

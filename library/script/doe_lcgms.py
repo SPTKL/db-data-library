@@ -8,7 +8,12 @@ from . import df_to_tempfile
 
 class Scriptor:
     """
-    NOTE: May 6, 2022 The request body for downloading the spreadsheet has not been stable from one year to the next.
+    NOTE: 
+    Dec 23, 2022 the ingest() has since being deprecated because the request endpoints and params are not stable.
+    New ingest_csv() takes the static csv and created according to the documentation in the yml template is used 
+    for data library.
+
+    May 6, 2022 The request body for downloading the spreadsheet has not been stable from one year to the next.
     View https://www.nycenet.edu/PublicApps/LCGMS.aspx in developer mode (⌘+⌥+C on mac) (with Chrome in this case).
     Then click " Downloadable School Data in Excel Format".
     Then navigate to the network tab and click on the "LCGMS.aspx" listed in the box titled "Names".
@@ -25,6 +30,10 @@ class Scriptor:
 
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
+
+    @property
+    def version(self):
+        return self.config["dataset"]["version"]
 
     def ingest(self) -> pd.DataFrame:
         headers = {
@@ -49,8 +58,12 @@ class Scriptor:
         df.columns = df.iloc[0].str.replace("\t", " ")  # First row as column names
         df = df[1:]
         return df
+    
+    def ingest_csv(self):
+        df = pd.read_csv(f"library/tmp/LCGMS_SchoolData_{self.version}.csv", encoding="utf-8")
+        return df
 
     def runner(self) -> str:
-        df = self.ingest()
+        df = self.ingest_csv()
         local_path = df_to_tempfile(df)
         return local_path
